@@ -10,7 +10,7 @@ class SignUpClass extends Component {
   }
   componentWillReceiveProps(newProps) {
     newProps.registerStatus && newProps.history.push({
-      pathname: '/',
+      pathname: '/login',
       state: {
         message: 'Manager Created Successfully'
       }
