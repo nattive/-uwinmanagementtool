@@ -1,0 +1,102 @@
+import axios from 'axios'
+import { baseUrl } from '../Misc/baseUrl'
+import {
+    AUTH_IS_LOADING,
+    AUTH_STOPPED_LOADING,
+    HAS_REGISTER,
+    ERR_REGISTER,
+    NULL_ERR_REGISTER,
+    ERR_LOGIN,
+    NULL_ERR_LOGIN,
+    GEN_PASSWORD,
+    TOKEN
+} from './types'
+
+export const login = (email, password) => dispatch => {
+    dispatch({
+        type: NULL_ERR_LOGIN
+    })
+    dispatch({
+        type: AUTH_IS_LOADING
+    })
+
+    axios.post(`${baseUrl}auth/login`, {
+        email: email,
+        password: password
+    }).then(res => {
+        console.log(res)
+        localStorage.getItem('uwin_manager_token')
+        localStorage.setItem('uwin_manager_token', res.data.success.token)
+        dispatch({
+            type: AUTH_STOPPED_LOADING
+        })
+        dispatch({
+            type: TOKEN,
+            payload: res.data.success.token
+        })
+
+    }).catch(err => {
+        console.log(err.response)
+        dispatch({
+            type: AUTH_STOPPED_LOADING
+        })
+        dispatch({
+            type: ERR_LOGIN,
+            payload: err.response.data.error
+        })
+
+    })
+}
+export const register = data => dispatch => {
+
+    dispatch({
+        type: NULL_ERR_REGISTER
+    })
+    dispatch({
+        type: AUTH_IS_LOADING
+    })
+
+    axios.post(`${baseUrl}auth/signup`, {
+        business_unit: data.business_unit,
+        isHOM: data.isHOM,
+        duty: 'manager',
+        isActive: 'true',
+        email: data.email,
+        head_of_manager_id: data.head_of_manager_id,
+        name: data.name,
+        password: data.password,
+    }).then(res => {
+        console.log(res)
+        dispatch({
+            type: AUTH_STOPPED_LOADING
+        })
+        dispatch({
+            type: HAS_REGISTER,
+            payload: res.status === 200 || res.status === 201 ? true : false
+        })
+
+    }).catch(err => {
+        console.log(err.response)
+        dispatch({
+            type: AUTH_STOPPED_LOADING
+        })
+        dispatch({
+            type: ERR_REGISTER,
+            payload: err.response.data
+        })
+    })
+}
+
+export const generatePassword = () => dispatch => {
+
+    var length = 10,
+        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    dispatch({
+        type: GEN_PASSWORD,
+        payload: retVal
+    })
+}

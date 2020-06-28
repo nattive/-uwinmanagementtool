@@ -1,20 +1,20 @@
 import React from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import Entrance from "./Entrance/Entrance";
-// import Provider from "react-redux";
+import { Provider } from "react-redux";
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import MainApp from "./Entrance/MainApp";
+import store from "./Misc/store";
 function App() {
-const browserHistory = createBrowserHistory();
+  const browserHistory = createBrowserHistory();
 
   return (
-    // <Provider store={store}>
-    <Router history={browserHistory}>
-      <MainApp />
-      {/* </Provider> */}
-    </Router>
+    <Provider store={store}>
+      <Router history={browserHistory}>
+        <MainApp />
+      </Router>
+    </Provider>
   );
 }
 

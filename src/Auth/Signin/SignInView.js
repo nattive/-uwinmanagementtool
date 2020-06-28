@@ -1,6 +1,17 @@
 import React, { Component } from "react";
 import Sign from "./Sign";
-export default class SignInView extends Component {
+import { connect } from "react-redux";
+import { Redirect } from "react-router-dom";
+import { withRouter } from "react-router-dom";
+
+ class SignInView extends Component {
+componentWillReceiveProps(newProps){
+  if (newProps.token !== '') {
+   this.props.history.push("/");
+
+   
+  }
+}
   render() {
     return (
       <div>
@@ -9,3 +20,9 @@ export default class SignInView extends Component {
     );
   }
 }
+const mapStateToProps = (state) => ({
+  token: state.auth.token
+})
+
+
+export default connect(mapStateToProps, null)(withRouter(SignInView));
