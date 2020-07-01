@@ -87,8 +87,12 @@ function SignIn(props) {
             name="email"
             autoComplete="email"
             autoFocus
-            error={props.loginError.email}
-            helperText={props.loginError.email && props.loginError.email[0]}
+            error={props.loginError && props.loginError.email}
+            helperText={
+              props.loginError && props.loginError.email
+                ? props.loginError.email[0]
+                : JSON.stringify(props.loginError)
+            }
           />
           <TextField
             variant="outlined"

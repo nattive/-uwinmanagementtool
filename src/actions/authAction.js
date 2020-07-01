@@ -9,8 +9,10 @@ import {
     ERR_LOGIN,
     NULL_ERR_LOGIN,
     GEN_PASSWORD,
+    STORE_USER,
     TOKEN
 } from './types'
+import { ChecklistExist } from './checkoutAction'
 
 export const login = (email, password) => dispatch => {
     dispatch({
@@ -34,16 +36,32 @@ export const login = (email, password) => dispatch => {
             type: TOKEN,
             payload: res.data.success.token
         })
+        dispatch({
+            type: STORE_USER,
+            payload: res.data.user
+        })
+        dispatch(ChecklistExist(res.data.user.id))
 
     }).catch(err => {
         console.log(err.response)
-        dispatch({
-            type: AUTH_STOPPED_LOADING
-        })
-        dispatch({
-            type: ERR_LOGIN,
-            payload: err.response.data.error
-        })
+        if (err.response !== undefined && err.response.status === 500) {
+            dispatch({
+                type: AUTH_STOPPED_LOADING
+            })
+            dispatch({
+                type: ERR_LOGIN,
+                payload: 'Server Error'
+            })
+        } else {
+
+            dispatch({
+                type: AUTH_STOPPED_LOADING
+            })
+            dispatch({
+                type: ERR_LOGIN,
+                payload: err.response !== undefined && err.response.data ? err.response.data.error : JSON.stringify(err.response)
+            })
+        }
 
     })
 }

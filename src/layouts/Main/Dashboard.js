@@ -20,23 +20,19 @@ import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import { mainListItems, secondaryListItems } from "../../components/listItems";
 import { Switch, Route, BrowserRouter, useHistory } from "react-router-dom";
-import { ListItemIcon, FormControlLabel, Checkbox } from '@material-ui/core';
-import PropTypes from "prop-types";
-import Button from "@material-ui/core/Button";
-import Avatar from "@material-ui/core/Avatar";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemAvatar from "@material-ui/core/ListItemAvatar";
-import ListItemText from "@material-ui/core/ListItemText";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import Dialog from "@material-ui/core/Dialog";
-import PersonIcon from "@material-ui/icons/Person";
-import { blue } from "@material-ui/core/colors";
-
+import { connect } from "react-redux";
+import ChecklistComponent from "../../components/ChecklistComponent";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Home from "../Views/Home/Home";
 const drawerWidth = 240;
-
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+  },  
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: "#fff",
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -107,91 +103,12 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
-  },
-  fixedHeight: {
-    height: 240,
-  },
-  avatar: {
-    backgroundColor: blue[100],
-    color: blue[600],
-  },
+  }
 }));
 
-const emails = ["username@gmail.com", "user02@gmail.com"];
-function SimpleDialog(props) {
+function Dashboard(props) {
   const classes = useStyles();
-  const { onClose, selectedValue, open } = props;
-
-  const handleClose = () => {
-    onClose(selectedValue);
-  };
-
-  const handleListItemClick = (value) => {
-    // onClose(value);
-  };
-
-  return (
-    <Dialog
-      aria-labelledby="simple-dialog-title"
-      open={open}
-    >
-      <DialogTitle id="simple-dialog-title">Set backup account</DialogTitle>
-      <List>
-        {emails.map((email) => (
-          <ListItem
-            button
-            onClick={() => handleListItemClick(email)}
-            key={email}
-          >
-            <ListItemIcon>
-              <FormControlLabel
-                control={<Checkbox name="checkedC" />}
-                label="Uncontrolled"
-              />
-            </ListItemIcon>
-            <ListItemText primary={email} />
-          </ListItem>
-        ))}
-      </List>
-    </Dialog>
-  );
-}
-
-SimpleDialog.propTypes = {
-  open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired,
-};
-
-function SimpleDialogDemo() {
-  const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(emails[1]);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (value) => {
-    setOpen(false);
-    setSelectedValue(value);
-  };
-
-  return (
-    <div>
-      <Typography variant="subtitle1">Selected: {selectedValue}</Typography>
-      <br />
-      <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Open simple dialog
-      </Button>
-      <SimpleDialog
-        selectedValue={selectedValue}
-        open={open}
-      />
-    </div>
-  );
-}
-export default function Dashboard() {
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(props.checkExist);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -203,6 +120,9 @@ export default function Dashboard() {
   return (
     <div className={classes.root}>
       <BrowserRouter>
+        <Backdrop className={classes.backdrop} open={props.appIsLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
         <CssBaseline />
         <AppBar
           position="absolute"
@@ -254,10 +174,10 @@ export default function Dashboard() {
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
-          <SimpleDialogDemo />
+          <ChecklistComponent />
           <Switch>
-            <Route exact path="/blog">
-             <p>page </p>
+            <Route exact path="/">
+              <Home />
             </Route>
             <Route path="/blog/list">
               <p>page 2</p>
@@ -268,3 +188,12 @@ export default function Dashboard() {
     </div>
   );
 }
+
+const mapStateToProps = (state) => ({
+  checkExist: state.checklist.isExist,
+  checklist: state.checklist.open,
+  manager: state.auth.manager,
+  appIsLoading: state.loadingState.appIsLoading,
+});
+
+export default connect(mapStateToProps, null)(Dashboard);

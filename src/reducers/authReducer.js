@@ -8,6 +8,7 @@ import {
     ERR_LOGIN,
     TOKEN,
     GEN_PASSWORD,
+    STORE_USER,
     NULL_ERR_LOGIN
 } from "../actions/types";
 
@@ -16,6 +17,7 @@ const initialState = {
     authIsLoading: false,
     genPassword: '',
     loginError: {},
+    user: {},
     registerError: {},
     registerStatus: null,
     token: ''
@@ -87,6 +89,13 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 genPassword: action.payload
+            }
+            break;
+        case STORE_USER:
+
+            return {
+                ...state,
+                manager: action.payload
             }
             break;
 
