@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 700,
   },
   avatar: {
-    backgroundColor: "orange",
+    backgroundColor: theme.palette.error.main,
     height: 56,
     width: 56,
   },
@@ -27,21 +27,29 @@ const useStyles = makeStyles((theme) => ({
     width: 32,
   },
   difference: {
-    marginTop: 10,
+    marginTop: theme.spacing(2),
     display: "flex",
     alignItems: "center",
   },
   differenceIcon: {
-    color: "#373727",
+    color: theme.palette.error.dark,
   },
   differenceValue: {
-    color: "#373727",
-    marginRight: 15,
+    color: theme.palette.error.dark,
+    marginRight: theme.spacing(1),
   },
 }));
 
 const SummaryCard = (props) => {
-  const { className, ...rest } = props;
+  const {
+    className,
+    summaryTitle,
+    summaryTittleAbbr,
+    mainText,
+    lastUpdated,
+    totalUpdated,
+    ...rest
+  } = props;
 
   const classes = useStyles();
 
@@ -56,9 +64,12 @@ const SummaryCard = (props) => {
               gutterBottom
               variant="body2"
             >
-              BUDGET
+              {summaryTitle}
             </Typography>
-            <Typography variant="h3">$24,000</Typography>
+            <Typography variant="h3">{summaryTittleAbbr}</Typography>
+            <Typography variant="subtitle2" component="small">
+              {summaryTitle}
+            </Typography>
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -69,10 +80,10 @@ const SummaryCard = (props) => {
         <div className={classes.difference}>
           <ArrowDownwardIcon className={classes.differenceIcon} />
           <Typography className={classes.differenceValue} variant="body2">
-            12%
+            {totalUpdated}
           </Typography>
           <Typography className={classes.caption} variant="caption">
-            Since last month
+            {lastUpdated}
           </Typography>
         </div>
       </CardContent>
@@ -82,6 +93,11 @@ const SummaryCard = (props) => {
 
 SummaryCard.propTypes = {
   className: PropTypes.string,
+  summaryTitle: PropTypes.string,
+  summaryTittleAbbr: PropTypes.string,
+  mainText: PropTypes.string,
+  lastUpdated: PropTypes.string,
+  totalUpdated: PropTypes.string,
 };
 
 export default SummaryCard;

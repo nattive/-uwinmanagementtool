@@ -6,9 +6,9 @@ import SummaryCard from "../../../components/SummaryCard";
 export default function Home() {
   return (
     <>
-      <Grid container spacing={4}>
+      <Grid container spacing={4} className='m-3'>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <SummaryCard />
+          <SummaryCard  />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           {/* <TotalUsers /> */}

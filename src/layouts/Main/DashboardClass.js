@@ -6,7 +6,7 @@ import {ChecklistExist} from '../../actions/checkoutAction'
 class DashboardClass extends Component {
 
   componentDidMount(){
-    this.props.ChecklistExist()
+    // this.props.ChecklistExist()
   }
     render() {
         const token = localStorage.getItem("uwin_manager_token");

@@ -11,10 +11,8 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Badge from "@material-ui/core/Badge";
-import Container from "@material-ui/core/Container";
-import Grid from "@material-ui/core/Grid";
-import Paper from "@material-ui/core/Paper";
-import Link from "@material-ui/core/Link";
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/styles';
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -25,11 +23,14 @@ import ChecklistComponent from "../../components/ChecklistComponent";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Home from "../Views/Home/Home";
+import { purple } from "@material-ui/core/colors";
+import logo_white from '../../Assets/img/logo_white.png'
+import Report from "../Views/Reports/Report";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
-  },  
+  },
   backdrop: {
     zIndex: theme.zIndex.drawer + 1,
     color: "#fff",
@@ -90,6 +91,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
+    marginTop: theme.spacing(4),
     flexGrow: 1,
     height: "100vh",
     overflow: "auto",
@@ -103,7 +105,7 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     overflow: "auto",
     flexDirection: "column",
-  }
+  },
 }));
 
 function Dashboard(props) {
@@ -117,75 +119,85 @@ function Dashboard(props) {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      // Purple and green play nicely together.
+      main: "#dc004e",
+    },
+    secondary: {
+      // This is green.A700 as hex.
+      main: "#11cb5f",
+    },
+  },
+});
+
   return (
-    <div className={classes.root}>
-      <BrowserRouter>
-        <Backdrop className={classes.backdrop} open={props.appIsLoading}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
-        <CssBaseline />
-        <AppBar
-          position="absolute"
-          className={clsx(classes.appBar, open && classes.appBarShift)}
-        >
-          <Toolbar className={classes.toolbar}>
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              className={clsx(
-                classes.menuButton,
-                open && classes.menuButtonHidden
-              )}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              className={classes.title}
-            >
-              Dashboard
-            </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
-          }}
-          open={open}
-        >
-          <div className={classes.toolbarIcon}>
-            <IconButton onClick={handleDrawerClose}>
-              <ChevronLeftIcon />
-            </IconButton>
-          </div>
-          <Divider />
-          <List>{mainListItems}</List>
-        </Drawer>
-        <main className={classes.content}>
-          <div className={classes.appBarSpacer} />
-          <ChecklistComponent />
-          <Switch>
-            <Route exact path="/">
-              <Home />
-            </Route>
-            <Route path="/blog/list">
-              <p>page 2</p>
-            </Route>
-          </Switch>
-        </main>
-      </BrowserRouter>
-    </div>
+    <ThemeProvider theme={theme}>
+      <div className={classes.root}>
+        <BrowserRouter>
+          <Backdrop className={classes.backdrop} open={props.appIsLoading}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
+          <CssBaseline />
+          <AppBar
+            position="absolute"
+            className={clsx(classes.appBar, open && classes.appBarShift)}
+          >
+            <Toolbar className={classes.toolbar}>
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                className={clsx(
+                  classes.menuButton,
+                  open && classes.menuButtonHidden
+                )}
+              >
+                <MenuIcon />
+              </IconButton>
+              <image src={logo_white} alt="uwinit logo" />
+              <IconButton color="inherit">
+                <Badge badgeContent={4} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Toolbar>
+          </AppBar>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: clsx(
+                classes.drawerPaper,
+                !open && classes.drawerPaperClose
+              ),
+            }}
+            open={open}
+          >
+            <div className={classes.toolbarIcon}>
+              <IconButton onClick={handleDrawerClose}>
+                <ChevronLeftIcon />
+              </IconButton>
+            </div>
+            <Divider />
+            <List>{mainListItems}</List>
+          </Drawer>
+          <main className={classes.content}>
+            <div className={classes.appBarSpacer} />
+            <ChecklistComponent />
+            <Switch>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route path="/reports">
+               <Report />
+              </Route>
+            </Switch>
+          </main>
+        </BrowserRouter>
+      </div>
+    </ThemeProvider>
   );
 }
 
