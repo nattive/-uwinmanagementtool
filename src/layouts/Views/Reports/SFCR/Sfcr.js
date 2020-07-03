@@ -10,10 +10,15 @@ import {
   Divider,
   TextField,
   Button,
+  List,
+  ListItem,
+  ListItemText,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
+import { Link } from "react-router-dom";
+import SidebarContent from "../SidebarContent";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -51,10 +56,7 @@ export default function Sfcr() {
               color="primary"
               className="p-3"
             >
-              TASK:FUEL DISBURSEMENT/CONSUMPTION MONITORING REPORT SHEET
-            </Typography>
-            <Typography variant="overline" className={classes.headerTitle}>
-              Orders
+              FUEL DISBURSEMENT/CONSUMPTION MONITORING REPORT
             </Typography>
             <Divider className={classes.topDivider} />
             <form className={classes.root} noValidate autoComplete="off">
@@ -133,11 +135,16 @@ export default function Sfcr() {
                 </Grid>
               </Grid>
             </form>
-              <div className="float-right">
-                  <Button variant='contained' color='primary' className='m-4'>Send Report</Button>
-              </div>
+            <div className="float-right">
+              <Button variant="contained" color="primary" className="m-4">
+                Send Report
+              </Button>
+            </div>
           </CardContent>
         </Card>
+      </Grid>
+      <Grid item sm={12} md={3}>
+       <SidebarContent />
       </Grid>
     </Container>
   );

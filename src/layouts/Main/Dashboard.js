@@ -26,6 +26,7 @@ import Home from "../Views/Home/Home";
 import { purple } from "@material-ui/core/colors";
 import logo_white from '../../Assets/img/logo_white.png'
 import Report from "../Views/Reports/Report";
+import Profile from "../../components/Profile";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -119,21 +120,7 @@ function Dashboard(props) {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
-const theme = createMuiTheme({
-  palette: {
-    primary: {
-      // Purple and green play nicely together.
-      main: "#dc004e",
-    },
-    secondary: {
-      // This is green.A700 as hex.
-      main: "#11cb5f",
-    },
-  },
-});
-
   return (
-    <ThemeProvider theme={theme}>
       <div className={classes.root}>
         <BrowserRouter>
           <Backdrop className={classes.backdrop} open={props.appIsLoading}>
@@ -157,8 +144,8 @@ const theme = createMuiTheme({
               >
                 <MenuIcon />
               </IconButton>
-              <image src={logo_white} alt="uwinit logo" />
-              <IconButton color="inherit">
+              <img src={logo_white} alt="uwinit logo" style={{ width: 100 }} />
+              <IconButton color="inherit" style={{float:'right'}}>
                 <Badge badgeContent={4} color="secondary">
                   <NotificationsIcon />
                 </Badge>
@@ -181,6 +168,8 @@ const theme = createMuiTheme({
               </IconButton>
             </div>
             <Divider />
+           {open && (<Profile />)} 
+            <Divider />
             <List>{mainListItems}</List>
           </Drawer>
           <main className={classes.content}>
@@ -190,14 +179,13 @@ const theme = createMuiTheme({
               <Route exact path="/">
                 <Home />
               </Route>
-              <Route path="/reports">
-               <Report />
+              <Route  path="/reports">
+                <Report />
               </Route>
             </Switch>
           </main>
         </BrowserRouter>
       </div>
-    </ThemeProvider>
   );
 }
 

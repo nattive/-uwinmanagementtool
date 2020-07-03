@@ -14,13 +14,17 @@ export default function MainApp() {
       <Route exact path="/">
         <DashboardClass />
       </Route>
+      <Route exact path="/">
+        <DashboardClass />
+      </Route>
+      
       <Route path="/login">
         <SignInView />
       </Route>
       <Route path="/createManager">
         <SignUpClass history={history} />
       </Route>
-      <Route path="/dashboard">{/* <Dashboard /> */}</Route>
+      <Route path="*"><p>404</p></Route>
     </Switch>
   );
 }

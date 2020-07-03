@@ -42,16 +42,29 @@ function ReportHomeScreen(params) {
       <Container>
         <Grid justify="flex-end" className={classes.ButtonGroup}>
           <ButtonGroup>
-            <Button color="primary" variant="contained" className='m-2'>
+            <Button
+              component={Link}
+              to={`${path}/spar`}
+              n
+              color="primary"
+              variant="contained"
+              className="m-2"
+            >
               SPAR
             </Button>
-            <Button color="primary" variant="contained" className='m-2'>
+            <Button color="primary" variant="contained" className="m-2">
               SSR
             </Button>
-            <Button color="primary" variant="contained" className='m-2'>
+            <Button color="primary" variant="contained" className="m-2">
               SWKPA
             </Button>
-            <Button component={Link} to={`${path}/sfcr`} className='m-2' color="primary" variant="contained">
+            <Button
+              component={Link}
+              to={`${path}/sfcr`}
+              className="m-2"
+              color="primary"
+              variant="contained"
+            >
               SFCR
             </Button>
           </ButtonGroup>
