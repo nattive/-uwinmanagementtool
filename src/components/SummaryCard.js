@@ -58,14 +58,14 @@ const SummaryCard = (props) => {
       <CardContent>
         <Grid container justify="space-between">
           <Grid item>
-            <Typography
+            {/* <Typography
               className={classes.title}
               color="textSecondary"
               gutterBottom
               variant="body2"
             >
               {summaryTitle}
-            </Typography>
+            </Typography> */}
             <Typography variant="h3">{summaryTittleAbbr}</Typography>
             <Typography variant="subtitle2" component="small">
               {summaryTitle}
@@ -77,13 +77,13 @@ const SummaryCard = (props) => {
             </Avatar>
           </Grid>
         </Grid>
-        <div className={classes.difference}>
-          <ArrowDownwardIcon className={classes.differenceIcon} />
-          <Typography className={classes.differenceValue} variant="body2">
-            {totalUpdated}
-          </Typography>
+        <div >
+          {/* <ArrowDownwardIcon className={classes.differenceIcon} /> */}
           <Typography className={classes.caption} variant="caption">
-            {lastUpdated}
+            Total sent this week {totalUpdated}
+          </Typography><br />
+          <Typography className={classes.caption} variant="caption">
+            Last sent: {lastUpdated}
           </Typography>
         </div>
       </CardContent>
@@ -97,7 +97,7 @@ SummaryCard.propTypes = {
   summaryTittleAbbr: PropTypes.string,
   mainText: PropTypes.string,
   lastUpdated: PropTypes.string,
-  totalUpdated: PropTypes.string,
+  totalUpdated: PropTypes.number,
 };
 
 export default SummaryCard;

@@ -9640,6 +9640,11 @@ react-app-polyfill@^1.0.6:
     regenerator-runtime "^0.13.3"
     whatwg-fetch "^3.0.0"
 
+react-bootstrap-sweetalert@^5.1.15:
+  version "5.1.15"
+  resolved "https://registry.yarnpkg.com/react-bootstrap-sweetalert/-/react-bootstrap-sweetalert-5.1.15.tgz#5baab8571d974419be7045b5f24f939eb8841697"
+  integrity sha512-bJXLOvurU0yIgX9hnbP0PoURClc2VOJhU4i4NKX6PiBc30ypHnuQAAsOet9d2yChAVpLzHV/R95ZqzXIjaCBQQ==
+
 react-calendar@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/react-calendar/-/react-calendar-3.1.0.tgz#7a384a70f98e02177d176c45f6918fb6a15ce41f"

@@ -9,6 +9,7 @@ import {
 import { Link, useRouteMatch } from "react-router-dom";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useSelector } from "react-redux";
 
 export default function SidebarContent() {
   const { path } = useRouteMatch();
@@ -59,28 +60,31 @@ export default function SidebarContent() {
   );
 }
 
-function SparChart(props) {
+function SparChart() {
+  const workPercentage = useSelector((state) => state.reports.workPercentage);
+
   return (
     <div style={{ margin: 30 }}>
-    
       <div style={{ marginTop: 30, display: "flex" }}>
-        <div style={{ width: "50%", paddingRight: 30 }}>
+        <div style={{ width: "60%", paddingRight: 30 }}>
           <CircularProgressbar
-            value={10}
-            text={`${10}%`}
+            value={workPercentage}
+            text={`${workPercentage}%`}
             background
             backgroundPadding={6}
             styles={buildStyles({
-              backgroundColor: "#dc004e",
+              backgroundColor:
+                workPercentage >= 80
+                  ? "#11cb5f"
+                  : workPercentage >= 60
+                  ? "#cabf29"
+                  : "#dc004e",
               textColor: "#fff",
               pathColor: "#fff",
               trailColor: "transparent",
               width: 20,
             })}
           />
-        </div>
-        <div style={{ width: "70%" }}>
-          <h3 className="h5">{props.label}</h3>
         </div>
       </div>
     </div>

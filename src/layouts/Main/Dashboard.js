@@ -168,7 +168,7 @@ function Dashboard(props) {
               </IconButton>
             </div>
             <Divider />
-           {open && (<Profile />)} 
+           {open && (<Profile className='m-2'/>)} 
             <Divider />
             <List>{mainListItems}</List>
           </Drawer>
@@ -194,6 +194,7 @@ const mapStateToProps = (state) => ({
   checklist: state.checklist.open,
   manager: state.auth.manager,
   appIsLoading: state.loadingState.appIsLoading,
+  wskpaReports: state.reports.wskpaReports,
 });
 
 export default connect(mapStateToProps, null)(Dashboard);

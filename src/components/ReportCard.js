@@ -24,7 +24,7 @@ const useStyles = makeStyles({
   },
   pos: {
     marginTop: 5,
-    fontSize: "13px",
+    fontSize: "10px",
   },
 });
 
@@ -46,13 +46,13 @@ function ReportCard(props) {
         </Typography>
         <Divider />
         <Typography className={classes.pos} color="textSecondary">
-          Last Sent report:
+          Last Sent:
         </Typography>
         <Typography variant="h5" component="h3">
           {lastSentHumanDate}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          {lastSentDate}
+         last Updated: {lastSentDate}
         </Typography>
       </CardContent>
       <CardActions>

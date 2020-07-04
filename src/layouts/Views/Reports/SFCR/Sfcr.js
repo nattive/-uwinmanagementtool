@@ -108,28 +108,28 @@ export default function Sfcr() {
                 <Grid item xs={6} md={3}>
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="VOLUME"
                     variant="outlined"
                   />
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="COST/LIT"
                     variant="outlined"
                   />
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="PETROL STATION"
                     variant="outlined"
                   />
                 </Grid>
                 <Grid item xs={6} md={3}>
                   <TextField
                     id="outlined-basic"
-                    label="Outlined"
+                    label="RECV SIGN"
                     variant="outlined"
                   />
                 </Grid>
@@ -144,7 +144,7 @@ export default function Sfcr() {
         </Card>
       </Grid>
       <Grid item sm={12} md={3}>
-       <SidebarContent />
+        <SidebarContent />
       </Grid>
     </Container>
   );

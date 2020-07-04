@@ -13,6 +13,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  CircularProgress,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import "date-fns";
@@ -20,6 +21,12 @@ import DateFnsUtils from "@date-io/date-fns";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import SidebarContent from "../SidebarContent";
+import { connect } from "react-redux";
+import SweetAlert from "react-bootstrap-sweetalert";
+import {
+  getAppraisalPercent,
+  storeWSKPA,
+} from "../../../../actions/reportAction";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -42,64 +49,123 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
 }));
-function Spar() {
+function Spar(props) {
   const classes = useStyles();
   const [full_name, setfullName] = useState("");
-  const [work_attendance, setWorkAttendance] = useState("");
-  const [punctuality, setPunctuality] = useState("");
-  const [accountability, setAccountability] = useState("");
-  const [cr_rs, setCrRs] = useState("");
-  const [revenue_per_day, setRevenuePerDay] = useState("");
-  const [appearance, setAppearance] = useState("");
+  const [work_attendance, setWorkAttendance] = useState(0);
+  const [punctuality, setPunctuality] = useState(0);
+  const [accountability, setAccountability] = useState(0);
+  const [cr_rs, setCrRs] = useState(0);
+  const [revenue_per_day, setRevenuePerDay] = useState(0);
+  const [appearance, setAppearance] = useState(0);
   const [
     general_equipment_maintenance,
     setGeneralEquipmentMaintenance,
-  ] = useState("");
+  ] = useState(0);
+
+  const handleSend = () => {
+    const data = {
+      full_name,
+      work_attendance,
+      punctuality,
+      accountability,
+      cr_rs,
+      revenue_per_day,
+      general_equipment_maintenance,
+      appearance,
+      workPercentage: props.workPercentage,
+    };
+    props.storeWSKPA({data });
+  };
+  // getAppraisalPercent;
   const textField = [
     {
       name: "full_name",
       placeholder: "Full Name",
-      onChange: (e) => setfullName(e.target.full_name),
+      value: full_name,
+      type: "text",
+      helpText: "rate 1-10 (10 being the highest)",
+      onChange: (e) => setfullName(e.target.value),
     },
     {
       name: "work_attendance",
       placeholder: "Work Attendance",
-      onChange: (e) => setWorkAttendance(e.target.work_attendance),
+      value: work_attendance,
+      type: "number",
+      helpText: "rate 1-10 (10 being the highest)",
+      onChange: (e) =>
+        setWorkAttendance(
+          Number(e.target.value) > 10 ? 10 : Number(e.target.value)
+        ),
     },
     {
       name: "punctuality",
       placeholder: "Punctually",
-      onChange: (e) => setPunctuality(e.target.punctuality),
+      value: punctuality,
+      type: "number",
+      helpText: "rate 1-10 (10 being the highest)",
+      onChange: (e) =>
+        setPunctuality(
+          Number(e.target.value) > 10 ? 10 : Number(e.target.value)
+        ),
     },
     {
       name: "accountability",
       placeholder: "Accountability",
-      onChange: (e) => setAccountability(e.target.accountability),
+      value: accountability,
+      type: "number",
+      helpText: "rate 1-10 (10 being the highest)",
+      onChange: (e) =>
+        setAccountability(
+          Number(e.target.value) > 10 ? 10 : Number(e.target.value)
+        ),
     },
     {
       name: "cr_rs",
       placeholder: "Customer Relation Skill",
-      onChange: (e) => setCrRs(e.target.cr_rs),
-      helpText: "Customer Relation/Retention Skill",
+      value: cr_rs,
+      type: "number",
+      onChange: (e) =>
+        setCrRs(Number(e.target.value) > 10 ? 10 : Number(e.target.value)),
+      helpText:
+        "Customer Relation/Retention Skill | rate 1-10 (10 being the highest)",
     },
     {
       name: "revenue_per_day",
       placeholder: "Revenue Per/day",
-      onChange: (e) => setRevenuePerDay(e.target.revenue_per_day),
+      value: revenue_per_day,
+      type: "number",
+      helpText: "rate 1-10 (10 being the highest)",
+      onChange: (e) =>
+        setRevenuePerDay(
+          Number(e.target.value) > 10 ? 10 : Number(e.target.value)
+        ),
     },
     {
       name: "appearance",
       placeholder: "Appearance",
-      onChange: (e) => setAppearance(e.target.appearance),
+      value: appearance,
+      type: "number",
+      helpText: "rate 1-10 (10 being the highest)",
+      onChange: (e) =>
+        setAppearance(
+          Number(e.target.value) > 10 ? 10 : Number(e.target.value)
+        ),
     },
     {
       name: "general_equipment_maintenance",
-      helpText: "General Equipment Maintenance",
+      type: "number",
+      value: general_equipment_maintenance,
+      helpText:
+        "General Equipment Maintenance | Rate 1-10 (10 being the highest)",
       placeholder: "Maintenance",
       onChange: (e) =>
-        setGeneralEquipmentMaintenance(e.target.general_equipment_maintenance),
+        setGeneralEquipmentMaintenance(
+          Number(e.target.value) > 10 ? 10 : Number(e.target.value)
+        ),
     },
   ];
+
   return (
     <Container className={classes.root}>
       <Grid item sm={12} md={9}>
@@ -119,11 +185,28 @@ function Spar() {
                 {textField.map((field, key) => (
                   <Grid xs={12} sm={6} md={4} key={key}>
                     <TextField
-                      id="standard-multiline-flexible"
-                      multiline
-                      rowsMax={4}
+                      id={
+                        field.type === "text"
+                          ? "standard-multiline-flexible"
+                          : "standard-number"
+                      }
                       label={field.placeholder}
+                      type={field.type}
+                      onChange={field.onChange}
+                      value={field.value}
                       helperText={field.helpText}
+                      InputProps={{ inputProps: { min: 0, max: 10 } }}
+                      onBlur={() =>
+                        props.getAppraisalPercent(
+                          work_attendance,
+                          punctuality,
+                          accountability,
+                          cr_rs,
+                          revenue_per_day,
+                          appearance,
+                          general_equipment_maintenance
+                        )
+                      }
                       className={classes.textField}
                     />
                   </Grid>
@@ -131,9 +214,18 @@ function Spar() {
               </Grid>
             </form>
             <div className="float-right">
-              <Button variant="contained" color="primary" className="m-4">
-                Send Report
-              </Button>
+              {props.loadingState ? (
+                <CircularProgress />
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className="m-4"
+                  onClick={() => handleSend()}
+                >
+                  Send Report
+                </Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -145,4 +237,12 @@ function Spar() {
   );
 }
 
-export default Spar;
+const mapStateToProps = (state) => ({
+  loadingState: state.reports.loadingState,
+  success: state.reports.success,
+  workPercentage: state.reports.workPercentage,
+});
+
+export default connect(mapStateToProps, { getAppraisalPercent, storeWSKPA })(
+  Spar
+);

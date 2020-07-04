@@ -2,13 +2,19 @@ import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Grid } from "@material-ui/core";
 import SummaryCard from "../../../components/SummaryCard";
+import { connect } from 'react-redux'
 
-export default function Home() {
+function Home(props) {
   return (
     <>
-      <Grid container spacing={4} className='m-3'>
+      <Grid container spacing={4} className="m-3">
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          <SummaryCard  />
+          <SummaryCard
+            summaryTitle="Staff performance report"
+            summaryTittleAbbr="SPAR"
+            totalUpdated={props.wskpaReports.length}
+            lastUpdated={props.wskpaReport.created_at}
+          />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           {/* <TotalUsers /> */}
@@ -33,3 +39,17 @@ export default function Home() {
     </>
   );
 }
+
+
+const mapStateToProps = (state) => ({
+  checkExist: state.checklist.isExist,
+  checklist: state.checklist.open,
+  manager: state.auth.manager,
+  wskpaReport: state.reports.wskpaReport,
+  wskpaReports: state.reports.wskpaReports,
+  loadingState: state.reports.loadingState,
+});
+
+
+
+export default connect(mapStateToProps, null)(Home);
