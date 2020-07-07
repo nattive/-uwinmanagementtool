@@ -3,8 +3,12 @@ import clsx from "clsx";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Card, CardContent, Grid, Typography, Avatar } from "@material-ui/core";
-import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
+import AccessAlarmIcon from "@material-ui/icons/AccessAlarm";
 import MoneyIcon from "@material-ui/icons/Money";
+import { connect } from "react-redux";
+import { ChecklistExist, getLatestChecklist } from "../actions/checkoutAction";
+import Countdown from "react-countdown";
+import { Redirect } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -40,7 +44,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SummaryCard = (props) => {
+const TimerCard = (props) => {
   const {
     className,
     summaryTitle,
@@ -52,52 +56,63 @@ const SummaryCard = (props) => {
   } = props;
 
   const classes = useStyles();
+  const renderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+      // Render a completed state
+      return <Redirect to='/' />;
+    } else {
+      // Render a countdown
+      return (
+        <Typography variant="h4">
+          {hours}:{minutes}:{seconds}
+        </Typography>
+      );
+    }
+  };
 
   return (
     <Card {...rest} className={clsx(classes.root, className)}>
       <CardContent>
         <Grid container justify="space-between">
           <Grid item>
-            {/* <Typography
-              className={classes.title}
-              color="textSecondary"
-              gutterBottom
-              variant="body2"
-            >
-              {summaryTitle}
-            </Typography> */}
-            <Typography variant="h3">{summaryTittleAbbr}</Typography>
             <Typography variant="subtitle2" component="small">
-              {summaryTitle}
+              Nect Checklist in
             </Typography>
+            <Countdown
+              date={1000000}
+              renderer={renderer}
+              onComplete={() => props.ChecklistExist()}
+            />
+            ,
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
-              <MoneyIcon className={classes.icon} />
+              <AccessAlarmIcon className={classes.icon} />
             </Avatar>
           </Grid>
         </Grid>
-        <div>
+        <Grid item>
           {/* <ArrowDownwardIcon className={classes.differenceIcon} /> */}
           <Typography className={classes.caption} variant="caption">
-            Total sent this week {totalUpdated}
-          </Typography><br />
-          <Typography className={classes.caption} variant="caption">
-            Last sent: {lastUpdated}
+            Next checklist time: 00:00
           </Typography>
-        </div>
+          <br />
+          <Typography className={classes.caption} variant="caption">
+            Last checklist: {props.lastChecked}
+          </Typography>
+        </Grid>
       </CardContent>
     </Card>
   );
 };
 
-SummaryCard.propTypes = {
-  className: PropTypes.string,
-  summaryTitle: PropTypes.string,
-  summaryTittleAbbr: PropTypes.string,
-  mainText: PropTypes.string,
-  lastUpdated: PropTypes.string,
-  totalUpdated: PropTypes.number,
+const mapStateToProps = (state) => ({
+  nextChecklist: state.checklist.nextChecklist,
+});
+
+const mapDispatchToProps = {
+  ChecklistExist,
+  getLatestChecklist,
 };
 
-export default SummaryCard;
+export default connect(mapStateToProps, mapDispatchToProps)(TimerCard);

@@ -2,12 +2,13 @@ import React, { Component } from "react";
 import Dashboard from "./Dashboard";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
-import { ChecklistExist } from "../../actions/checkoutAction";
+import { ChecklistExist, getLatestChecklist } from "../../actions/checkoutAction";
 import { getWSKPA, LatestWSKPA } from "../../actions/reportAction";
 class DashboardClass extends Component {
   componentDidMount() {
     // this.props.ChecklistExist()
     this.props.getWSKPA();
+    this.props.getLatestChecklist();
     this.props.LatestWSKPA();
   }
   render() {
@@ -23,4 +24,5 @@ export default connect(mapStateToProps, {
   ChecklistExist,
   getWSKPA,
   LatestWSKPA,
+  getLatestChecklist,
 })(DashboardClass);

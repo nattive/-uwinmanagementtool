@@ -27,7 +27,7 @@ export const login = (email, password) => dispatch => {
         password: password
     }).then(res => {
         console.log(res)
-        localStorage.getItem('uwin_manager_token')
+        localStorage.removeItem('uwin_manager_token')
         localStorage.setItem('uwin_manager_token', res.data.success.token)
         dispatch({
             type: AUTH_STOPPED_LOADING
@@ -118,3 +118,18 @@ export const generatePassword = () => dispatch => {
         payload: retVal
     })
 }
+
+// export const verifyRedirect = () => dispatch => {
+//     try {
+//         const token = localStorage.getItem('uwin_manager_token')
+//         var decoded = jwt.verify(token, 'wrong-secret');
+//         console.log(decoded);
+
+//     } catch (err) {
+//         // err
+//     }
+//     dispatch({
+//         type: GEN_PASSWORD,
+//         payload: retVal
+//     })
+// }

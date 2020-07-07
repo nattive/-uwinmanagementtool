@@ -2,7 +2,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { Grid } from "@material-ui/core";
 import SummaryCard from "../../../components/SummaryCard";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
+import TimerCard from "../../../components/TimerCard";
 
 function Home(props) {
   return (
@@ -17,7 +18,7 @@ function Home(props) {
           />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          {/* <TotalUsers /> */}
+          <TimerCard />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           {/* <TasksProgress /> */}
@@ -40,7 +41,6 @@ function Home(props) {
   );
 }
 
-
 const mapStateToProps = (state) => ({
   checkExist: state.checklist.isExist,
   checklist: state.checklist.open,
@@ -49,7 +49,5 @@ const mapStateToProps = (state) => ({
   wskpaReports: state.reports.wskpaReports,
   loadingState: state.reports.loadingState,
 });
-
-
 
 export default connect(mapStateToProps, null)(Home);

@@ -6,6 +6,7 @@ import {
     SUCCESS_FETCHING_WSKPA,
     WSKPA_PERCENTAGE,
     FETCHED_SINGLE_WSKPA,
+    OPEN_SUCCESS_MODAL,
 } from "../actions/types";
 
 const initialState = {
@@ -13,7 +14,7 @@ const initialState = {
     wskpaReports: {},
     wskpaReport: {},
     error: null,
-    success: '',
+    success: null,
     workPercentage: 0
 }
 
@@ -28,6 +29,12 @@ export default function(state = initialState, action) {
                 ...state,
                 loadingState: action.payload
             }
+        case OPEN_SUCCESS_MODAL:
+            return {
+                ...state,
+                success: action.payload
+            }
+
         case FETCHED_WSKPA:
             return {
                 ...state,

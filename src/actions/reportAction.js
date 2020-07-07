@@ -6,6 +6,7 @@ import {
     SUCCESS_FETCHING_WSKPA,
     WSKPA_PERCENTAGE,
     FETCHED_SINGLE_WSKPA,
+    OPEN_SUCCESS_MODAL,
 } from './types'
 import axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
@@ -45,11 +46,12 @@ export const storeWSKPA = ({ data }) => dispatch => {
             revenue_per_day,
             appearance,
             general_equipment_maintenance,
-            workPercentage: store.getState.report.workPercentage
+            workPercentage: store.getState().reports.workPercentage
         }, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => {
                 console.log(res);
+                alert(res.data.data)
                 dispatch({
                     type: WSKPA_LOADING_STATE,
                     payload: false
@@ -58,6 +60,11 @@ export const storeWSKPA = ({ data }) => dispatch => {
                     type: SUCCESS_FETCHING_WSKPA,
                     payload: res.data.data
                 })
+                dispatch({
+                    type: OPEN_SUCCESS_MODAL,
+                    payload: res.data.data
+                })
+
             }
 
         ).catch(err => {

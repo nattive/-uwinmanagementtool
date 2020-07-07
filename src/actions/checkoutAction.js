@@ -7,7 +7,8 @@ import {
     CHECKLIST_EXIST_STATUS,
     OPEN_DIALOG,
     HAS_STORED_CHECKLIST,
-    APP_IS_LOADING
+    APP_IS_LOADING,
+    NEXT_CHECKLIST
 } from './types'
 import axios from 'axios'
 import store from '../Misc/store'
@@ -28,16 +29,12 @@ export const ChecklistExist = (id) => dispatch => {
         headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
             dispatch({
-                type: CHECKLIST_EXIST_STATUS,
-                payload: res.data.itExist
+                type: OPEN_DIALOG,
+                payload: res.data === 1 ? true : false
             })
             dispatch({
                 type: APP_IS_LOADING,
                 payload: false
-            })
-            dispatch({
-                type: OPEN_DIALOG,
-                payload: !res.data.itExist
             })
 
         }
@@ -53,6 +50,37 @@ export const ChecklistExist = (id) => dispatch => {
         })
     })
 }
+
+export const getLatestChecklist = (id) => dispatch => {
+    dispatch({
+        type: CHECKING_CHECKLIST
+    })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    axios.get(`${baseUrl}checklist/latest`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res.data)
+            dispatch({
+                type: NEXT_CHECKLIST,
+                payload: res.data
+            })
+
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_CHECKLIST_EXIST_STATUS,
+            payload: err.response
+        })
+        dispatch({
+            type: APP_IS_LOADING,
+            payload: false
+        })
+    })
+}
+
 export const storeChecklist = () => dispatch => {
     dispatch({
         type: APP_IS_LOADING,

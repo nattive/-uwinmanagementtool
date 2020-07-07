@@ -17,16 +17,15 @@ import { connect } from "react-redux";
 import { login } from "../../actions/authAction";
 import { CircularProgress } from "@material-ui/core";
 import Alert from "@material-ui/lab/Alert";
-
+// import logo from 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" href="https://uwiniynigeria.com/">
+        UwinitNigeria
       </Link>{" "}
       {new Date().getFullYear()}
-      {"."}
     </Typography>
   );
 }
@@ -61,9 +60,7 @@ function SignIn(props) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+        img
 
         {/* <p className="alert alert-danger">{item.email}</p> */}
         <Typography component="h1" variant="h5">

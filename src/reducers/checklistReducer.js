@@ -1,8 +1,9 @@
-import { CHECKLIST_EXIST_STATUS, OPEN_DIALOG } from "../actions/types";
+import { CHECKLIST_EXIST_STATUS, OPEN_DIALOG, NEXT_CHECKLIST } from "../actions/types";
 
 const initialState = {
     isExist: null,
     open: false,
+    nextChecklist: {},
     day: ''
 }
 export default function(state = initialState, action) {
@@ -17,6 +18,12 @@ export default function(state = initialState, action) {
                 ...state,
                 open: action.payload
             }
+        case NEXT_CHECKLIST:
+            return {
+                ...state,
+                nextChecklist: action.payload
+            }
+
         default:
             return {
                 ...state
