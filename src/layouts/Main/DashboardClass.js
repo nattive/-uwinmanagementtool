@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Dashboard from "./Dashboard";
 import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
+import { verifyRedirect } from '../../actions/authAction'
 import { ChecklistExist, getLatestChecklist } from "../../actions/checkoutAction";
 import { getWSKPA, LatestWSKPA } from "../../actions/reportAction";
 class DashboardClass extends Component {
@@ -10,6 +11,7 @@ class DashboardClass extends Component {
     this.props.getWSKPA();
     this.props.getLatestChecklist();
     this.props.LatestWSKPA();
+    this.props.verifyRedirect();
   }
   render() {
     const token = localStorage.getItem("uwin_manager_token");
@@ -25,4 +27,5 @@ export default connect(mapStateToProps, {
   getWSKPA,
   LatestWSKPA,
   getLatestChecklist,
+  verifyRedirect,
 })(DashboardClass);

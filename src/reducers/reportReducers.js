@@ -7,14 +7,22 @@ import {
     WSKPA_PERCENTAGE,
     FETCHED_SINGLE_WSKPA,
     OPEN_SUCCESS_MODAL,
+    SFCR_LOADING_STATE,
+    FETCHED_SFCR_REPORT,
+    SFCR_SUCCESS_MESSAGE,
+    SFCR_ERROR_MESSAGE,
+    NULL_SFCR_MESSAGE
 } from "../actions/types";
 
 const initialState = {
     loadingState: null,
+    sfcrLoading: false,
     wskpaReports: {},
+    sfcrReports: {},
     wskpaReport: {},
     error: null,
-    success: null,
+    sfcrError: null,
+    sfcrSuccess: null,
     workPercentage: 0
 }
 
@@ -69,6 +77,31 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 wskpaReport: action.payload
+            }
+        case SFCR_LOADING_STATE:
+            return {
+                ...state,
+                sfcrLoading: action.payload
+            }
+        case FETCHED_SFCR_REPORT:
+            return {
+                ...state,
+                sfcrReports: action.payload
+            }
+        case SFCR_SUCCESS_MESSAGE:
+            return {
+                ...state,
+                sfcrSuccess: action.payload
+            }
+        case SFCR_ERROR_MESSAGE:
+            return {
+                ...state,
+                sfcrError: action.payload
+            }
+        case NULL_SFCR_MESSAGE:
+            return {
+                ...state,
+                sfcrError: null
             }
 
         default:

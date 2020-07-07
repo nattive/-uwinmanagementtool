@@ -13,6 +13,7 @@ import {
     TOKEN
 } from './types'
 import { ChecklistExist } from './checkoutAction'
+import jwt from 'jsonwebtoken'
 
 export const login = (email, password) => dispatch => {
     dispatch({
@@ -119,17 +120,29 @@ export const generatePassword = () => dispatch => {
     })
 }
 
-// export const verifyRedirect = () => dispatch => {
-//     try {
-//         const token = localStorage.getItem('uwin_manager_token')
-//         var decoded = jwt.verify(token, 'wrong-secret');
-//         console.log(decoded);
+export const verifyRedirect = () => dispatch => {
+    const token = localStorage.getItem('uwin_manager_token')
 
-//     } catch (err) {
-//         // err
-//     }
-//     dispatch({
-//         type: GEN_PASSWORD,
-//         payload: retVal
-//     })
-// }
+    axios.get(`${baseUrl}auth/user`, { headers: { Authorization: `Bearer ${token}` } })
+        .then(res => {
+            console.log(res)
+            dispatch({
+                type: AUTH_IS_LOADING
+            })
+            dispatch({
+                type: STORE_USER,
+                payload: res.data
+            })
+        })
+        .catch(err => {
+            console.log(err.response)
+            dispatch({
+                type: AUTH_STOPPED_LOADING
+            })
+            dispatch({
+                type: ERR_LOGIN,
+                payload: err.response.data
+            })
+        })
+
+}
