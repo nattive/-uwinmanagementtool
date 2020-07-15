@@ -12,40 +12,40 @@ import AssignmentIcon from "@material-ui/icons/Assignment";
 import { Link } from "react-router-dom";
 import SendIcon from "@material-ui/icons/Send";
 export const mainListItems = (
-  <div>
-    <ListItem button component={Link} to="/">
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItem>
-    <ListItem button component={Link} to="/reports">
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Reports" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <SendIcon />
-      </ListItemIcon>
-      <ListItemText primary="Message" />
-    </ListItem>
-    <ListItem button>
-      <ListItemIcon>
-        <PeopleIcon />
-      </ListItemIcon>
-      <ListItemText primary="Manager's Forum" />
-    </ListItem>
+         <div>
+           <ListItem button component={Link} to="/">
+             <ListItemIcon>
+               <DashboardIcon />
+             </ListItemIcon>
+             <ListItemText primary="Dashboard" />
+           </ListItem>
+           <ListItem button component={Link} to="/reports">
+             <ListItemIcon>
+               <BarChartIcon />
+             </ListItemIcon>
+             <ListItemText primary="Reports" />
+           </ListItem>
+           <ListItem button component={Link} to="/chat">
+             <ListItemIcon>
+               <SendIcon />
+             </ListItemIcon>
+             <ListItemText primary="Message" />
+           </ListItem>
+           <ListItem button>
+             <ListItemIcon>
+               <PeopleIcon />
+             </ListItemIcon>
+             <ListItemText primary="Manager's Forum" />
+           </ListItem>
 
-    <ListItem button>
-      <ListItemIcon>
-        <LayersIcon />
-      </ListItemIcon>
-      <ListItemText primary="Request" />
-    </ListItem>
-  </div>
-);
+           <ListItem button>
+             <ListItemIcon>
+               <LayersIcon />
+             </ListItemIcon>
+             <ListItemText primary="Request" />
+           </ListItem>
+         </div>
+       );
 
 export const secondaryListItems = (
   <div>
@@ -70,4 +70,3 @@ export const secondaryListItems = (
     </ListItem>
   </div>
 );
-

@@ -11,8 +11,8 @@ import Typography from "@material-ui/core/Typography";
 import Divider from "@material-ui/core/Divider";
 import IconButton from "@material-ui/core/IconButton";
 import Badge from "@material-ui/core/Badge";
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from "@material-ui/core/styles";
+import { ThemeProvider } from "@material-ui/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
@@ -23,8 +23,9 @@ import ChecklistComponent from "../../components/ChecklistComponent";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Home from "../Views/Home/Home";
+import Chat from "../Views/Chat"
 import { purple } from "@material-ui/core/colors";
-import logo_white from '../../Assets/img/logo_white.png'
+import logo_white from "../../Assets/img/logo_white.png";
 import Report from "../Views/Reports/Report";
 import Profile from "../../components/Profile";
 const drawerWidth = 240;
@@ -121,71 +122,71 @@ function Dashboard(props) {
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
   return (
-      <div className={classes.root}>
-        <BrowserRouter>
-          <Backdrop className={classes.backdrop} open={props.appIsLoading}>
-            <CircularProgress color="inherit" />
-          </Backdrop>
-          <CssBaseline />
-          <AppBar
-            position="absolute"
-            className={clsx(classes.appBar, open && classes.appBarShift)}
-          >
-            <Toolbar className={classes.toolbar}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open drawer"
-                onClick={handleDrawerOpen}
-                className={clsx(
-                  classes.menuButton,
-                  open && classes.menuButtonHidden
-                )}
-              >
-                <MenuIcon />
-              </IconButton>
-              <img src={logo_white} alt="uwinit logo" style={{ width: 100 }} />
-              <IconButton color="inherit" style={{float:'right'}}>
-                <Badge badgeContent={4} color="secondary">
-                  <NotificationsIcon />
-                </Badge>
-              </IconButton>
-            </Toolbar>
-          </AppBar>
-          <Drawer
-            variant="permanent"
-            classes={{
-              paper: clsx(
-                classes.drawerPaper,
-                !open && classes.drawerPaperClose
-              ),
-            }}
-            open={open}
-          >
-            <div className={classes.toolbarIcon}>
-              <IconButton onClick={handleDrawerClose}>
-                <ChevronLeftIcon />
-              </IconButton>
-            </div>
-            <Divider />
-           {open && (<Profile className='m-2'/>)} 
-            <Divider />
-            <List>{mainListItems}</List>
-          </Drawer>
-          <main className={classes.content}>
-            <div className={classes.appBarSpacer} />
-            <ChecklistComponent />
-            <Switch>
-              <Route exact path="/">
-                <Home />
-              </Route>
-              <Route  path="/reports">
-                <Report />
-              </Route>
-            </Switch>
-          </main>
-        </BrowserRouter>
-      </div>
+    <div className={classes.root}>
+      <BrowserRouter>
+        <Backdrop className={classes.backdrop} open={props.appIsLoading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        <CssBaseline />
+        <AppBar
+          position="absolute"
+          className={clsx(classes.appBar, open && classes.appBarShift)}
+        >
+          <Toolbar className={classes.toolbar}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              className={clsx(
+                classes.menuButton,
+                open && classes.menuButtonHidden
+              )}
+            >
+              <MenuIcon />
+            </IconButton>
+            <img src={logo_white} alt="uwinit logo" style={{ width: 100 }} />
+            <IconButton color="inherit" style={{ float: "right" }}>
+              <Badge badgeContent={4} color="secondary">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
+          </Toolbar>
+        </AppBar>
+        <Drawer
+          variant="permanent"
+          classes={{
+            paper: clsx(classes.drawerPaper, !open && classes.drawerPaperClose),
+          }}
+          open={open}
+        >
+          <div className={classes.toolbarIcon}>
+            <IconButton onClick={handleDrawerClose}>
+              <ChevronLeftIcon />
+            </IconButton>
+          </div>
+          <Divider />
+          {open && <Profile className="m-2" />}
+          <Divider />
+          <List>{mainListItems}</List>
+        </Drawer>
+        <main className={classes.content}>
+          <div className={classes.appBarSpacer} />
+          <ChecklistComponent />
+          <Switch>
+            <Route exact path="/">
+              <Home />
+            </Route>
+            <Route path="/reports">
+              <Report />
+            </Route>
+            <Route path="/chat">
+              <Chat />
+            </Route>
+          </Switch>
+        </main>
+      </BrowserRouter>
+    </div>
   );
 }
 
