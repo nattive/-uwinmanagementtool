@@ -45,6 +45,7 @@ export default function(state = initialState, action) {
             break;
 
         case AUTH_STOPPED_LOADING:
+            // window.location.href = '/login'
             return {
                 ...state,
                 authIsLoading: false

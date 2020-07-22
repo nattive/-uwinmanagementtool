@@ -29,6 +29,8 @@
     "react-bootstrap-sweetalert": "^5.1.15",
     "react-calendar": "^3.1.0",
     "react-chartjs-2": "^2.7.6",
+    "react-chat-elements": "^10.9.2",
+    "react-chat-ui": "^0.3.2",
     "react-circular-progressbar": "^2.0.3",
     "react-countdown": "^2.2.1",
     "react-dom": "^16.13.1",

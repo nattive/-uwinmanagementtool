@@ -7,128 +7,181 @@ import {
   Card,
   CardHeader,
   CardContent,
-  List,
-  ListItem,
-  Typography,
-  ListItemAvatar,
-  Avatar,
-  ListItemText,
-  Divider,
-  TextField,
-  CardActionArea,
-  Button,
   CardActions,
+  Paper,
+  IconButton,
+  CircularProgress,
+  TextField,
 } from "@material-ui/core";
+import { connect } from "react-redux";
+import { fetchChats, postMessage } from "../../../actions/chatAction";
+import SendIcon from "@material-ui/icons/Send";
+import store from "../../../Misc/store";
+import { FETCHED_CHAT } from "../../../actions/types";
+import "react-chat-elements/dist/main.css";
+import {
+  MessageList,
+  Input,
+  MessageBox,
+  Button,
+  SideBar,
+  ChatList,
+} from "react-chat-elements";
+import chatBackground from "./image/chatbg.jpg";
+import ChatArena from "./ChatArena";
+class ChatHome extends Component {
+ 
 
-export default class ChatHome extends Component {
-  constructor() {
-    super();
-    this.state = {
-      message: "",
-      messages: [],
-    };
-    // this.fetchMessages = this.fetchMessages.bind(this);
-    this.postMessage = this.postMessage.bind(this);
+  componentWillMount() {
+
+    const { echo, manager } = this.props;
+    echo
+      .channel("laravel_database_private-chat")
+      .listen("MessageSent", (ev) => {
+        store.dispatch({
+          type: FETCHED_CHAT,
+          payload: {
+            text: ev.text,
+            user: ev.user,
+          },
+        });
+      });
   }
-//   componentDidMount() {
-//     this.fetchMessages();
-//     // window.Echo.channel("private-chat").listen("MessageSent", (event) => {
-//     //   console.log(event);
-
-//     //   this.state.messages.push(event.message);
-//     // });
-//   }
-//   fetchMessages() {
-//     const token = localStorage.getItem("uwin_manager_token");
-
-//     Axios.get(`${baseUrl}chat/messages`, {
-//       headers: { Authorization: `Bearer ${token}` },
-//     })
-//       .then((res) => {
-//          window.Echo.channel("private-chat").listen("MessageSent", (event) => {
-//            console.log(event);
-
-//            this.state.messages.push(event.message);
-//          });
-//         console.log(res.data);
-//       })
-//       .catch((err) => console.log(err));
-//   }
-  postMessage() {
-    const token = localStorage.getItem("uwin_manager_token");
-
-    Axios.post(
-      `${baseUrl}chat/messages`,
-      {
-        text: this.state.message,
-      },
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    )
-      .then((res) => {
-        console.log(res.data);
-      })
-      .catch((err) => console.log(err));
-  }
+  
   render() {
     const messageCard = {
       backgroundColor: "#dc004e",
       color: "#fff",
+      color: "rgb(43, 42, 42)",
       marginBottom: "20px",
       borderRadius: "10px 10px 10px 0",
-      width: '80%',
+      width: "80%",
+      fontSize: 14,
     };
     return (
       <div>
         <Grid container>
           <Grid item xs={12} sm={12} md={7}>
-            <Card>
-              <CardHeader title="Public Chat" />
-              <CardContent>
-                <List
-                  component="ul"
-                  style={{ height: "400px", overflowY: "scroll" }}
-                >
-                  {this.state.messages.length > 0 ? (
-                    this.state.messages.map((message) => (
-                      <React.Fragment key={message.id}>
-                        <ListItem color="primary" style={messageCard}>
-                          <ListItemAvatar>
-                            <Avatar />
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={message.user.name}
-                            secondary={message.text}
-                          />
-                        </ListItem>
-                      </React.Fragment>
-                    ))
-                  ) : (
-                    <p>fetching message</p>
-                  )}
-                </List>
-              </CardContent>
-              <CardActions>
-                <TextField
-                  id="standard-basic"
-                  value={this.state.message}
-                  onChange={(e) => this.setState({ message: e.target.value })}
-                  label="Standard"
+          <ChatArena />
+           </Grid>
+          <Grid item xs={12} sm={12} md={5}>
+            <Card style={{ marginBottom: 10 }}>
+              <CardHeader
+                title="Recent Messages"
+                action={
+                  <TextField
+                    id="standard-search"
+                    label="Search field"
+                    type="search"
+                  />
+                }
+                style={{
+                  backgroundColor: "#373737099",
+                  color: "rgb(46, 44, 44)",
+                }}
+              />
+              <CardContent style={{ height: "300px", overflowY: "scroll" }}>
+                <ChatList
+                  className="chat-list"
+                  dataSource={[
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                    {
+                      avatar: "https://facebook.github.io/react/img/logo.svg",
+                      alt: "Reactjs",
+                      title: "Facebook",
+                      subtitle: "What are you doing?",
+                      date: new Date(),
+                      unread: 0,
+                    },
+                  ]}
                 />
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={this.postMessage}
-                >
-                  Send
-                </Button>
-              </CardActions>
+              </CardContent>
             </Card>
           </Grid>
-          <div className="col-md-6"></div>
         </Grid>
       </div>
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  echo: state.chat.echo,
+  isFetching: state.chat.isFetching,
+  chat: state.chat.chat,
+  chats: state.chat.chats,
+  chatError: state.chat.chatError,
+  manager: state.auth.manager,
+});
+
+export default connect(mapStateToProps, { fetchChats, postMessage })(ChatHome);

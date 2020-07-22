@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -23,9 +23,10 @@ import ChecklistComponent from "../../components/ChecklistComponent";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Home from "../Views/Home/Home";
-import Chat from "../Views/Chat"
+import Chat from "../Views/Chat";
 import { purple } from "@material-ui/core/colors";
 import logo_white from "../../Assets/img/logo_white.png";
+import { fetchChats, postMessage } from "../../actions/chatAction";
 import Report from "../Views/Reports/Report";
 import Profile from "../../components/Profile";
 const drawerWidth = 240;
@@ -93,7 +94,7 @@ const useStyles = makeStyles((theme) => ({
   },
   appBarSpacer: theme.mixins.toolbar,
   content: {
-    marginTop: theme.spacing(4),
+    // marginTop: theme.spacing(4),
     flexGrow: 1,
     height: "100vh",
     overflow: "auto",
@@ -121,6 +122,9 @@ function Dashboard(props) {
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
 
+useEffect(() => {
+  props.fetchChats();
+}, []);
   return (
     <div className={classes.root}>
       <BrowserRouter>
@@ -130,6 +134,7 @@ function Dashboard(props) {
         <CssBaseline />
         <AppBar
           position="absolute"
+          elevation={0}
           className={clsx(classes.appBar, open && classes.appBarShift)}
         >
           <Toolbar className={classes.toolbar}>
@@ -198,4 +203,4 @@ const mapStateToProps = (state) => ({
   wskpaReports: state.reports.wskpaReports,
 });
 
-export default connect(mapStateToProps, null)(Dashboard);
+export default connect(mapStateToProps, { fetchChats })(Dashboard);

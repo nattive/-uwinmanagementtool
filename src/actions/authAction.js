@@ -141,7 +141,7 @@ export const verifyRedirect = () => dispatch => {
             })
             dispatch({
                 type: ERR_LOGIN,
-                payload: err.response.data
+                payload: err.response ? err.response.data : JSON.stringify(err)
             })
         })
 

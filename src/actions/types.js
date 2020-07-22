@@ -77,3 +77,16 @@ export const NULL_SFCR_MESSAGE = 'NULL_SFCR_MESSAGE'
  * Modal Alert
  */
 export const OPEN_SUCCESS_MODAL = 'OPEN_SUCCESS_MODAL'
+
+
+/**
+ * Chat 
+ */
+
+export const INIT_CHAT = 'INIT_CHAT'
+export const FETCHING_CHATS = 'FETCHING_CHATS'
+export const FETCHED_CHATS = 'FETCHED_CHATS'
+export const NULL_CHAT_ERR = 'NULL_CHAT_ERR'
+export const FETCHED_CHAT = 'FETCHED_CHAT'
+export const CHAT_ERROR = 'CHAT_ERROR'
+export const CHAT_SUCCESS = 'CHAT_SUCCESS'

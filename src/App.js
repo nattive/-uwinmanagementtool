@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import Entrance from "./Entrance/Entrance";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import { Router } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import MainApp from "./Entrance/MainApp";
@@ -9,22 +9,24 @@ import store from "./Misc/store";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
 import Echo from "laravel-echo";
 import socketio from "socket.io-client";
-    const token = localStorage.getItem("uwin_manager_token");
+import { useEffect } from "react";
+import { INIT_CHAT } from "./actions/types";
+const token = localStorage.getItem("uwin_manager_token");
 
-const echo = new Echo({
-  host: "http://127.0.0.1:5050",
-  broadcaster: "socket.io",
-  client: socketio, 
-  auth: {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  },
-});
+// const echo = new Echo({
+//   host: "http://127.0.0.1:5050",
+//   broadcaster: "socket.io",
+//   client: socketio,
+//   auth: {
+//     headers: {
+//       Authorization: "Bearer " + token,
+//     },
+//   },
+// });
 
-echo
-  .channel("laravel_database_private-chat")
-  .listen("MessageSent", (ev) => console.log(ev));
+// echo
+//   .channel("laravel_database_private-chat")
+//   .listen("MessageSent", (ev) => console.log(ev));
 
 // // window.Pusher = require("pusher-js");
 //     const token = localStorage.getItem("uwin_manager_token");
@@ -61,6 +63,8 @@ function App() {
       },
     },
   });
+
+
 
   return (
     <Provider store={store}>
