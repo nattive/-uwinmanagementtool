@@ -21,7 +21,12 @@ import {
   DialogContentText,
   DialogActions,
 } from "@material-ui/core";
-import { fetchChats, postMessage } from "../../../actions/chatAction";
+import {
+  fetchChats,
+  postMessage,
+  initPrivateChat,
+  fetchChatsById,
+} from "../../../actions/chatAction";
 import SendIcon from "@material-ui/icons/Send";
 import store from "../../../Misc/store";
 import { FETCHED_CHAT } from "../../../actions/types";
@@ -36,11 +41,13 @@ import {
 } from "react-chat-elements";
 import chatBackground from "./image/chat.jpg";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import { getUser } from "../../../actions/usersAction";
 class ChatArena extends Component {
   constructor(props) {
     super(props);
     this.state = {
       message: "",
+      receiver: {},
       open: false,
       queuedMessage: null,
       AnchorEl: null,
@@ -51,20 +58,15 @@ class ChatArena extends Component {
     this.handleClickOpen = this.handleClickOpen.bind(this);
     this.handleClose = this.handleClose.bind(this);
   }
+
   componentWillReceiveProps(newProps) {
     if (newProps.chats) {
-      this.setState({ messages: newProps.chats });
+      this.setState({ messages: newProps.chats.chat_messages });
     }
-  }
-
-  componentWillMount() {
-    this.setState({ messages: this.props.chats });
-
-  }
-  componentWillReceiveProps(newProps) {
-    if (newProps.chats) {
-      this.setState({ messages: newProps.chats });
+    if (newProps.FetchedManager) {
+      this.setState({ receiver: newProps.FetchedManager });
     }
+
     if (newProps.chat) {
       this.setState({ queuedMessage: "" });
       if (newProps.chat.text) {
@@ -78,8 +80,17 @@ class ChatArena extends Component {
     }
   }
 
+  UNSAFE_componentWillMount() {
+    if (this.props.activeChat.chat.id) {
+      this.props.fetchChatsById(this.props.activeChat.chat.id);
+    }
+  }
   handlePostMessage() {
-    this.props.postMessage(this.state.message);
+    this.props.postMessage(
+      this.state.message,
+      this.state.receiver.id,
+      this.props.activeChat.chat.id
+    );
     var cardMessage = document.getElementById("cardMessage");
     cardMessage.scroll(0, 1000000);
     this.setState({ message: "", queuedMessage: this.state.message });
@@ -101,8 +112,12 @@ class ChatArena extends Component {
     const chatMenu = (
       <>
         <div>
-          <MaterialButton variant="text" color="primary" onClick={this.handleClickOpen}>
-          Create Group
+          <MaterialButton
+            variant="text"
+            color="primary"
+            onClick={this.handleClickOpen}
+          >
+            Create Group
           </MaterialButton>
           <Dialog
             open={this.state.open}
@@ -111,9 +126,7 @@ class ChatArena extends Component {
           >
             <DialogTitle id="form-dialog-title">Create Chat Group</DialogTitle>
             <DialogContent>
-              <DialogContentText>
-               Chat Group name?
-              </DialogContentText>
+              <DialogContentText>Chat Group name?</DialogContentText>
               <TextField
                 autoFocus
                 margin="dense"
@@ -139,8 +152,14 @@ class ChatArena extends Component {
       <>
         <Card>
           <CardHeader
-            title="Chat"
-            subheader="users"
+            title={
+              this.state.receiver !== {} ? (
+                this.state.receiver.name
+              ) : (
+                <CircularProgress />
+              )
+            }
+            subheader="online"
             action={chatMenu}
             style={{
               backgroundColor: "#373737099",
@@ -152,7 +171,7 @@ class ChatArena extends Component {
             style={{
               height: "400px",
               overflowY: "scroll",
-                backgroundImage: `url(${chatBackground})`,
+              backgroundImage: `url(${chatBackground})`,
             }}
           >
             <div style={{ display: "flex", justifyContent: "center" }}>
@@ -160,28 +179,32 @@ class ChatArena extends Component {
                 <CircularProgress size={24} color="primary" />
               )}
             </div>
-            {this.state.messages.map((message) => (
-              <React.Fragment>
-                <MessageBox
-                  position={
-                    message.position
-                      ? message.position
-                      : message.user.id === this.props.manager.id
-                      ? "right"
-                      : "left"
-                  }
-                  title={
-                    message.user && message.user.id === this.props.manager.id
-                      ? null
-                      : message.user.name
-                  }
-                  type={"text"}
-                  text={message.text}
-                  dateString={message.created_at}
-                  status={message.status ? "waiting" : "sent"}
-                />
-              </React.Fragment>
-            ))}
+            {this.state.messages.length > 0 ? (
+              this.state.messages.map((message) => (
+                <React.Fragment>
+                  <MessageBox
+                    position={
+                      message.position
+                        ? message.position
+                        : message.user_id === this.props.manager.id
+                        ? "right"
+                        : "left"
+                    }
+                    // title={
+                    //   message.user_id === this.props.manager.id
+                    //     ? null
+                    //     : message.user.name
+                    // }
+                    type={"text"}
+                    text={message.text}
+                    dateString={message.created_at}
+                    status={message.status ? "waiting" : "sent"}
+                  />
+                </React.Fragment>
+              ))
+            ) : (
+              <p>No message sent</p>
+            )}
             {this.state.queuedMessage && (
               <>
                 <MessageBox
@@ -220,14 +243,22 @@ const mapStateToProps = (state) => ({
   echo: state.chat.echo,
   isFetching: state.chat.isFetching,
   chat: state.chat.chat,
-  chats: state.chat.chats,
+  chats: state.chat.chats.data,
+  activeChat: state.chat.activeChat,
   chatError: state.chat.chatError,
   manager: state.auth.manager,
+  FetchedManager: state.managers.FetchedManager,
 });
 
 const mapDispatchToProps = {
   fetchChats,
   postMessage,
+  initPrivateChat,
+  getUser,
+  fetchChatsById,
 };
 
+ChatArena.propTypes = {
+  activeChat: PropTypes.object.isRequired,
+};
 export default connect(mapStateToProps, mapDispatchToProps)(ChatArena);

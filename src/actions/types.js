@@ -78,6 +78,8 @@ export const NULL_SFCR_MESSAGE = 'NULL_SFCR_MESSAGE'
  */
 export const OPEN_SUCCESS_MODAL = 'OPEN_SUCCESS_MODAL'
 
+export const NULL_ALL_ERRORS = 'NULL_ALL_ERRORS'
+
 
 /**
  * Chat 
@@ -90,3 +92,16 @@ export const NULL_CHAT_ERR = 'NULL_CHAT_ERR'
 export const FETCHED_CHAT = 'FETCHED_CHAT'
 export const CHAT_ERROR = 'CHAT_ERROR'
 export const CHAT_SUCCESS = 'CHAT_SUCCESS'
+export const ACTIVE_CHAT = 'ACTIVE_CHAT'
+    //Nulling
+export const NULL_CHATS = 'NULL_CHATS'
+export const NULL_ACTIVE_CHAT_CHATS = 'NULL_ACTIVE_CHAT_CHATS'
+
+/**
+ * Users
+ */
+
+export const FETCHING_USERS = 'FETCHING_USERS'
+export const FETCHED_USERS = 'FETCHED_USERS'
+export const FETCHED_USER = 'FETCHED_USER'
+export const ERR_FETCHING_USERS = 'ERR_FETCHING_USERS'

@@ -6,6 +6,9 @@ import {
     FETCHED_CHAT,
     CHAT_ERROR,
     CHAT_SUCCESS,
+    NULL_ACTIVE_CHAT_CHATS,
+    NULL_CHATS,
+    ACTIVE_CHAT
 } from "../actions/types";
 import Echo from "laravel-echo";
 import socketio from "socket.io-client";
@@ -17,6 +20,7 @@ const initialState = {
     chats: [],
     chatError: null,
     chatSuccess: null,
+    activeChat: null
 }
 const token = localStorage.getItem('uwin_manager_token')
 
@@ -54,6 +58,19 @@ export default function(state = initialState, action) {
                 isFetching: action.payload
             }
 
+        case NULL_CHATS:
+            return {
+                ...state,
+                chats: []
+
+            }
+        case NULL_ACTIVE_CHAT_CHATS:
+            return {
+                ...state,
+                activeChat: null
+
+            }
+
         case NULL_CHAT_ERR:
             return {
                 ...state,
@@ -68,6 +85,11 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 chatSuccess: action.payload
+            }
+        case ACTIVE_CHAT:
+            return {
+                ...state,
+                activeChat: action.payload
             }
         default:
             return {

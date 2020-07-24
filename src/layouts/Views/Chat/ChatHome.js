@@ -12,6 +12,7 @@ import {
   IconButton,
   CircularProgress,
   TextField,
+  Typography,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { fetchChats, postMessage } from "../../../actions/chatAction";
@@ -29,25 +30,34 @@ import {
 } from "react-chat-elements";
 import chatBackground from "./image/chatbg.jpg";
 import ChatArena from "./ChatArena";
+import ContactTab from "./ContactTab";
 class ChatHome extends Component {
- 
+  // componentWillMount() {
+  //   const { echo, manager } = this.props;
+  //   echo
+  //     .channel("laravel_database_private-chat")
+  //     .listen("MessageSent", (ev) => {
+  //       store.dispatch({
+  //         type: FETCHED_CHAT,
+  //         payload: {
+  //           text: ev.text,
+  //           user: ev.user,
+  //         },
+  //       });
+  //     });
+  // }
 
-  componentWillMount() {
-
-    const { echo, manager } = this.props;
-    echo
-      .channel("laravel_database_private-chat")
-      .listen("MessageSent", (ev) => {
-        store.dispatch({
-          type: FETCHED_CHAT,
-          payload: {
-            text: ev.text,
-            user: ev.user,
-          },
-        });
-      });
+  componentWillReceiveProps(props) {
+    if (props.activeChat) {
+      const { echo, manager } = this.props;
+      echo
+        .private(props.activeChat.channel)
+        .listen("ChatMessageCreated", (ev) => {
+          console.log(ev);
+        })
+    }
   }
-  
+
   render() {
     const messageCard = {
       backgroundColor: "#dc004e",
@@ -62,112 +72,16 @@ class ChatHome extends Component {
       <div>
         <Grid container>
           <Grid item xs={12} sm={12} md={7}>
-          <ChatArena />
-           </Grid>
+            {!this.props.activeChat ? (
+              <Grid container justify="center" alignContent="center">
+                <Typography variant="h3">Please select a chat</Typography>
+              </Grid>
+            ) : (
+              <ChatArena activeChat={this.props.activeChat} />
+            )}
+          </Grid>
           <Grid item xs={12} sm={12} md={5}>
-            <Card style={{ marginBottom: 10 }}>
-              <CardHeader
-                title="Recent Messages"
-                action={
-                  <TextField
-                    id="standard-search"
-                    label="Search field"
-                    type="search"
-                  />
-                }
-                style={{
-                  backgroundColor: "#373737099",
-                  color: "rgb(46, 44, 44)",
-                }}
-              />
-              <CardContent style={{ height: "300px", overflowY: "scroll" }}>
-                <ChatList
-                  className="chat-list"
-                  dataSource={[
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                    {
-                      avatar: "https://facebook.github.io/react/img/logo.svg",
-                      alt: "Reactjs",
-                      title: "Facebook",
-                      subtitle: "What are you doing?",
-                      date: new Date(),
-                      unread: 0,
-                    },
-                  ]}
-                />
-              </CardContent>
-            </Card>
+            <ContactTab />
           </Grid>
         </Grid>
       </div>
@@ -180,6 +94,7 @@ const mapStateToProps = (state) => ({
   isFetching: state.chat.isFetching,
   chat: state.chat.chat,
   chats: state.chat.chats,
+  activeChat: state.chat.activeChat,
   chatError: state.chat.chatError,
   manager: state.auth.manager,
 });

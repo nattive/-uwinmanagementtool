@@ -4,6 +4,7 @@ import checklistReducer from './checklistReducer'
 import loadingReducer from './loadingReducer'
 import reportReducers from './reportReducers'
 import chatReducer from './chatReducer'
+import usersReducers from './usersReducers'
 
 
 export default combineReducers({
@@ -11,5 +12,6 @@ export default combineReducers({
     checklist: checklistReducer,
     loadingState: loadingReducer,
     reports: reportReducers,
-    chat: chatReducer
+    chat: chatReducer,
+    managers: usersReducers,
 })

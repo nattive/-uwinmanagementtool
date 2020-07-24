@@ -4,6 +4,7 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { verifyRedirect } from '../../actions/authAction'
 import { ChecklistExist, getLatestChecklist } from "../../actions/checkoutAction";
+import { getUsers } from "../../actions/usersAction";
 import { getWSKPA, LatestWSKPA } from "../../actions/reportAction";
 import Echo from "laravel-echo";
 class DashboardClass extends Component {
@@ -13,6 +14,7 @@ class DashboardClass extends Component {
         this.props.getLatestChecklist();
         this.props.LatestWSKPA();
         this.props.verifyRedirect();
+        this.props.getUsers();
 
         // Echo.private('users.' + this.user.id)
         //     .listen('GroupCreated', (e) => {
@@ -34,4 +36,5 @@ export default connect(mapStateToProps, {
     LatestWSKPA,
     getLatestChecklist,
     verifyRedirect,
+    getUsers,
 })(DashboardClass);
