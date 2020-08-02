@@ -9,9 +9,14 @@ import {
     OPEN_SUCCESS_MODAL,
     SFCR_LOADING_STATE,
     FETCHED_SFCR_REPORT,
+    FETCHED_SFCR_REPORTS,
     SFCR_SUCCESS_MESSAGE,
     SFCR_ERROR_MESSAGE,
-    NULL_SFCR_MESSAGE
+    NULL_SFCR_MESSAGE,
+    GET_LATEST_REPORT,
+    GETTING_LATEST_REPORT,
+    ERR_GETTING_LATEST_REPORT,
+    LATEST_REPORT,
 } from "../actions/types";
 
 const initialState = {
@@ -23,7 +28,10 @@ const initialState = {
     error: null,
     sfcrError: null,
     sfcrSuccess: null,
-    workPercentage: 0
+    workPercentage: 0,
+    isGettingLatestReport: false,
+    errorLR: null,
+    latestReport: {}
 }
 
 /**
@@ -83,7 +91,7 @@ export default function(state = initialState, action) {
                 ...state,
                 sfcrLoading: action.payload
             }
-        case FETCHED_SFCR_REPORT:
+        case FETCHED_SFCR_REPORTS:
             return {
                 ...state,
                 sfcrReports: action.payload
@@ -103,11 +111,31 @@ export default function(state = initialState, action) {
                 ...state,
                 sfcrError: null
             }
-
+        case GET_LATEST_REPORT:
+            return {
+                ...state,
+                errorLR: null,
+            }
+        case GETTING_LATEST_REPORT:
+            return {
+                ...state,
+                isGettingLatestReport: true,
+            }
+        case ERR_GETTING_LATEST_REPORT:
+            return {
+                ...state,
+                isGettingLatestReport: false,
+                errorLR: action.payload,
+            }
+        case LATEST_REPORT:
+            return {
+                ...state,
+                isGettingLatestReport: false,
+                latestReport: action.payload
+            }
         default:
             return {
                 ...state
             }
-            break;
     }
 }

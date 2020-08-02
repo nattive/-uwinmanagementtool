@@ -1,5 +1,6 @@
 import {
     SFCR_LOADING_STATE,
+    FETCHED_SFCR_REPORTS,
     FETCHED_SFCR_REPORT,
     SFCR_SUCCESS_MESSAGE,
     SFCR_ERROR_MESSAGE,
@@ -66,4 +67,46 @@ export const storeSFCR = ({ data }) => dispatch => {
     }
 
 
+}
+
+
+export const getAllSFCR = () => dispatch => {
+    dispatch({
+        type: SFCR_LOADING_STATE,
+        payload: true
+    })
+    dispatch({
+        type: NULL_SFCR_MESSAGE
+    })
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.get(`${baseUrl}report/sfcr`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: FETCHED_SFCR_REPORTS,
+                payload: res.data
+            })
+            dispatch({
+                type: NULL_SFCR_MESSAGE
+            })
+            dispatch({
+                type: SFCR_LOADING_STATE,
+                payload: false
+            })
+
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: SFCR_LOADING_STATE,
+            payload: false
+        })
+
+        dispatch({
+            type: SFCR_ERROR_MESSAGE,
+            payload: err.response
+        })
+    })
 }

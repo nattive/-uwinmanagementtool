@@ -20,11 +20,11 @@ const useStyles = makeStyles({
     transform: "scale(0.8)",
   },
   title: {
-    fontSize: 14,
+    fontSize: 12,
   },
   pos: {
     marginTop: 5,
-    fontSize: "10px",
+    fontSize: "12px",
   },
 });
 
@@ -37,6 +37,7 @@ function ReportCard(props) {
     lastSentHumanDate,
     lastSentDate,
     navigationLink,
+    date_supplied,
   } = props;
   return (
     <Card className={classes.root} variant="outlined">
@@ -52,12 +53,15 @@ function ReportCard(props) {
           {lastSentHumanDate}
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-         last Updated: {lastSentDate}
+          last Updated: {lastSentDate}
         </Typography>
+       {date_supplied && <Typography className={classes.pos} color="textSecondary">
+          date supplied: {date_supplied}
+        </Typography>}
       </CardContent>
       <CardActions>
         <ButtonGroup>
-          <Button component={Link} to={`${path}/${navigationLink}`} size="small">
+          <Button component={Link} to={`${props.navigationLink}`} size="small">
             View all Sent Reports
           </Button>
         </ButtonGroup>
@@ -73,6 +77,8 @@ ReportCard.propTypes = {
   lastSentDate: PropTypes.string,
   lastUpdated: PropTypes.string,
   totalUpdated: PropTypes.string,
+  navigationLink: PropTypes.string,
+  date_supplied: PropTypes.string,
 };
 
 export default ReportCard;

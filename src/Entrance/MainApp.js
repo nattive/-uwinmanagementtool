@@ -1,5 +1,11 @@
 import React, { Component, useEffect } from "react";
-import { Switch, Route, Link, useHistory } from "react-router-dom";
+import {
+  Switch,
+  Route,
+  Link,
+  useHistory,
+  BrowserRouter,
+} from "react-router-dom";
 import SignInView from "../Auth/Signin/SignInView";
 import SignUp from "../Auth/SignUp/SignUp";
 import SignUpClass from "../Auth/SignUp/SignUpClass";
@@ -22,23 +28,22 @@ export default function MainApp() {
   //   .listen("MessageSent", (ev) => console.log(ev));
 
   return (
-    <Switch>
-      <Route exact path="/">
-        <DashboardClass />
-      </Route>{" "}
-      <Route exact path="/">
-        <DashboardClass />
-      </Route>
-      <Route path="/login">
-        <SignInView />
-      </Route>{" "}
-      <Route path="/createManager">
-        <SignUpClass history={history} />{" "}
-      </Route>{" "}
-      <Route path="*">
-        {" "}
-        <p> 404 </p>
-      </Route>
-    </Switch>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="/login">
+          <SignInView />
+        </Route>
+        <Route exact path="/createManager">
+          <SignUpClass history={history} />
+        </Route>
+        <Route path="/">
+          <DashboardClass />
+        </Route>
+        <Route path="*">
+          
+          <p> 404 </p>
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }

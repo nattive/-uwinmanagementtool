@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import Entrance from "./Entrance/Entrance";
 import { Provider, useDispatch } from "react-redux";
-import { Router } from "react-router-dom";
+import { Router, Switch, Route, BrowserRouter } from "react-router-dom";
 import { createBrowserHistory } from "history";
 import MainApp from "./Entrance/MainApp";
 import store from "./Misc/store";
@@ -64,14 +64,10 @@ function App() {
     },
   });
 
-
-
   return (
     <Provider store={store}>
       <ThemeProvider theme={theme}>
-        <Router history={browserHistory}>
-          <MainApp />
-        </Router>{" "}
+        <MainApp />
       </ThemeProvider>{" "}
     </Provider>
   );

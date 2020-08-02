@@ -11,41 +11,83 @@ import LayersIcon from "@material-ui/icons/Layers";
 import AssignmentIcon from "@material-ui/icons/Assignment";
 import { Link } from "react-router-dom";
 import SendIcon from "@material-ui/icons/Send";
-export const mainListItems = (
-         <div>
-           <ListItem button component={Link} to="/">
-             <ListItemIcon>
-               <DashboardIcon />
-             </ListItemIcon>
-             <ListItemText primary="Dashboard" />
-           </ListItem>
-           <ListItem button component={Link} to="/reports">
-             <ListItemIcon>
-               <BarChartIcon />
-             </ListItemIcon>
-             <ListItemText primary="Reports" />
-           </ListItem>
-           <ListItem button component={Link} to="/chat">
-             <ListItemIcon>
-               <SendIcon />
-             </ListItemIcon>
-             <ListItemText primary="Message" />
-           </ListItem>
-           <ListItem button>
-             <ListItemIcon>
-               <PeopleIcon />
-             </ListItemIcon>
-             <ListItemText primary="Manager's Forum" />
-           </ListItem>
+import Collapse from "@material-ui/core/Collapse";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import { makeStyles } from "@material-ui/core/styles";
+import { List } from "@material-ui/core";
+import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
+import AssessmentIcon from "@material-ui/icons/Assessment";
+import PersonAddIcon from '@material-ui/icons/PersonAdd';
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+  },
+  nested: {
+    paddingLeft: theme.spacing(4),
+  },
+}));
 
-           <ListItem button>
-             <ListItemIcon>
-               <LayersIcon />
-             </ListItemIcon>
-             <ListItemText primary="Request" />
-           </ListItem>
-         </div>
-       );
+export const MainListItems = () => {
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+  return (
+    <div>
+      <ListItem button component={Link} to="/">
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </ListItem>
+      <ListItem button component={Link} to="/reports">
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Reports" />
+      </ListItem>
+      <ListItem button component={Link} to="/chat">
+        <ListItemIcon>
+          <SendIcon />
+        </ListItemIcon>
+        <ListItemText primary="Message" />
+      </ListItem>
+      <ListItem button onClick={handleClick}>
+        <ListItemIcon>
+          <SupervisorAccountIcon />
+        </ListItemIcon>
+        <ListItemText primary="Admin Corner" />
+      </ListItem>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List disablePadding >
+          <ListItem button className={classes.nested} component={Link} to="/supervisor/report">
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Reports" />
+          </ListItem>
+          <ListItem button className={classes.nested} component={Link} to="/supervisor/manage" >
+            <ListItemIcon>
+              <PersonAddIcon />
+            </ListItemIcon>
+            <ListItemText primary="Manage Users" />
+          </ListItem>
+        </List>
+      </Collapse>
+      <ListItem button>
+        <ListItemIcon>
+          <LayersIcon />
+        </ListItemIcon>
+        <ListItemText primary="Request" />
+      </ListItem>
+    </div>
+  );
+};
 
 export const secondaryListItems = (
   <div>

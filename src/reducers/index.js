@@ -5,6 +5,8 @@ import loadingReducer from './loadingReducer'
 import reportReducers from './reportReducers'
 import chatReducer from './chatReducer'
 import usersReducers from './usersReducers'
+import salesReportReducer from './salesReportReducer'
+import adminReducer from './adminReducer'
 
 
 export default combineReducers({
@@ -14,4 +16,6 @@ export default combineReducers({
     reports: reportReducers,
     chat: chatReducer,
     managers: usersReducers,
+    admin: adminReducer,
+    salesReport: salesReportReducer
 })

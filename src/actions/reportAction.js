@@ -7,6 +7,10 @@ import {
     WSKPA_PERCENTAGE,
     FETCHED_SINGLE_WSKPA,
     OPEN_SUCCESS_MODAL,
+    GET_LATEST_REPORT,
+    GETTING_LATEST_REPORT,
+    ERR_GETTING_LATEST_REPORT,
+    LATEST_REPORT,
 } from './types'
 import axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
@@ -168,7 +172,36 @@ export const LatestWSKPA = () => dispatch => {
 }
 
 
-export const getAppraisalPercent = (
+
+
+
+export const getLatestReport = () => dispatch => {
+    dispatch({ type: GET_LATEST_REPORT })
+    dispatch({ type: GETTING_LATEST_REPORT })
+    const token = localStorage.getItem('uwin_manager_token')
+
+    axios.get(`${baseUrl}report/all/Latest`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: LATEST_REPORT,
+                payload: res.data
+            })
+
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_GETTING_LATEST_REPORT,
+            payload: err.response
+        })
+    })
+}
+
+
+
+export const getAppraisalPercent = () => (
     work_attendance,
     punctuality,
     accountability,

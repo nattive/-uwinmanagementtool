@@ -16,7 +16,7 @@ import { ThemeProvider } from "@material-ui/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import { mainListItems, secondaryListItems } from "../../components/listItems";
+import { secondaryListItems, MainListItems } from "../../components/listItems";
 import { Switch, Route, BrowserRouter, useHistory } from "react-router-dom";
 import { connect } from "react-redux";
 import ChecklistComponent from "../../components/ChecklistComponent";
@@ -24,11 +24,17 @@ import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Home from "../Views/Home/Home";
 import Chat from "../Views/Chat";
-import { purple } from "@material-ui/core/colors";
 import logo_white from "../../Assets/img/logo_white.png";
 import { fetchChats, postMessage } from "../../actions/chatAction";
 import Report from "../Views/Reports/Report";
 import Profile from "../../components/Profile";
+import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import { Grow } from "@material-ui/core";
+import ExpandLess from "@material-ui/icons/ExpandLess";
+import ExpandMore from "@material-ui/icons/ExpandMore";
+import Fab from "@material-ui/core/Fab";
+import Supervisor from "../Views/Supervisor"
+import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,6 +78,9 @@ const useStyles = makeStyles((theme) => ({
   title: {
     flexGrow: 1,
   },
+  flexgrow: {
+    flexGrow: 1,
+  },
   drawerPaper: {
     position: "relative",
     whiteSpace: "nowrap",
@@ -109,6 +118,16 @@ const useStyles = makeStyles((theme) => ({
     overflow: "auto",
     flexDirection: "column",
   },
+  fabButton: {
+    display: "flex",
+    margin: 10,
+    zIndex: 100,
+    position: "fixed",
+    bottom: 0,
+    right: 0,
+    top: "80%",
+    left: "80%",
+  },
 }));
 
 function Dashboard(props) {
@@ -121,10 +140,13 @@ function Dashboard(props) {
     setOpen(false);
   };
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-useEffect(() => {
-  props.fetchChats();
-}, []);
+  const history = useHistory();
+  const handleGoBack = () => {
+    history.goBack();
+  };
+  useEffect(() => {
+    props.fetchChats();
+  }, []);
   return (
     <div className={classes.root}>
       <BrowserRouter>
@@ -151,6 +173,7 @@ useEffect(() => {
               <MenuIcon />
             </IconButton>
             <img src={logo_white} alt="uwinit logo" style={{ width: 100 }} />
+            <div className={classes.flexgrow} />
             <IconButton color="inherit" style={{ float: "right" }}>
               <Badge badgeContent={4} color="secondary">
                 <NotificationsIcon />
@@ -173,10 +196,13 @@ useEffect(() => {
           <Divider />
           {open && <Profile className="m-2" />}
           <Divider />
-          <List>{mainListItems}</List>
+          <List>
+            <MainListItems />
+          </List>
         </Drawer>
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
+
           <ChecklistComponent />
           <Switch>
             <Route exact path="/">
@@ -188,7 +214,18 @@ useEffect(() => {
             <Route path="/chat">
               <Chat />
             </Route>
+            <Route  path="/supervisor">
+              <Supervisor />
+            </Route>
           </Switch>
+          <div className={classes.fabButton}>
+            <Fab color="primary" onClick={handleGoBack} aria-label="back">
+              <ArrowBackIosIcon />
+            </Fab>
+            <Fab color="primary" onClick={handleGoBack} aria-label="forward">
+              <ArrowForwardIosIcon />
+            </Fab>
+          </div>
         </main>
       </BrowserRouter>
     </div>

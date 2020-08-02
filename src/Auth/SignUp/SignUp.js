@@ -84,7 +84,7 @@ function SignUp(props) {
   const [duty, setDuty] = useState();
   const [email, setEmail] = useState();
   const [head_of_manager_id, setHead_of_manager_id] = useState();
-  
+
   const handleClickShowPassword = () => {
     setshowPassword(!showPassword);
   };
@@ -130,14 +130,10 @@ function SignUp(props) {
                 id="firstName"
                 label="Full Name"
                 autoFocus
-                error={
-                  props.registerErrors && props.registerErrors.errors.password
-                    ? true
-                    : false
-                }
-                helperText={
-                  props.registerErrors && props.registerErrors.password
-                }
+                error={props.registerErrors && props.registerErrors.password}
+                // helperText={
+                //   props.registerErrors && props.registerErrors.password
+                // }
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -162,16 +158,8 @@ function SignUp(props) {
                 onChange={(e) => setEmail(e.target.value)}
                 name="email"
                 autoComplete="email"
-                error={
-                  props.registerErrors && props.registerErrors.errors.email
-                    ? true
-                    : false
-                }
-                helperText={
-                  props.registerErrors &&
-                  props.registerErrors.email &&
-                  props.registerErrors.email
-                }
+                error={props.registerErrors && props.registerErrors.email}
+                helperText={props.registerErrors && props.registerErrors.email}
               />
             </Grid>
             <Grid item xs={12}>
@@ -238,7 +226,7 @@ const mapStateToProps = (state) => ({
   loginError: state.auth.loginError,
   genPassword: state.auth.genPassword,
   registerStatus: state.auth.registerStatus,
-  registerErrors: state.auth.registerError.data && state.auth.registerError.data.errors !== undefined && state.auth.registerError.errors,
+  registerErrors: state.auth.registerError && state.auth.registerError.errors,
   registerError: state.auth.registerError,
 });
 

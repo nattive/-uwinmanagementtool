@@ -49,13 +49,31 @@ class ChatHome extends Component {
 
   componentWillReceiveProps(props) {
     if (props.activeChat) {
+      console.log(props.activeChat.channel);
       const { echo, manager } = this.props;
+      
+echo
+  .channel("laravel_database_private-chat")
+  .listen("MessageSent", (ev) => console.log(ev));
+
       echo
         .private(props.activeChat.channel)
         .listen("ChatMessageCreated", (ev) => {
           console.log(ev);
         })
     }
+  }
+
+  componentDidMount(){
+     if (this.props.activeChat) {
+       console.log("private-private-chat-1");
+       const { echo, manager } = this.props;
+       echo
+         .private(this.props.activeChat.channel)
+         .listen("ChatMessageCreated", (ev) => {
+           console.log(ev);
+         });
+     }
   }
 
   render() {

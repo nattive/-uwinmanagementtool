@@ -99,6 +99,33 @@ export const register = data => dispatch => {
         dispatch({
             type: AUTH_STOPPED_LOADING
         })
+        switch (err) {
+            case err.response:
+                dispatch({
+                    type: ERR_REGISTER,
+                    payload: err.response.data
+                })
+                break;
+            case err.response.error:
+                dispatch({
+                    type: ERR_REGISTER,
+                    payload: err.response.error
+                })
+                break;
+            case err.response.errors:
+                dispatch({
+                    type: ERR_REGISTER,
+                    payload: err.response.errors
+                })
+                break;
+
+            default:
+                dispatch({
+                    type: ERR_REGISTER,
+                    payload: err
+                })
+                break;
+        }
         dispatch({
             type: ERR_REGISTER,
             payload: err.response.data

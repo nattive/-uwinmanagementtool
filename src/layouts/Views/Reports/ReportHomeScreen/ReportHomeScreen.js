@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -9,7 +9,9 @@ import { Grid, ButtonGroup, Container } from "@material-ui/core";
 import ReportCard from "../../../../components/ReportCard";
 import { Link, useRouteMatch } from "react-router-dom";
 import Tooltip from "@material-ui/core/Tooltip";
-import { connect } from 'react-redux'
+import { connect } from "react-redux";
+import { getWSKPA, getLatestReport } from "../../../../actions/reportAction";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -44,6 +46,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ReportHomeScreen(params) {
+  useEffect(() => {
+    params.getWSKPA();
+    params.getLatestReport();
+  }, []);
   const classes = useStyles();
   let { path } = useRouteMatch();
   const bull = <span className={classes.bullet}>•</span>;
@@ -89,13 +95,65 @@ function ReportHomeScreen(params) {
             </Tooltip>
           </ButtonGroup>
         </Grid>
-        <Grid item xs={6} md={4}>
-          <ReportCard
-            reportTitle="Staff Appraisal"
-            lastSentHumanDate={params.wskpaReport.created_at}
-            totalUpdated={params.wskpaReports.length}
-            lastSentDate={params.wskpaReport.updated_at}
-          />
+        <Grid container spacing={3}>
+          <Grid item xs={6} md={3}>
+            {params.latestReport.account && params.latestReport.account.id ? (
+              <React.Fragment key={params.latestReport.account.id}>
+                <ReportCard
+                  reportTitle="Sales Account"
+                  lastSentHumanDate={params.latestReport.account.created_at}
+                  totalUpdated={params.latestReport.account.id}
+                  lastSentDate={JSON.stringify(
+                    new Date(params.latestReport.account.updated_at)
+                  )}
+                  navigationLink={`${path}/sales/all`}
+                />
+              </React.Fragment>
+            ) : params.isGettingLatestReport ? (
+              <Skeleton height={250} variant="rect" />
+            ) : (
+              <p>No report Sent</p>
+            )}
+          </Grid>
+          <Grid item xs={6} md={3}>
+            {params.latestReport.fuel && params.latestReport.fuel.id ? (
+              <React.Fragment key={params.latestReport.fuel.id}>
+                <ReportCard
+                  reportTitle="Fuel Disbursement Report"
+                  lastSentHumanDate={params.latestReport.fuel.created_at}
+                  date_supplied={params.latestReport.fuel.date_supplied}
+                  totalUpdated={params.latestReport.fuel.id}
+                  lastSentDate={JSON.stringify(
+                    new Date(params.latestReport.fuel.updated_at)
+                  )}
+                  navigationLink={`${path}/fuel/all`}
+                />
+              </React.Fragment>
+            ) : params.isGettingLatestReport ? (
+              <Skeleton height={250} variant="rect" />
+            ) : (
+              <p>No report Sent</p>
+            )}
+          </Grid>
+          <Grid item xs={6} md={3}>
+            {params.latestReport.wskpa && params.latestReport.wskpa.id ? (
+              <React.Fragment key={params.latestReport.wskpa.id}>
+                <ReportCard
+                  reportTitle="Staff performance appraisal"
+                  lastSentHumanDate={params.latestReport.wskpa.created_at}
+                  totalUpdated={params.latestReport.wskpa.id}
+                  lastSentDate={JSON.stringify(
+                    new Date(params.latestReport.wskpa.updated_at)
+                  )}
+                  navigationLink={`${path}/wskpa/all`}
+                />
+              </React.Fragment>
+            ) : params.isGettingLatestReport ? (
+              <Skeleton height={250} variant="rect" />
+            ) : (
+              <p>No report Sent</p>
+            )}
+          </Grid>
         </Grid>
       </Container>
     </>
@@ -109,7 +167,10 @@ const mapStateToProps = (state) => ({
   wskpaReport: state.reports.wskpaReport,
   wskpaReports: state.reports.wskpaReports,
   loadingState: state.reports.loadingState,
+  latestReport: state.reports.latestReport,
+  isGettingLatestReport: state.reports.isGettingLatestReport,
 });
 
-
-export default connect(mapStateToProps, null) (ReportHomeScreen);
+export default connect(mapStateToProps, { getWSKPA, getLatestReport })(
+  ReportHomeScreen
+);

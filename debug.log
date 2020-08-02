@@ -1,0 +1,2 @@
+[0724/222800.735:ERROR:settings.cc(320)] Settings magic is not 1129342067
+[0724/231541.620:ERROR:http_transport_win.cc(276)] WinHttpSendRequest: The operation completed successfully. (0x0)
