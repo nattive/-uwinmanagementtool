@@ -6,10 +6,8 @@ import { withRouter } from "react-router-dom";
 
  class SignInView extends Component {
 componentWillReceiveProps(newProps){
-  if (newProps.token !== '') {
-   this.props.history.push("/");
-
-   
+  if (newProps.redirectTo) {
+  return <Redirect to={this.props.redirectTo} />
   }
 }
   render() {
@@ -21,7 +19,8 @@ componentWillReceiveProps(newProps){
   }
 }
 const mapStateToProps = (state) => ({
-  token: state.auth.token
+  token: state.auth.token,
+  redirectTo: state.auth.redirectTo
 })
 
 

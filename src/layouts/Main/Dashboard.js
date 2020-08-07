@@ -17,7 +17,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import { secondaryListItems, MainListItems } from "../../components/listItems";
-import { Switch, Route, BrowserRouter, useHistory } from "react-router-dom";
+import { Switch, Route, BrowserRouter, useHistory, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import ChecklistComponent from "../../components/ChecklistComponent";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -26,15 +26,18 @@ import Home from "../Views/Home/Home";
 import Chat from "../Views/Chat";
 import logo_white from "../../Assets/img/logo_white.png";
 import { fetchChats, postMessage } from "../../actions/chatAction";
+import { ChecklistExist } from "../../actions/checkoutAction";
 import Report from "../Views/Reports/Report";
 import Profile from "../../components/Profile";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
-import { Grow } from "@material-ui/core";
+import { Grow, Dialog, DialogTitle, DialogContentText, DialogActions, Button, DialogContent } from "@material-ui/core";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import Fab from "@material-ui/core/Fab";
 import Supervisor from "../Views/Supervisor"
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
+import UpdateProfile from '../Views/UpdateProfile'
+import Alert from "@material-ui/lab/Alert";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -146,6 +149,8 @@ function Dashboard(props) {
   };
   useEffect(() => {
     props.fetchChats();
+    props.ChecklistExist();
+    props.redirectTo && history.push(props.redirectTo)
   }, []);
   return (
     <div className={classes.root}>
@@ -153,6 +158,30 @@ function Dashboard(props) {
         <Backdrop className={classes.backdrop} open={props.appIsLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
+        <div>
+         
+          <Dialog
+            open={props.isLogin === 'wait' || !props.isLogin}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{props.isLogin === 'wait' ? "Authenticating": "You are Logged out!"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+               { props.isLogin === 'wait' ? (
+                  <Alert severity="info">Checking You login status</Alert>
+               ) : <Alert severity="error">You are not logged in, Please proceed to the Log in page to continue using this App</Alert>
+
+               }
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button component={Link} to='/login' color="primary" autoFocus>
+             {   props.isLogin === 'wait' ? (<CircularProgress size={22} />) :  "Log In" }
+          </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
         <CssBaseline />
         <AppBar
           position="absolute"
@@ -214,7 +243,10 @@ function Dashboard(props) {
             <Route path="/chat">
               <Chat />
             </Route>
-            <Route  path="/supervisor">
+            <Route path="/update/profile">
+              <UpdateProfile />
+            </Route>
+            <Route path="/supervisor">
               <Supervisor />
             </Route>
           </Switch>
@@ -236,8 +268,10 @@ const mapStateToProps = (state) => ({
   checkExist: state.checklist.isExist,
   checklist: state.checklist.open,
   manager: state.auth.manager,
+  redirectTo: state.auth.redirectTo,
+  isLogin: state.auth.isLogin,
   appIsLoading: state.loadingState.appIsLoading,
   wskpaReports: state.reports.wskpaReports,
 });
 
-export default connect(mapStateToProps, { fetchChats })(Dashboard);
+export default connect(mapStateToProps, { fetchChats, ChecklistExist })(Dashboard);

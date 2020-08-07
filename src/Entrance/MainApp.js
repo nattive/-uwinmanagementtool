@@ -12,7 +12,7 @@ import SignUpClass from "../Auth/SignUp/SignUpClass";
 import Dashboard from "../layouts/Main/Dashboard";
 import DashboardClass from "../layouts/Main/DashboardClass";
 import { useDispatch } from "react-redux";
-import { INIT_CHAT } from "../actions/types";
+import { INIT_CHAT, INIT_CHAT_PUSHER } from "../actions/types";
 // import Dashboard from '../layouts/Main/Dashboard';
 
 export default function MainApp() {
@@ -20,6 +20,7 @@ export default function MainApp() {
 
   const dispatch = useDispatch();
   useEffect(() => {
+    // dispatch({ type: INIT_CHAT_PUSHER });
     dispatch({ type: INIT_CHAT });
   }, []);
 
@@ -32,9 +33,6 @@ export default function MainApp() {
       <Switch>
         <Route exact path="/login">
           <SignInView />
-        </Route>
-        <Route exact path="/createManager">
-          <SignUpClass history={history} />
         </Route>
         <Route path="/">
           <DashboardClass />

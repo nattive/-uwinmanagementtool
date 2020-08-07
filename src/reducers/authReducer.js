@@ -9,7 +9,9 @@ import {
     TOKEN,
     GEN_PASSWORD,
     STORE_USER,
-    NULL_ERR_LOGIN
+    NULL_ERR_LOGIN,
+    LOGIN_STATUS,
+    REDIRECT
 } from "../actions/types";
 
 const initialState = {
@@ -20,17 +22,35 @@ const initialState = {
     user: {},
     registerError: {},
     registerStatus: null,
-    token: ''
+    redirectTo: null,
+    token: '',
+    isLogin: 'wait'
 }
 
 export default function(state = initialState, action) {
     switch (action.type) {
+        /**
+         * Borrowed
+         */
+
+        case REDIRECT:
+            return {
+                ...state,
+                redirectTo: action.payload
+            }
+
+        case LOGIN_STATUS:
+            return {
+                ...state,
+                isLogin: action.payload
+            }
+
         case LOGIN:
             return {
                 ...state,
                 manager: action.payload
             }
-            break;
+
         case AUTH_IS_LOADING:
             return {
                 ...state,

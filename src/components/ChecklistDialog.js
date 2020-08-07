@@ -19,7 +19,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Dialog from "@material-ui/core/Dialog";
 import PersonIcon from "@material-ui/icons/Person";
 import { blue, green } from "@material-ui/core/colors";
-import { Checklist } from "../Misc/Checklists";
+import {
+  Morning, Afternoon,
+Evening } from "../Misc/Checklists";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import { connect } from "react-redux";
@@ -33,6 +35,7 @@ class ChecklistDialog extends Component {
       checked: false,
       hour: "",
       open: !this.props.isExist,
+      checklist: {}
     };
     // this.handleClose = this.handleClose.bind(this)
     this.handleListItemClick = this.handleListItemClick.bind(this);
@@ -40,6 +43,24 @@ class ChecklistDialog extends Component {
     this.getHour();
   }
 
+  componentWillReceiveProps(props) {
+    if (props.open) {
+      switch (props.open.type) {
+        case 'morning':
+          this.setState({ checklist: Morning })
+          break;
+        case 'afternoon':
+          this.setState({ checklist: Afternoon })
+          break;
+        case 'night':
+          this.setState({ checklist: Evening })
+          break;
+        default:
+          this.setState({ checklist: {} })
+          break;
+      }
+    }
+  }
   handleListItemClick() {
     this.props.storeChecklist();
   }
@@ -69,17 +90,13 @@ class ChecklistDialog extends Component {
       position: "relative",
     };
     return (
-      <Dialog aria-labelledby="simple-dialog-title" open={this.props.open}>
+      <Dialog aria-labelledby="simple-dialog-title" open={this.props.open && this.props.open.open}>
         <DialogContent>
           <Typography variant="body1" className="p-4 m-3">
-            {this.state.hour < 12
-              ? `Good Morning, ${this.props.manager.name}`
-              : "Good evening" + this.props.manager.name
-              ? this.props.manager.name
-              : "Manager"}
+            {`Good ${this.props.open.type}, ${this.props.manager.name}`}
           </Typography>
           <List>
-            {Object.keys(Checklist.Morning).map((item, key) => (
+            {Object.keys(this.state.checklist).map((item, key) => (
               <ListItem
                 button
                 key={key}
@@ -94,15 +111,15 @@ class ChecklistDialog extends Component {
                   style={
                     this.state.todos[key]
                       ? {
-                          textDecorationLine: "line-through",
-                          textDecorationStyle: "solid",
-                        }
+                        textDecorationLine: "line-through",
+                        textDecorationStyle: "solid",
+                      }
                       : null
                   }
                   // value={option}
                   key={key}
                   control={<Checkbox />}
-                  label={Checklist.Morning[item]}
+                  label={this.state.checklist[item]}
                 />
               </ListItem>
             ))}
@@ -118,7 +135,7 @@ class ChecklistDialog extends Component {
                 this.props.appIsLoading ? "btn btn-primary" : "btn btn-success"
               }
               disabled={
-                Object.keys(Checklist.Morning).length !==
+                Object.keys(this.state.checklist).length !==
                 Object.keys(this.state.todos).length
               }
               onClick={this.handleListItemClick}

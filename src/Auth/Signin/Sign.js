@@ -12,7 +12,7 @@ import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import { login } from "../../actions/authAction";
 import { CircularProgress } from "@material-ui/core";
@@ -55,6 +55,8 @@ function SignIn(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const handleLogin = () => props.login(email, password);
+
+  if (props.redirectTo) { return (<Redirect to={props.redirectTo} />) }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -122,8 +124,8 @@ function SignIn(props) {
             {props.authIsLoading === true ? (
               <CircularProgress size={16} color="inherit" />
             ) : (
-              "Sign In"
-            )}
+                "Sign In"
+              )}
           </Button>
           <Grid container>
             <Grid item xs>
@@ -148,6 +150,7 @@ function SignIn(props) {
 
 const mapStateToProps = (state) => ({
   manager: state.auth.manager,
+  redirectTo: state.auth.redirectTo,
   authIsLoading: state.auth.authIsLoading,
   loginError: state.auth.loginError,
 });

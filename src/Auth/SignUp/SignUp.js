@@ -35,8 +35,8 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
+      <Link color="inherit" >
+        uwinitnigeria
       </Link>{" "}
       {new Date().getFullYear()}
       {"."}
@@ -76,9 +76,10 @@ function SignUp(props) {
   const classes = useStyles();
   const [HeadOfManager, setHeadOfManager] = useState();
   const [name, setName] = useState();
-  const [showPassword, setshowPassword] = useState(true);
+  const [showPassword, setshowPassword] = useState(false);
   const genPassword = props.genPassword;
   const [password, setPassword] = useState(genPassword);
+  const [showGenPassword, setShowGenPassword] = useState(false);
   const [business_unit, setBusiness_unit] = useState();
   const [isHOM, setIsHOM] = useState(false);
   const [duty, setDuty] = useState();
@@ -87,6 +88,10 @@ function SignUp(props) {
 
   const handleClickShowPassword = () => {
     setshowPassword(!showPassword);
+  };
+  
+  const handleGenPassword = () => {
+    setPassword(genPassword);
   };
 
   const handleMouseDownPassword = (event) => {
@@ -110,13 +115,11 @@ function SignUp(props) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+
         <Typography component="h1" variant="h5">
-          Sign up
+          Create MAnager
         </Typography>
-        {/* <Alert severity='error'>{}</Alert> */}
+        {props.registerStatus && <Alert severity='success'>{'Manager successfully created!'}</Alert>}
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
@@ -131,9 +134,9 @@ function SignUp(props) {
                 label="Full Name"
                 autoFocus
                 error={props.registerErrors && props.registerErrors.password}
-                // helperText={
-                //   props.registerErrors && props.registerErrors.password
-                // }
+              // helperText={
+              //   props.registerErrors && props.registerErrors.password
+              // }
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -148,6 +151,8 @@ function SignUp(props) {
                 autoComplete="lname"
               />
             </Grid>
+          </Grid>
+          <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
@@ -162,7 +167,9 @@ function SignUp(props) {
                 helperText={props.registerErrors && props.registerErrors.email}
               />
             </Grid>
-            <Grid item xs={12}>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={7}>
               <OutlinedInput
                 id="outlined-adornment-password"
                 type={showPassword ? "text" : "password"}
@@ -183,30 +190,24 @@ function SignUp(props) {
                 labelWidth={70}
               />
             </Grid>
-          </Grid>
-          <Grid container justify="flex-start">
-            <Grid item>
-              <Checkbox
-                checked={isHOM}
-                onChange={(event) => {
-                  setIsHOM(event.target.checked);
-                }}
-                inputProps={{ "aria-label": "Check if this manager is an HOD" }}
-              />
+            <Grid item xs={12} md={5}>
+              <Button variant='contained' color='secondary' onClink={handleGenPassword}>
+                Generate Password
+              </Button>
             </Grid>
           </Grid>
           <Button
             fullWidth
             variant="contained"
             color="primary"
-            onClick={() => handleRegister()}
+            onClick={handleRegister}
             className={classes.submit}
           >
             {props.authIsLoading === true ? (
               <CircularProgress size={16} color="inherit" />
             ) : (
-              "Create Manager Account"
-            )}
+                "Create Manager Account"
+              )}
           </Button>
           <Grid container justify="flex-end">
             <Grid item></Grid>

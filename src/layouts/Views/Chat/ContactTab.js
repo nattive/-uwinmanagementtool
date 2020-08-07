@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import SwipeableViews from "react-swipeable-views";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles, useTheme, withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -12,6 +12,8 @@ import { connect } from "react-redux";
 import { useEffect } from "react";
 import { getUsers } from "../../../actions/usersAction";
 import { initPrivateChat } from "../../../actions/chatAction";
+import Badge from '@material-ui/core/Badge';
+import { ChatList } from 'react-chat-elements'
 import {
   List,
   ListItem,
@@ -21,6 +23,52 @@ import {
   CircularProgress,
   Divider,
 } from "@material-ui/core";
+
+const StyledBadge = withStyles((theme) => ({
+  badge: {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: '$ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}))(Badge);
+
+const SmallAvatar = withStyles((theme) => ({
+  root: {
+    width: 22,
+    height: 22,
+    border: `2px solid ${theme.palette.background.paper}`,
+  },
+}))(Avatar);
+
+// const useStyles = makeStyles((theme) => ({
+//   root: {
+//     display: 'flex',
+//     '& > *': {
+//       margin: theme.spacing(1),
+//     },
+//   },
+// }));
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -63,6 +111,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ContactTab(props) {
+
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -108,28 +157,75 @@ function ContactTab(props) {
           dir={theme.direction}
           style={{ height: "450px", overflowY: "scroll" }}
         >
-          {props.managers.length > 0
-            ? props.managers.map((item) => (
-                <React.Fragment key={item.id}>
-                  <List>
-                    <ListItem button onClick={() => handleInitChat(item.id)}>
-                      <ListItemAvatar>
-                        <Avatar />
-                      </ListItemAvatar>
+          <ChatList
+            className='chat-list'
+            dataSource={[
+              {
+                avatar: 'https://facebook.github.io/react/img/logo.svg',
+                alt: 'Reactjs',
+                title: 'Facebook',
+                subtitle: 'What are you doing?',
+                date: new Date(),
+                unread: 0,
+              }
+            ]} />
+          {/* {props.privateChats.length > 0
+            ? props.privateChats.map((item) => (
+              <React.Fragment key={item.id}>
+                <List>
+                  <ListItem button onClick={() => handleInitChat(item.id)}>
+                    <ListItemAvatar>
+                      <StyledBadge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        variant="dot"
+                      >
+                        <Avatar alt={item.receiver.name} src={item.receiver.profile_image} />
+                      </StyledBadge>
 
-                      <ListItemText>{item.name}</ListItemText>
-                    </ListItem>
-                  </List>
-                  <Divider />
-                </React.Fragment>
-              ))
-            : props.isFetching ? (<CircularProgress />) :(<p>No Manager</p>)}
+                    </ListItemAvatar>
+
+                    <ListItemText>{item.receiver.name}</ListItemText>
+                  </ListItem>
+                </List>
+                <Divider />
+              </React.Fragment>
+            ))
+            : props.isFetching ? (<CircularProgress />) : (<p>No Manager</p>)} */}
         </TabPanel>
         <TabPanel value={value} index={1} dir={theme.direction}>
-          Item Two
+          {props.managers.length > 0
+            ? props.managers.map((item) => (
+              <React.Fragment key={item.id}>
+                <List>
+                  <ListItem button onClick={() => handleInitChat(item.id)}>
+                    <ListItemAvatar>
+                      <StyledBadge
+                        overlap="circle"
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        variant="dot"
+                      >
+                        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                      </StyledBadge>
+
+                    </ListItemAvatar>
+
+                    <ListItemText>{item.name}</ListItemText>
+                  </ListItem>
+                </List>
+                <Divider />
+              </React.Fragment>
+            ))
+            : props.isFetching ? (<CircularProgress />) : (<p>No Manager</p>)}
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-          Item Three
+          Coming soon
         </TabPanel>
       </SwipeableViews>
     </div>
@@ -139,6 +235,9 @@ function ContactTab(props) {
 const mapStateToProps = (state) => ({
   managers: state.managers.allManagers,
   isFetching: state.chat.isFetching,
+  isFetchingPrivate: state.chat.isFetchingPrivate,
+  privateChats: state.chat.privateChats,
+  privateChatError: state.chat.privateChatError
 });
 
 const mapDispatchToProps = {

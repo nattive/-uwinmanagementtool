@@ -30,6 +30,7 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import store from "../../../Misc/store";
 import { FETCHED_CHAT } from "../../../actions/types";
+import { SystemMessage } from 'react-chat-elements'
 import "react-chat-elements/dist/main.css";
 import {
     MessageList,
@@ -67,14 +68,29 @@ class ChatArena extends Component {
             this.setState({ receiver: newProps.FetchedManager });
         }
 
-        if (newProps.chat) {
-            this.setState({ queuedMessage: "" });
-            if (newProps.chat.text) {
+        if (newProps.myMessage) {
+            // this.setState({ queuedMessage: "" });
+            if (newProps.newMessage !== this.props.newMessage) {
                 this.state.messages.push({
-                    text: newProps.chat.text.text,
+                    text: newProps.newMessage.text,
                     user: newProps.chat.user,
-                    id: newProps.chat.text.id,
-                    created_at: newProps.chat.text.created_at,
+                    id: newProps.newMessage.user_id,
+                    created_at: newProps.newMessage.created_at,
+                });
+            }
+
+        }
+
+        if (newProps.myMessage) {
+            // this.setState({ queuedMessage: "" });
+            if (newProps.myMessage !== this.props.myMessage) {
+                var dateNow = new Date();
+                var date5SecondsAgo = dateNow.getTime();
+                this.state.messages.push({
+                    text: newProps.myMessage,
+                    user: this.props.manager,
+                    id: newProps.newMessage.user_id,
+                    created_at: date5SecondsAgo,
                 });
             }
 
@@ -92,9 +108,7 @@ class ChatArena extends Component {
             this.state.receiver.id,
             this.props.activeChat.chat.id
         );
-        var cardMessage = document.getElementById("cardMessage");
-        cardMessage.scroll(0, 1000000);
-        this.setState({ message: "", queuedMessage: this.state.message });
+        this.setState({ queuedMessage: this.state.message });
         this.props.fetchChats()
     }
 
@@ -108,7 +122,17 @@ class ChatArena extends Component {
     handleClose() {
         this.setState({ open: false });
     }
+    scrollToBottom = () => {
+        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+    }
 
+    componentDidMount() {
+        this.scrollToBottom();
+    }
+
+    componentDidUpdate() {
+        this.scrollToBottom();
+    }
     render() {
         const { anchorEl } = this.state;
         const chatMenu = (
@@ -165,34 +189,31 @@ class ChatArena extends Component {
                             backgroundImage: `url(${chatBackground})`,
                         }
                     } >
-                    <div style={
-                        { display: "flex", justifyContent: "center" }} > {
-                            this.props.isFetching && (<
-                                CircularProgress size={24}
-                                color="primary" />
-                            )
-                        } </div> {
+                    {this.props.isFetching && (<SystemMessage text='Fetching Messages' />)}{
                         this.state.messages.length > 0 ? (
-                            this.state.messages.map((message) => (<React.Fragment >
-                                <MessageBox position={
-                                    message.position ?
-                                        message.position :
-                                        message.user_id === this.props.manager.id ?
-                                            "right" :
-                                            "left"
-                                }
-                                    // title={
-                                    //   message.user_id === this.props.manager.id
-                                    //     ? null
-                                    //     : message.user.name
-                                    // }
-                                    type={"text"}
-                                    text={message.text}
-                                    dateString={message.created_at}
-                                    status={message.status ? "waiting" : "sent"} /> </React.Fragment>
+                            this.state.messages.map((message) => (
+                                <React.Fragment >
+                                    <MessageBox position={
+                                        message.position ?
+                                            message.position :
+                                            message.user_id === this.props.manager.id ?
+                                                "right" :
+                                                "left"
+                                    }
+                                        // title={
+                                        //   message.user_id === this.props.manager.id
+                                        //     ? null
+                                        //     : message.user.name
+                                        // }
+                                        type={"text"}
+                                        text={message.text}
+                                        dateString={message.created_at}
+                                        status={message.status ? "waiting" : "sent"} />
+                                </React.Fragment>
                             ))
-                        ) : (<p> No message sent </p>
-                            )} {
+                        ) :
+                            (<SystemMessage text={' No message sent'} />)
+                    } {
                         this.state.queuedMessage && (<>
                             <MessageBox position={"right"}
                                 type={"text"}
@@ -200,7 +221,11 @@ class ChatArena extends Component {
                                 status={"waiting"}
                             /> </>
                         )
-                    } </CardContent> <CardActions >
+                    }
+                    <div style={{ float: "left", clear: "both" }}
+                        ref={(el) => { this.messagesEnd = el; }}>
+                    </div>
+                </CardContent> <CardActions >
                     <Input placeholder="Type here..."
                         ref={
                             (el) => (this.inputRef = el)}
@@ -228,6 +253,8 @@ const mapStateToProps = (state) => ({
     chats: state.chat.chats.data,
     activeChat: state.chat.activeChat,
     chatError: state.chat.chatError,
+    newMessage: state.chat.newMessage,
+    myMessage: state.chat.myMessage,
     manager: state.auth.manager,
     FetchedManager: state.managers.FetchedManager,
 });

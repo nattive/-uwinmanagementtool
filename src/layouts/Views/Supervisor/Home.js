@@ -5,6 +5,7 @@ import { Container, Grid } from '@material-ui/core'
 import { Switch, Route, useRouteMatch } from 'react-router-dom'
 import Reports from './Reports'
 import Manage from './Manage'
+import SignUpClass from '../../../Auth/SignUp/SignUpClass'
 
 export const Home = () => {
   const { path } = useRouteMatch()
@@ -16,6 +17,9 @@ export const Home = () => {
         </Route>
         <Route path={`${path}/manage`}>
           <Manage />
+        </Route>
+        <Route path={`${path}/manager/create`}>
+          <SignUpClass />
         </Route>
 
       </Switch>

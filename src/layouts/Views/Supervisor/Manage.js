@@ -14,13 +14,13 @@ import TableRow from "@material-ui/core/TableRow";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp"; 
+import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import { useEffect } from "react";
-import { getUsers } from "../../../actions/usersAction";
+import { getAllRoles, admin_GetUsers } from "../../../actions/adminAction";
 import { Card, CardHeader, Grid, Container, FormControlLabel, Checkbox } from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
-import { Link } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 const useRowStyles = makeStyles({
     root: {
         "& > *": {
@@ -31,14 +31,15 @@ const useRowStyles = makeStyles({
 
 const Manage = (props) => {
     useEffect(() => {
-        props.getUsers();
+        props.admin_GetUsers();
     }, []);
+    const { path } = useRouteMatch()
     return (
         <Container>
             <Card>
                 <CardHeader
                     action={
-                        <IconButton component={'a'} href='/createManager'>
+                        <IconButton component={Link} to={`manager/create`}>
                             <AddBoxIcon />
                         </IconButton>
                     }
@@ -50,9 +51,9 @@ const Manage = (props) => {
                         <TableRow>
                             <TableCell />
                             <TableCell>Full Name</TableCell>
-                            <TableCell align="right">Position</TableCell>
-                            <TableCell align="right">Location</TableCell>
-                            <TableCell align="right">Activate/Deactivate</TableCell>
+                            <TableCell>Position</TableCell>
+                            <TableCell>Location</TableCell>
+                            <TableCell>Activate/Deactivate</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -130,13 +131,18 @@ Manage.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-    managers: state.managers.allManagers,
-
+    adminIsFetchingUsers: state.admin.adminIsFetchingUsers,
+    managers: state.admin.adminFetchedUsers,
+    adminFetchedUser: state.admin.adminFetchedUser,
+    errorAdminFetchingUser: state.admin.errorAdminFetchingUser,
+    FetchingRoles: state.admin.FetchingRoles,
+    fetchedRoles: state.admin.fetchedRoles,
+    errorFetchingRole: state.admin.errorFetchingRole,
 });
 
 const mapDispatchToProps = {
-    getUsers,
-
+    admin_GetUsers,
+    getAllRoles
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Manage);

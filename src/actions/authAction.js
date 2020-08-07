@@ -10,7 +10,10 @@ import {
     NULL_ERR_LOGIN,
     GEN_PASSWORD,
     STORE_USER,
-    TOKEN
+    APP_IS_LOADING,
+    TOKEN,
+    LOGIN_STATUS,
+    REDIRECT
 } from './types'
 import { ChecklistExist } from './checkoutAction'
 import jwt from 'jsonwebtoken'
@@ -34,12 +37,24 @@ export const login = (email, password) => dispatch => {
             type: AUTH_STOPPED_LOADING
         })
         dispatch({
+            type: REDIRECT,
+            payload: '/'
+        })
+        dispatch({
+            type: LOGIN_STATUS,
+            payload: true
+        })
+        dispatch({
             type: TOKEN,
             payload: res.data.success.token
         })
         dispatch({
             type: STORE_USER,
             payload: res.data.user
+        })
+        dispatch({
+            type: LOGIN_STATUS,
+            payload: false
         })
         dispatch(ChecklistExist(res.data.user.id))
 
@@ -71,6 +86,8 @@ export const register = data => dispatch => {
     dispatch({
         type: NULL_ERR_REGISTER
     })
+
+
     dispatch({
         type: AUTH_IS_LOADING
     })
@@ -86,6 +103,11 @@ export const register = data => dispatch => {
         password: data.password,
     }).then(res => {
         console.log(res)
+        dispatch({
+            type: REDIRECT,
+            payload: '/'
+        })
+
         dispatch({
             type: AUTH_STOPPED_LOADING
         })
@@ -150,21 +172,39 @@ export const generatePassword = () => dispatch => {
 export const verifyRedirect = () => dispatch => {
     const token = localStorage.getItem('uwin_manager_token')
 
+    dispatch({
+        type: APP_IS_LOADING,
+        payload: true
+    })
     axios.get(`${baseUrl}auth/user`, { headers: { Authorization: `Bearer ${token}` } })
         .then(res => {
             console.log(res)
+
             dispatch({
-                type: AUTH_IS_LOADING
+                type: APP_IS_LOADING,
+                payload: false
             })
             dispatch({
                 type: STORE_USER,
                 payload: res.data
+            })
+            dispatch({
+                type: LOGIN_STATUS,
+                payload: true
             })
         })
         .catch(err => {
             console.log(err.response)
             dispatch({
                 type: AUTH_STOPPED_LOADING
+            })
+            dispatch({
+                type: APP_IS_LOADING,
+                payload: false
+            })
+            dispatch({
+                type: LOGIN_STATUS,
+                payload: false
             })
             dispatch({
                 type: ERR_LOGIN,

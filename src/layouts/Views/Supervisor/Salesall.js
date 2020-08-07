@@ -72,9 +72,18 @@ function Salesall(props) {
 };
 
 function Row(props) {
-    const { item } = props;
+    const { item, approveReport } = props;
     const [open, setOpen] = React.useState(false);
     const classes = useRowStyles();
+    const [approveSelect, setApproveSelect] = React.useState(item.isApprovedBy ? 1 : 0);
+  const handleChange = (event) => {
+    setApproveSelect(event.target.value)
+    const data = {
+      report: 'wskpa',
+      report_id: item.id,
+    }
+    approveReport(data)
+  }
     return (
         <React.Fragment>
             <TableRow className={classes.root}>

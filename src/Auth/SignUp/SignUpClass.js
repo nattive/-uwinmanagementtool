@@ -8,14 +8,7 @@ class SignUpClass extends Component {
   componentDidMount(){
     this.props.generatePassword();
   }
-  componentWillReceiveProps(newProps) {
-    newProps.registerStatus && newProps.history.push({
-      pathname: '/login',
-      state: {
-        message: 'Manager Created Successfully'
-      }
-    });
-  }
+  
   render() {
     return <SignUp />;
   }

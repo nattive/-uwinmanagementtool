@@ -20,6 +20,7 @@ import {
   getAllWskpa,
   getAllSfcr,
   getAllSales,
+  approveReport
 } from "../../../actions/adminAction";
 import { Card, CardHeader, Grid, Container, MenuItem, Select, FormControl, InputLabel } from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
@@ -37,7 +38,9 @@ const useRowStyles = makeStyles((theme) => ({
   },
 }));
 
-
+// 
+// sales
+// 
 const SfcrAllTable = (props) => {
   useEffect(() => {
     props.getAllWskpa();
@@ -83,7 +86,7 @@ const SfcrAllTable = (props) => {
                 </TableRow>
               ) :
                 props.allSfcr.length > 0 ? (
-                  props.allSfcr.map((item) => <Row key={item.id} item={item} />)
+                  props.allSfcr.map((item) => <Row {...props} key={item.id} item={item} />)
                 ) : (
                     <p>No data</p>
                   )}
@@ -95,13 +98,22 @@ const SfcrAllTable = (props) => {
 };
 
 function Row(props) {
-  const { item } = props;
+  const { item, approveReport } = props;
   const [open, setOpen] = React.useState(false);
+  const [approveSelect, setApproveSelect] = React.useState(item.isApprovedBy ? 1 : 0);
   const classes = useRowStyles();
+  const handleChange = (event) => {
+    setApproveSelect(event.target.value)
+    const data = {
+      report: 'sfcr',
+      report_id: item.id,
+    }
+    approveReport(data)
+  }
   return (
     <React.Fragment>
       <TableRow className={classes.root}>
-        
+
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -122,15 +134,17 @@ function Row(props) {
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
+              onChange={handleChange}
+              value={approveSelect}
             >
-              <MenuItem disabled value={10}>
-                {'Report is Unapproved'}
+              <MenuItem disabled value={0}>
+                {item.isApprovedBy ? 'Approved' : 'Unapproved'}
               </MenuItem>
-              <MenuItem value={10}>
+              <MenuItem value={1}>
                 {'Approve'}
               </MenuItem>
 
-              <MenuItem value={10}>
+              <MenuItem value={0}>
                 {'Disapprove'}
               </MenuItem>
             </Select>
@@ -181,6 +195,7 @@ const mapDispatchToProps = {
   getAllWskpa,
   getAllSfcr,
   getAllSales,
+  approveReport
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SfcrAllTable);

@@ -30,7 +30,7 @@ export const ChecklistExist = (id) => dispatch => {
     }).then(res => {
             dispatch({
                 type: OPEN_DIALOG,
-                payload: res.data === 1 ? true : false
+                payload: res.data
             })
             dispatch({
                 type: APP_IS_LOADING,

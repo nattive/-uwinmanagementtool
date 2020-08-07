@@ -201,7 +201,7 @@ export const getLatestReport = () => dispatch => {
 
 
 
-export const getAppraisalPercent = () => (
+export const getAppraisalPercent = (
     work_attendance,
     punctuality,
     accountability,
@@ -210,7 +210,7 @@ export const getAppraisalPercent = () => (
     appearance,
     general_equipment_maintenance
 ) => dispatch => {
-
+    console.log(work_attendance)
     var sum = Number(work_attendance) + Number(punctuality) + Number(accountability) + Number(cr_rs) + Number(revenue_per_day) + Number(appearance) + Number(general_equipment_maintenance)
 
     let percentage = Math.floor((sum / 70) * 100)

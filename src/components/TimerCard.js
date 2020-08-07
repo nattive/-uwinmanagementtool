@@ -64,7 +64,7 @@ const TimerCard = (props) => {
       // Render a countdown
       return (
         <Typography variant="h4">
-          {hours}:{minutes}:{seconds}
+          {hours}:{minutes < 9 ? `0${minutes}` : minutes}: {seconds < 9 ? `0${seconds}` : seconds}
         </Typography>
       );
     }
@@ -76,14 +76,14 @@ const TimerCard = (props) => {
         <Grid container justify="space-between">
           <Grid item>
             <Typography variant="subtitle2" component="small">
-              Nect Checklist in
+              {props.open && `Next Checklist in ${new Date(props.open.next).getHours()}:${new Date(props.open.next).getMinutes()}`}
             </Typography>
-            <Countdown
-              date={1000000}
+            {props.open && <Countdown
+              date={new Date(props.open && props.open.next)}
               renderer={renderer}
               onComplete={() => props.ChecklistExist()}
             />
-            ,
+            }
           </Grid>
           <Grid item>
             <Avatar className={classes.avatar}>
@@ -107,6 +107,7 @@ const TimerCard = (props) => {
 };
 
 const mapStateToProps = (state) => ({
+  open: state.checklist.open,
   nextChecklist: state.checklist.nextChecklist,
 });
 

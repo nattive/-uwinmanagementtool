@@ -16,17 +16,22 @@ import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import { useEffect } from "react";
-import { getAllWskpa, getAllWskpaById } from "../../../actions/adminAction";
-import { Card, CardHeader, Grid, Container } from "@material-ui/core";
+import { getAllWskpa, getAllWskpaById, approveReport } from "../../../actions/adminAction";
+import { Card, CardHeader, Grid, Container, FormControl, InputLabel, Select, MenuItem } from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import Skeleton from "@material-ui/lab/Skeleton";
-const useRowStyles = makeStyles({
+
+const useRowStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
   root: {
     "& > *": {
       borderBottom: "unset",
     },
   },
-});
+}));
 
 const SparTable = (props) => {
   useEffect(() => {
@@ -49,10 +54,11 @@ const SparTable = (props) => {
             <TableRow>
               <TableCell />
               <TableCell>Report by</TableCell>
-              <TableCell>Time</TableCell>
               <TableCell align="right">Staff's Full Name</TableCell>
+              <TableCell>Time</TableCell>
               <TableCell align="right">Staff's Revenue Per Day</TableCell>
               <TableCell align="right">Staff's overall Percentage </TableCell>
+              <TableCell />
             </TableRow>
           </TableHead>
           <TableBody>
@@ -83,6 +89,16 @@ function Row(props) {
   const { item } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useRowStyles();
+  const [approveSelect, setApproveSelect] = React.useState(item.isApprovedBy ? 1 : 0);
+  const handleChange = (event) => {
+    console.log(approveReport)
+    setApproveSelect(event.target.value)
+    const data = {
+      report: 'wskpa',
+      report_id: item.id,
+    }
+    approveReport(data)
+  }
   return (
     <React.Fragment>
       <TableRow className={classes.root}>
@@ -102,6 +118,28 @@ function Row(props) {
         <TableCell align="right">{item.created_at}</TableCell>
         <TableCell align="right">{item.revenue_per_day}</TableCell>
         <TableCell align="right">{item.workPercentage}</TableCell>
+        <TableCell>
+          <FormControl className={classes.formControl}>
+            <InputLabel id="demo-simple-select-label">Approve Report</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              onChange={handleChange}
+              value={approveSelect}
+            >
+              <MenuItem disabled value={0}>
+                {item.isApprovedBy ? 'Approved' : 'Unapproved'}
+              </MenuItem>
+              <MenuItem value={1}>
+                {'Approve'}
+              </MenuItem>
+
+              <MenuItem value={0}>
+                {'Disapprove'}
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -145,7 +183,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-  getAllWskpa, getAllWskpaById
+  getAllWskpa, getAllWskpaById, approveReport
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SparTable);

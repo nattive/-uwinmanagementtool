@@ -7,7 +7,12 @@ import {
     CHAT_SUCCESS,
     CHAT_ERROR,
     ACTIVE_CHAT,
-    NULL_CHATS
+    NULL_CHATS,
+    MY_SENT_MESSAGE,
+    GET_PRIVATE_CHAT,
+    GETTING_PRIVATE_CHAT,
+    ERROR_PRIVATE_CHAT,
+    PRIVATE_CHATS,
 } from './types'
 import Axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
@@ -46,6 +51,35 @@ export const fetchChats = () => dispatch => {
             dispatch({
                 type: FETCHING_CHATS,
                 payload: false
+            })
+        });
+}
+
+
+export const fetchPrivateChats = () => dispatch => {
+
+    const token = localStorage.getItem('uwin_manager_token')
+    dispatch({
+        type: GET_PRIVATE_CHAT,
+    })
+
+    dispatch({
+        type: GETTING_PRIVATE_CHAT
+    })
+
+    Axios.get(`${baseUrl}chat/all`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+            dispatch({
+                type: PRIVATE_CHATS,
+                payload: res.data.data
+            })
+        })
+        .catch((err) => {
+            dispatch({
+                type: ERROR_PRIVATE_CHAT,
+                payload: err.response
             })
         });
 }
@@ -161,6 +195,11 @@ export const postMessage = (text, receiver_id, chat) => dispatch => {
                 type: CHAT_SUCCESS,
                 payload: res.data
             })
+            dispatch({
+                type: MY_SENT_MESSAGE,
+                payload: text
+            })
+
         })
         .catch((err) => {
             dispatch({

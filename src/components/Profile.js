@@ -40,7 +40,7 @@ const Profile = (props) => {
         className={classes.avatar}
         component={RouterLink}
         src={user.avatar}
-        to="/settings"
+        to="/update/profile"
       />
       <Typography className={classes.name} variant="h6">
         {props.manager.name}
