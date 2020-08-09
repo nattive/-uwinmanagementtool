@@ -7,23 +7,27 @@ import Reports from './Reports'
 import Manage from './Manage'
 import SignUpClass from '../../../Auth/SignUp/SignUpClass'
 
-export const Home = () => {
+export const Home = (props) => {
   const { path } = useRouteMatch()
+  const { manager } = props
   return (
     <Container>
-      <Switch>
-        <Route path={`${path}/report`}>
-          <Reports />
-        </Route>
-        <Route path={`${path}/manage`}>
-          <Manage />
-        </Route>
-        <Route path={`${path}/manager/create`}>
-          <SignUpClass />
-        </Route>
-
-      </Switch>
-    </Container>
+      {manager.role ? manager.role.name === "Director" ? (
+        <Switch>
+          <Route path={`${path}/report`}>
+            <Reports />
+          </Route>
+          <Route path={`${path}/manage`}>
+            <Manage />
+          </Route>
+          <Route path={`${path}/manager/create`}>
+            <SignUpClass />
+          </Route>
+        </Switch>
+      ) : (<p>You are not authorized to view this page</p>)
+        : <p>You are not authorized to view this page</p>
+      }
+    </Container >
   );
 }
 
@@ -32,6 +36,7 @@ Home.propTypes = {
 }
 
 const mapStateToProps = (state) => ({
+  manager: state.auth.manager,
 
 })
 

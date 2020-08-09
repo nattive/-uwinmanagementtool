@@ -8,7 +8,8 @@ import {
     OPEN_DIALOG,
     HAS_STORED_CHECKLIST,
     APP_IS_LOADING,
-    NEXT_CHECKLIST
+    NEXT_CHECKLIST,
+    CLOSE_ALL
 } from './types'
 import axios from 'axios'
 import store from '../Misc/store'
@@ -22,6 +23,7 @@ export const ChecklistExist = (id) => dispatch => {
         type: APP_IS_LOADING,
         payload: true
     })
+    dispatch({ type: CLOSE_ALL })
 
     const token = localStorage.getItem('uwin_manager_token')
 
@@ -32,6 +34,7 @@ export const ChecklistExist = (id) => dispatch => {
                 type: OPEN_DIALOG,
                 payload: res.data
             })
+
             dispatch({
                 type: APP_IS_LOADING,
                 payload: false
@@ -104,10 +107,7 @@ export const storeChecklist = () => dispatch => {
                 payload: false
             })
 
-            dispatch({
-                type: OPEN_DIALOG,
-                payload: res.data.itExist === 'false' ? true : false
-            })
+            dispatch({ type: CLOSE_ALL })
 
         }
 

@@ -1,6 +1,6 @@
-import React, { Component, useState } from 'react'
+import React, { Component, useState, useEffect } from 'react'
 import { connect } from 'react-redux'
-import { Container, Grid, Card, CardContent, Typography, Avatar, IconButton, TextField, Divider, Button, CardActionArea, CardActions } from '@material-ui/core'
+import { Container, Grid, Card, CardContent, Typography, Avatar, IconButton, TextField, Divider, Button, CardActionArea, CardActions, CircularProgress, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
@@ -9,6 +9,10 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import { updateProfile } from '../../../actions/usersAction'
+import { verifyRedirect } from '../../../actions/authAction'
+import Alert from "@material-ui/lab/Alert";
+
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
@@ -16,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     card: {
         padding: theme.spacing(2),
         margin: 'auto',
-        marginTop: '5%',
+        // marginTop: '5%',
         maxWidth: 600,
     },
     input: {
@@ -29,44 +33,96 @@ const useStyles = makeStyles((theme) => ({
 
 }));
 export const Profile = (props) => {
-    const [fullName, setFullName] = useState(props.fullName)
-    const [oldPassword, setOldPassword] = useState(props.oldPassword)
-    const [newPassword, setNewPassword] = useState(props.newPassword)
-    const [conFirmNewPassword, setConFirmNewPassword] = useState(props.conFirmNewPassword)
-    const [Location, setLocation] = useState(props.Location)
-    const [email, setEmail] = useState(props.email)
-    const [phoneNumber, setPhoneNumber] = useState(props.phoneNumber)
-    const [guarantorPhone, setGuarantorPhone] = useState(props.guarantorPhone)
-    const [guarantorAddress, setGuarantorAddress] = useState(props.guarantorAddress)
-    const classes = useStyles();
-    const myWidget = window.cloudinary.createUploadWidget({
-        cloudName: '',
-        upload_preset: 'preset1',
-    }, (error, result) => {
-        if (result.event == "success") {
-            console.log(result.info) // result.info contains data from upload
-        }
-    })
 
+
+
+    const [name, setFullName] = useState('')
+    const [password, setOldPassword] = useState()
+    const [showOldPassword, setOldShowPassword] = useState(false)
+    const [showNewPassword, setNewShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [newPassword, setNewPassword] = useState()
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [conFirmNewPassword, setConFirmNewPassword] = useState()
+    const [location, setLocation] = useState('')
+    const [email, setEmail] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
+    const [guarantorPhone, setGuarantorPhone] = useState('')
+    const [guarantorAddress, setGuarantorAddress] = useState('')
+    const [thumbnail_url, setThumbnail_url] = useState('')
+    const [url, setUrl] = useState('')
+    const classes = useStyles();
+    // const myWidget = window.cloudinary.createUploadWidget({
+    //     cloudName: 'charisbiz-africa',
+    //     upload_preset: 'qtwirqod',
+    // }, (error, result) => {
+    //     if (result.event == "success") {
+    //         setThumbnail_url(result.info.thumbnail_url)
+    //         setUrl(result.info.url)
+    //         console.log(result.info) // result.info contains data from upload
+    //     }
+    // })
+    const handleDialogClose = () => {
+        setDialogOpen(false)
+    }
+    useEffect(() => {
+        props.verifyRedirect()
+    }, [])
+    useEffect(() => {
+        if (props.errorUpdatingProfile) {
+            setDialogOpen(true)
+        }
+    }, [props.errorUpdatingProfile])
+
+    useEffect(() => {
+        props.manager.user && setFullName(props.manager.user.name)
+        props.manager.user && setLocation(props.manager.user.location)
+        props.manager.user && setEmail(props.manager.user.email)
+        props.manager.user && setPhoneNumber(props.manager.user.phoneNumber)
+        props.manager.user && setGuarantorPhone(props.manager.user.guarantorPhone)
+        props.manager.user && setGuarantorAddress(props.manager.user.guarantorAddress)
+        props.manager.user && setThumbnail_url(props.manager.user.thumbnail_url)
+        props.manager.user && setUrl(props.manager.user.url)
+    }, [props.manager])
+    const handleUpdateProfile = () => {
+        const data = {
+            name,
+            password: newPassword,
+            oldPassword: password,
+            location,
+            email,
+            phoneNumber,
+            guarantorPhone,
+            guarantorAddress,
+            thumbnail_url,
+            url,
+            user_id: props.manager.id
+        }
+        props.updateProfile({ data })
+    }
     const feild = [
         {
-            name: 'fullName',
+            name: 'name',
             label: 'Full Name',
             onChange: (e) => setFullName(e.target.value),
-            value: fullName,
+            value: name,
             type: 'text'
         },
         {
-            name: 'oldPassword',
+            name: 'password',
             label: 'Old Password',
             onChange: (e) => setOldPassword(e.target.value),
-            value: oldPassword,
+            showPassword: () => setOldShowPassword(!showOldPassword),
+            shouldShowPassword: showOldPassword,
+            value: password,
             type: 'password'
         },
         {
             name: 'newPassword',
             label: 'New Password',
             onChange: (e) => setNewPassword(e.target.value),
+            showPassword: () => setNewShowPassword(!showNewPassword),
+            shouldShowPassword: showNewPassword,
             value: newPassword,
             type: 'password'
         },
@@ -74,17 +130,21 @@ export const Profile = (props) => {
             name: 'conFirmNewPassword',
             label: 'Confirm Password',
             onChange: (e) => setConFirmNewPassword(e.target.value),
+            showPassword: () => setShowConfirmPassword(!showConfirmPassword),
+            shouldShowPassword: showConfirmPassword,
             value: conFirmNewPassword,
             type: 'password'
         },
     ]
+
+
     const bioData = [
 
         {
-            name: 'Location',
-            label: 'Unit Location',
+            name: 'location',
+            label: 'Unit location',
             onChange: (e) => setLocation(e.target.value),
-            value: Location,
+            value: location,
             type: 'text'
         },
 
@@ -122,38 +182,67 @@ export const Profile = (props) => {
     return (
         <Container className={classes.root}>
             <Grid alignContent='center' alignItems='center' justify='center' direction="column-reverse">
+                <Dialog
+                    open={dialogOpen}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">An Error Occurred</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            <Alert severity="error">Unable to update profile</Alert>
+                            <Typography variant='body2'>{JSON.stringify(props.errorUpdatingProfile)}</Typography>
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button variant='contained'
+                            onClick={handleDialogClose}
+                            color='secondary'
+                        // style={{ float: 'right' }}>
+                        > Close
+                        </Button>
+                        <Button onClick={handleUpdateProfile} color="primary" autoFocus>
+                            Retry
+                        </Button>
+
+                    </DialogActions>
+                </Dialog>
                 <Card className={classes.card}>
                     <CardContent>
                         <Typography variant='h6'>Update Profile</Typography>
                         <Grid container>
-                            <Grid md={6} xs={12}>
+                            <Grid md={6} sm={6} xs={12}>
                                 <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
                                 <label htmlFor="icon-button-file">
                                     <IconButton color="primary" aria-label="upload picture" component="span">
-                                        <Avatar size='large' style={{ width: 200, height: 200, alignSelf: 'center' }} onClick={() => myWidget.open()} />
+                                        <Avatar src={url} size='large' style={{ width: 200, height: 200, alignSelf: 'center' }} />
                                     </IconButton>
+                                    {/* onClick={() => myWidget.open()} /> */}
                                 </label>
                             </Grid>
-                            <Grid md={6} xs={12}>
+                            <Divider />
+                            <Grid md={6} sm={6} xs={12}>
+                                <Typography variant='subtitle1'>Update Account settings</Typography>
+
                                 {
                                     feild.map(input => (
                                         <FormControl className={classes.textField} variant="outlined">
                                             <InputLabel htmlFor={input.type === 'password' ? "outlined-adornment-password" : "outlined-basic"}>{input.label}</InputLabel>
                                             <OutlinedInput
                                                 id={input.type === 'password' ? "outlined-adornment-password" : "outlined-basic"}
-                                                // type={values.showPassword ? 'text' : 'password'}
+                                                type={input.shouldShowPassword ? 'text' : input.type}
                                                 value={input.value}
-                                                // onChange={handleChange('password')}
+                                                onChange={input.onChange}
                                                 endAdornment={
                                                     input.type === 'password' ?
                                                         <InputAdornment position="end">
                                                             <IconButton
                                                                 aria-label="toggle password visibility"
-                                                                // onClick={handleClickShowPassword}
+                                                                onClick={input.showPassword}
                                                                 // onMouseDown={handleMouseDownPassword}
                                                                 edge="end"
-                                                            ><Visibility />
-                                                                {/* {values.showPassword ? <Visibility /> : <VisibilityOff />} */}
+                                                            >
+                                                                {input.shouldShowPassword ? <Visibility /> : <VisibilityOff />}
                                                             </IconButton>
                                                         </InputAdornment>
                                                         : null}
@@ -170,7 +259,7 @@ export const Profile = (props) => {
                                     bioData.map(input => (
                                         <Grid xs={12}>
                                             <FormControl className={classes.textField} variant="outlined">
-                                                <TextField id="outlined-basic" value={input.value} label={input.label} variant="outlined" />
+                                                <TextField id="outlined-basic" onChange={input.onChange} value={input.value} label={input.label} variant="outlined" />
                                             </FormControl>
                                         </Grid>
                                     ))
@@ -181,7 +270,15 @@ export const Profile = (props) => {
                         </Grid>
                     </CardContent>
                     <CardActionArea>
-                        <Button variant='contained' color='primary' style={{ float: 'right' }}>Update Profile</Button>
+                        <Button variant='contained'
+                            onClick={handleUpdateProfile}
+                            disabled={props.isUpdatingProfile}
+                            variant='contained'
+                            color='primary'
+                            style={{ float: 'right' }}>
+                            {props.isUpdatingProfile ? <CircularProgress size={20} /> : 'Update Profile'}
+                        </Button>
+
                     </CardActionArea>
                 </Card>
             </Grid>
@@ -192,11 +289,12 @@ export const Profile = (props) => {
 
 const mapStateToProps = (state) => ({
     manager: state.auth.manager,
-
+    isUpdatingProfile: state.managers.isUpdatingProfile,
+    errorUpdatingProfile: state.managers.errorUpdatingProfile,
 })
 
 const mapDispatchToProps = {
-
+    updateProfile, verifyRedirect
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)

@@ -20,6 +20,8 @@ import {
 import Echo from "laravel-echo";
 import socketio from "socket.io-client";
 import { baseUrl, baseUrlNoApi } from "../Misc/baseUrl";
+import EchoRedux from 'laravel-echo-redux';
+import store from '../Misc/store'
 const Pusher = require("pusher-js");
 
 const initialState = {
@@ -45,58 +47,54 @@ const token = localStorage.getItem('uwin_manager_token')
 export default function(state = initialState, action) {
     switch (action.type) {
         case INIT_CHAT:
-
-            // const initEcho = new Echo({
-
-            const initEcho = new Pusher('43c8f03f6308989dfc9b', {
+            const config = {
+                store, //Redux store (required)
+                debug: true, //Debug mode on/off (optional)
+                host: baseUrlNoApi,
+                encrypted: false,
                 authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-                cluster: 'eu',
-                encrypted: true,
                 auth: {
                     headers: {
                         Authorization: "Bearer " + token,
                     },
                 }
-            });
+            }
 
+            EchoRedux.init(config)
+                // const initEcho = new Echo({
+
+            // const initEcho = new Pusher('43c8f03f6308989dfc9b', {
+            //     authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
+            //     cluster: 'eu',
+            //     encrypted: true,
+            //     auth: {
+            //         headers: {
+            //             Authorization: "Bearer " + token,
+            //         },
+            //     }
+            // });
 
             // const initEcho = new Echo({
-            //     encrypted: true,
             //     broadcaster: 'pusher',
             //     key: '43c8f03f6308989dfc9b',
             //     cluster: 'eu',
-            //     forceTLS: true,
-            //     host: "http://uwinmanagerapi.test",
+            //     encrypted: true,
             //     authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
             //     auth: {
             //         headers: {
             //             Authorization: "Bearer " + token,
             //         },
-            //     },
-            // });
-            // const initEcho = new Echo({
-            //     encrypted: true,
-            //     authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-            //     broadcaster: 'socket.io',
-            //     client: socketio,
-            //     host: "http://uwinmanagerapi.test",
-            //     encrypted: true,
-            //     forceTLS: true,
-            //     auth: {
-            //         headers: {
-            //             Authorization: "Bearer " + token,
-            //         },
-            //     },
-            // });
+            //     }
+            // })
             return {
                 ...state,
-                echo: initEcho
+                echo: true
             }
         case INIT_CHAT_PUSHER:
             var pusher = new Pusher('message.posted', {
                 authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
                 cluster: 'eu',
-                encrypted: true,
+                encrypted: false,
                 auth: {
                     headers: {
                         Authorization: "Bearer " + token,

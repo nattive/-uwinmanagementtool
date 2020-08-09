@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import Echo from "laravel-echo";
+import date from 'date-and-time';
 import {
     Grid,
     Card,
@@ -47,7 +47,7 @@ class ChatArena extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: "",
+            message: [],
             receiver: {},
             open: false,
             queuedMessage: null,
@@ -68,33 +68,21 @@ class ChatArena extends Component {
             this.setState({ receiver: newProps.FetchedManager });
         }
 
+        // console.log()
         if (newProps.myMessage) {
-            // this.setState({ queuedMessage: "" });
+            this.setState({ queuedMessage: "" });
             if (newProps.newMessage !== this.props.newMessage) {
-                this.state.messages.push({
-                    text: newProps.newMessage.text,
-                    user: newProps.chat.user,
-                    id: newProps.newMessage.user_id,
-                    created_at: newProps.newMessage.created_at,
-                });
+                if (newProps.newMessage.id !== this.state.messages[this.state.messages.length - 1].id) {
+                    this.state.messages.push({
+                        user: newProps.chat.user,
+                        ...newProps.newMessage,
+                    });
+                }
             }
 
         }
 
-        if (newProps.myMessage) {
-            // this.setState({ queuedMessage: "" });
-            if (newProps.myMessage !== this.props.myMessage) {
-                var dateNow = new Date();
-                var date5SecondsAgo = dateNow.getTime();
-                this.state.messages.push({
-                    text: newProps.myMessage,
-                    user: this.props.manager,
-                    id: newProps.newMessage.user_id,
-                    created_at: date5SecondsAgo,
-                });
-            }
 
-        }
     }
 
     UNSAFE_componentWillMount() {
@@ -103,13 +91,23 @@ class ChatArena extends Component {
         }
     }
     handlePostMessage() {
+        const now = new Date();
+
         this.props.postMessage(
             this.state.message,
             this.state.receiver.id,
             this.props.activeChat.chat.id
         );
-        this.setState({ queuedMessage: this.state.message });
-        this.props.fetchChats()
+        this.state.messages.push({
+            user_id: this.props.manager.user.id,
+            receiver_id: this.state.receiver.id,
+            text: this.state.message,
+            updated_at:date.format(now, 'hh:mm A'),
+            created_at:date.format(now, 'hh:mm A'),
+            id: Math.random() * 10
+        })
+        // this.setState({ queuedMessage: this.state.message });
+        // this.props.fetchChats()
     }
 
     static propTypes = {
@@ -165,83 +163,82 @@ class ChatArena extends Component {
                 </div>
             </>
         );
-        return (<>
-            <Card >
-                <CardHeader title={
-                    this.state.receiver !== {} ? (
-                        this.state.receiver.name
-                    ) : (<CircularProgress />
-                        )
-                }
-                    subheader="online"
-                    action={chatMenu}
-                    style={
-                        {
-                            backgroundColor: "#373737099",
-                            color: "rgb(46, 44, 44)",
-                        }
+        return (
+            <>
+                <Card >
+                    <CardHeader title={
+                        this.state.receiver !== {} ? (
+                            this.state.receiver.name
+                        ) : (<CircularProgress />
+                            )
                     }
-                /> <CardContent id="cardMessage"
-                    style={
-                        {
-                            height: "400px",
-                            overflowY: "scroll",
-                            backgroundImage: `url(${chatBackground})`,
+                        subheader="online"
+                        action={chatMenu}
+                        style={
+                            {
+                                backgroundColor: "#373737099",
+                                color: "rgb(46, 44, 44)",
+                            }
                         }
-                    } >
-                    {this.props.isFetching && (<SystemMessage text='Fetching Messages' />)}{
-                        this.state.messages.length > 0 ? (
-                            this.state.messages.map((message) => (
-                                <React.Fragment >
-                                    <MessageBox position={
-                                        message.position ?
-                                            message.position :
-                                            message.user_id === this.props.manager.id ?
-                                                "right" :
-                                                "left"
-                                    }
-                                        // title={
-                                        //   message.user_id === this.props.manager.id
-                                        //     ? null
-                                        //     : message.user.name
-                                        // }
-                                        type={"text"}
-                                        text={message.text}
-                                        dateString={message.created_at}
-                                        status={message.status ? "waiting" : "sent"} />
-                                </React.Fragment>
-                            ))
-                        ) :
-                            (<SystemMessage text={' No message sent'} />)
-                    } {
-                        this.state.queuedMessage && (<>
-                            <MessageBox position={"right"}
-                                type={"text"}
-                                text={this.state.queuedMessage}
-                                status={"waiting"}
-                            /> </>
-                        )
-                    }
+                    /> <CardContent id="cardMessage"
+                        style={
+                            {
+                                height: "400px",
+                                overflowY: "scroll",
+                                backgroundImage: `url(${chatBackground})`,
+                            }
+                        } >
+                        {this.props.isFetching && (<SystemMessage text='Fetching Messages' />)}{
+                            this.state.messages.length > 0 ? (
+                                this.state.messages.map((message) => (
+                                    <React.Fragment >
+                                        <MessageBox position={
+                                            message.position ?
+                                                message.position :
+                                                message.user_id === this.props.manager.user.id ?
+                                                    "right" :
+                                                    "left"
+                                        }
+                                            type={"text"}
+                                            text={message.text}
+                                            dateString={message.created_at}
+                                            status={message.status ? "waiting" : "sent"} />
+                                    </React.Fragment>
+                                ))
+                            ) :
+                                (<SystemMessage text={' No message sent'} />)
+                        } {
+                            this.state.queuedMessage && (<>
+                                <MessageBox position={"right"}
+                                    type={"text"}
+                                    text={this.state.queuedMessage}
+                                    status={"waiting"}
+                                /> </>
+                            )
+                        }
+                    </CardContent>
                     <div style={{ float: "left", clear: "both" }}
                         ref={(el) => { this.messagesEnd = el; }}>
                     </div>
-                </CardContent> <CardActions >
-                    <Input placeholder="Type here..."
-                        ref={
-                            (el) => (this.inputRef = el)}
-                        value={this.state.message}
-                        multiline={true}
-                        onChange={
-                            (e) => this.setState({ message: e.target.value })}
-                        rightButtons={<
-                            Button
-                            onClick={this.handlePostMessage}
-                            color="primary"
-                            backgroundColor="black"
-                            text="Send" /
-                        >
-                        }
-                    /> </CardActions> </Card> </>
+                    <CardActions >
+                        <Input placeholder="Type here..."
+                            ref={
+                                (el) => (this.inputRef = el)}
+                            value={this.state.message}
+                            multiline={true}
+                            onChange={
+                                (e) => this.setState({ message: e.target.value })}
+                            rightButtons={<
+                                Button
+                                onClick={this.handlePostMessage}
+                                color="primary"
+                                backgroundColor="black"
+                                text="Send" /
+                            >
+                            }
+                        /> </CardActions>
+                </Card>
+            </>
         );
     }
 }

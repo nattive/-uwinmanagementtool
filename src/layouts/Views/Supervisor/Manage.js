@@ -32,6 +32,7 @@ const useRowStyles = makeStyles({
 const Manage = (props) => {
     useEffect(() => {
         props.admin_GetUsers();
+        props.getAllRoles();
     }, []);
     const { path } = useRouteMatch()
     return (
@@ -108,14 +109,19 @@ function Row(props) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    <TableRow>
-                                        <TableCell>Supervisor</TableCell>
-                                        <TableCell>can see all report</TableCell>
-                                        <TableCell> <FormControlLabel
-                                            control={<Checkbox checked name="Supervisor" />}
-                                            label="Active"
-                                        /></TableCell>
-                                    </TableRow>
+                                    {
+                                        props.fetchedRoles && props.fetchedRoles.roles.length ?
+                                            props.fetchedRoles.roles.map(role => (
+                                                <TableRow>
+                                                    <TableCell>{role.name}</TableCell>
+                                                    <TableCell>can see all report</TableCell>
+                                                    <TableCell> <FormControlLabel
+                                                        control={<Checkbox checked />}
+                                                        label="Active"
+                                                    /></TableCell>
+                                                </TableRow>
+                                            )) : <p>No data</p>
+                                    }
                                 </TableBody>
                             </Table>
                         </Box>

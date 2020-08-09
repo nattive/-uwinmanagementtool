@@ -13,7 +13,8 @@ import { useEffect } from "react";
 import { getUsers } from "../../../actions/usersAction";
 import { initPrivateChat } from "../../../actions/chatAction";
 import Badge from '@material-ui/core/Badge';
-import { ChatList } from 'react-chat-elements'
+import { ChatItem } from 'react-chat-elements'
+
 import {
   List,
   ListItem,
@@ -157,18 +158,15 @@ function ContactTab(props) {
           dir={theme.direction}
           style={{ height: "450px", overflowY: "scroll" }}
         >
-          <ChatList
-            className='chat-list'
-            dataSource={[
-              {
-                avatar: 'https://facebook.github.io/react/img/logo.svg',
-                alt: 'Reactjs',
-                title: 'Facebook',
-                subtitle: 'What are you doing?',
-                date: new Date(),
-                unread: 0,
-              }
-            ]} />
+          {props.chats.length && props.chats.map(chat => (
+            <ChatItem
+              avatar={chat.user.thumbnail_url}
+              alt={chat.user.name}
+              title={chat.user.name}
+              subtitle={chat.text}
+              date={chat.created_at}
+              unread={0} />
+          ))}
           {/* {props.privateChats.length > 0
             ? props.privateChats.map((item) => (
               <React.Fragment key={item.id}>
@@ -196,7 +194,8 @@ function ContactTab(props) {
             ))
             : props.isFetching ? (<CircularProgress />) : (<p>No Manager</p>)} */}
         </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
+         
+        <TabPanel value={value} index={1} dir={theme.direction}  style={{ height: "450px", overflowY: "scroll" }}>
           {props.managers.length > 0
             ? props.managers.map((item) => (
               <React.Fragment key={item.id}>
@@ -211,11 +210,9 @@ function ContactTab(props) {
                         }}
                         variant="dot"
                       >
-                        <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                        <Avatar alt={item.name} src={item.thumbnail_url} />
                       </StyledBadge>
-
                     </ListItemAvatar>
-
                     <ListItemText>{item.name}</ListItemText>
                   </ListItem>
                 </List>
@@ -232,12 +229,14 @@ function ContactTab(props) {
   );
 }
 
+
 const mapStateToProps = (state) => ({
   managers: state.managers.allManagers,
   isFetching: state.chat.isFetching,
   isFetchingPrivate: state.chat.isFetchingPrivate,
   privateChats: state.chat.privateChats,
-  privateChatError: state.chat.privateChatError
+  privateChatError: state.chat.privateChatError,
+  chats: state.chat.chats
 });
 
 const mapDispatchToProps = {

@@ -281,7 +281,7 @@ export const admin_GetUsers = () => dispatch => {
 
     const token = localStorage.getItem('uwin_manager_token')
 
-    Axios.get(`${baseUrl}users/active/all`, {
+    Axios.get(`${baseUrl}supervisor/user/all`, {
         headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
             console.log(res)
