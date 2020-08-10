@@ -90,7 +90,7 @@ class ChecklistDialog extends Component {
       position: "relative",
     };
     return (
-      <Dialog aria-labelledby="simple-dialog-title" open={this.props.open && this.props.open.open}>
+      <Dialog aria-labelledby="simple-dialog-title" open={this.props.open && this.props.open.open && this.props.manager.name !== undefined}>
         <DialogContent>
           <Typography variant="body1" className="p-4 m-3">
             {`Good ${this.props.open.type}, ${this.props.manager.name}`}

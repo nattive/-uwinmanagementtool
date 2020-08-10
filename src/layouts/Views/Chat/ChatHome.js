@@ -31,68 +31,51 @@ import {
 import chatBackground from "./image/chatbg.jpg";
 import ChatArena from "./ChatArena";
 import ContactTab from "./ContactTab";
-import EchoRedux from 'laravel-echo-redux';
 
 class ChatHome extends Component {
-
-  // c
   componentDidMount() {
-    this.props.fetchPrivateChats()
     const token = localStorage.getItem('uwin_manager_token')
 
-    const config = {
-      store, //Redux store (required)
-      debug: true, //Debug mode on/off (optional)
-      host: baseUrlNoApi,
-      encrypted: false,
+    window.Echo = new Echo({
+      broadcaster: 'pusher',
+      key: '43c8f03f6308989dfc9b',
+      cluster: 'eu',
+      encrypted: true,
       authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
       auth: {
         headers: {
           Authorization: "Bearer " + token,
         },
       }
-    }
-    EchoRedux.init(config)
-
-    EchoRedux.subscribe('my-channel', 'my-event', 'NEW_MESSAGE');
-
-    /**
-     * update unline status
-     */
-    // Echo.join('my-channel')
-    //   .joining((user) => {
-    //     console.log(user)
-    //   })
-    //   .listen('my-event', (event) => {
-    //     console.log(event)
-    //   })
+    });
   }
-  // }
   componentWillReceiveProps(props) {
-    
-    if (props.initEcho !== this.props.initEcho){
-      props.initEcho.join('my-channel')
-        .joining((user) => {
-          console.log(user)
-        })
-        .listen('my-event', (event) => {
-          console.log(event)
-        })
-    }
-  // if (props.echo !== this.props.echo) {
-  //   const { echo, manager, activeChat } = props;
-  //   var channel = echo.subscribe('my-channel');
-  //   channel.bind('my-event', function (data) {
-  //     console.log(data.message);
-  //     store.dispatch({
-  //       type: NEW_MESSAGE,
-  //       payload: data.message
-  //     });
-  //   });
-  // }
+    if (props.activeChat)
+      if (props.activeChat !== this.props.activeChat) {
+        window.Echo
+          .join(props.activeChat.channel)
+          .here(user => {
+            console.log(user);
+          })
+          .joining(user => {
+            console.log(user);
+          })
+          .leaving(user => {
+            console.log(user)
+          })
+          .listen('chat', (event) => {
+            console.log(event)
+          })
+        // .listenForWhisper('typing', user => {
+        //   this.activeUser = user;
+        //   if (this.typingTimer) {
+        //     clearTimeout(this.typingTimer);
+        //   }
+        //   this.typingTimer = setTimeout(() => {
+        //     this.activeUser = false;
+        //   }, 1000);
+      }
   }
-
-
   render() {
     const messageCard = {
       backgroundColor: "#dc004e",

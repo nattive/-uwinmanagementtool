@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import Spar from "./Spar";
+import Spar from "./SPAR";
 
 export default class SparClass extends Component {
   /**

@@ -17,7 +17,7 @@ import {
     ERROR_PRIVATE_CHAT,
     PRIVATE_CHATS,
 } from "../actions/types";
-import Echo from "laravel-echo";
+// import Echo from "laravel-echo";
 import socketio from "socket.io-client";
 import { baseUrl, baseUrlNoApi } from "../Misc/baseUrl";
 import EchoRedux from 'laravel-echo-redux';
@@ -43,25 +43,15 @@ const initialState = {
     privateChatError: null,
 }
 const token = localStorage.getItem('uwin_manager_token')
-
+    //uwinitni_uwinitnigeria
+    //uwinBet9ja10
 export default function(state = initialState, action) {
     switch (action.type) {
         case INIT_CHAT:
-            const config = {
-                store, //Redux store (required)
-                debug: true, //Debug mode on/off (optional)
-                host: baseUrlNoApi,
-                encrypted: false,
-                authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-                auth: {
-                    headers: {
-                        Authorization: "Bearer " + token,
-                    },
-                }
-            }
 
-            EchoRedux.init(config)
-                // const initEcho = new Echo({
+
+            // EchoRedux.init(config)
+            // const initEcho = new Echo({
 
             // const initEcho = new Pusher('43c8f03f6308989dfc9b', {
             //     authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
@@ -90,21 +80,21 @@ export default function(state = initialState, action) {
                 ...state,
                 echo: true
             }
-        case INIT_CHAT_PUSHER:
-            var pusher = new Pusher('message.posted', {
-                authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-                cluster: 'eu',
-                encrypted: false,
-                auth: {
-                    headers: {
-                        Authorization: "Bearer " + token,
-                    },
-                }
-            });
-            return {
-                ...state,
-                pusher: pusher
-            }
+            // case INIT_CHAT_PUSHER:
+            //     var pusher = new Pusher('message.posted', {
+            //         authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
+            //         cluster: 'eu',
+            //         encrypted: false,
+            //         auth: {
+            //             headers: {
+            //                 Authorization: "Bearer " + token,
+            //             },
+            //         }
+            //     });
+            //     return {
+            //         ...state,
+            //         pusher: pusher
+            //     }
 
         case FETCHED_CHATS:
             return {
