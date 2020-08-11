@@ -4,6 +4,7 @@ import clsx from "clsx";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Avatar, Typography } from "@material-ui/core";
+import { verifyRedirect } from '../actions/authAction'
 import { connect } from 'react-redux'
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,9 +36,9 @@ const Profile = (props) => {
         to="/update/profile"
       />
       <Typography className={classes.name} variant="h6">
-        {props.manager.user.name}
+        {props.manager && props.manager.user.name}
       </Typography>
-      <Typography variant="body2">{props.manager.user.phoneNumber}</Typography>
+      <Typography variant="body2">{props.manager && props.manager.user.phoneNumber}</Typography>
     </div>
   );
 };
@@ -52,4 +53,7 @@ const mapStateToProps = (state) => ({
   manager: state.auth.manager,
 });
 
-export default connect(mapStateToProps, null)(Profile);
+const mapDispatchToProps = {
+    verifyRedirect
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

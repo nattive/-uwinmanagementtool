@@ -176,7 +176,7 @@ function Dashboard(props) {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button component={Link} to='/login' color="primary" autoFocus>
+              <Button component={'a'} href='/login' color="primary" autoFocus>
              {   props.isLogin === 'wait' ? (<CircularProgress size={22} />) :  "Log In" }
           </Button>
             </DialogActions>
@@ -204,7 +204,7 @@ function Dashboard(props) {
             <img src={logo_white} alt="uwinit logo" style={{ width: 100 }} />
             <div className={classes.flexgrow} />
             <IconButton color="inherit" style={{ float: "right" }}>
-              <Badge badgeContent={4} color="secondary">
+              <Badge badgeContent={0} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
@@ -250,14 +250,14 @@ function Dashboard(props) {
               <Supervisor />
             </Route>
           </Switch>
-          <div className={classes.fabButton}>
+          {/* <div className={classes.fabButton}>
             <Fab color="primary" onClick={handleGoBack} aria-label="back">
               <ArrowBackIosIcon />
             </Fab>
             <Fab color="primary" onClick={handleGoBack} aria-label="forward">
               <ArrowForwardIosIcon />
             </Fab>
-          </div>
+          </div> */}
         </main>
       </BrowserRouter>
     </div>

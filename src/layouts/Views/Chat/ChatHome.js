@@ -33,49 +33,8 @@ import ChatArena from "./ChatArena";
 import ContactTab from "./ContactTab";
 
 class ChatHome extends Component {
-  componentDidMount() {
-    const token = localStorage.getItem('uwin_manager_token')
-
-    window.Echo = new Echo({
-      broadcaster: 'pusher',
-      key: '43c8f03f6308989dfc9b',
-      cluster: 'eu',
-      encrypted: true,
-      authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-      auth: {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      }
-    });
-  }
-  componentWillReceiveProps(props) {
-    if (props.activeChat)
-      if (props.activeChat !== this.props.activeChat) {
-        window.Echo
-          .join(props.activeChat.channel)
-          .here(user => {
-            console.log(user);
-          })
-          .joining(user => {
-            console.log(user);
-          })
-          .leaving(user => {
-            console.log(user)
-          })
-          .listen('chat', (event) => {
-            console.log(event)
-          })
-        // .listenForWhisper('typing', user => {
-        //   this.activeUser = user;
-        //   if (this.typingTimer) {
-        //     clearTimeout(this.typingTimer);
-        //   }
-        //   this.typingTimer = setTimeout(() => {
-        //     this.activeUser = false;
-        //   }, 1000);
-      }
-  }
+ 
+  
   render() {
     const messageCard = {
       backgroundColor: "#dc004e",

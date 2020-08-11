@@ -110,13 +110,13 @@ function Row(props) {
                                 </TableHead>
                                 <TableBody>
                                     {
-                                        props.fetchedRoles && props.fetchedRoles.roles.length ?
+                                        props.fetchedRoles && props.fetchedRoles.roles.map > 0 ?
                                             props.fetchedRoles.roles.map(role => (
                                                 <TableRow>
                                                     <TableCell>{role.name}</TableCell>
                                                     <TableCell>can see all report</TableCell>
                                                     <TableCell> <FormControlLabel
-                                                        control={<Checkbox checked />}
+                                                        control={<Checkbox checked onClick={() => alert('role assigned')} />}
                                                         label="Active"
                                                     /></TableCell>
                                                 </TableRow>

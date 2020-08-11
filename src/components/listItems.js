@@ -19,6 +19,7 @@ import { List } from "@material-ui/core";
 import SupervisorAccountIcon from "@material-ui/icons/SupervisorAccount";
 import AssessmentIcon from "@material-ui/icons/Assessment";
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import { useSelector } from "react-redux";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
@@ -33,7 +34,7 @@ const useStyles = makeStyles((theme) => ({
 export const MainListItems = () => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
+  const manager = useSelector(state => state.auth.manager)
   const handleClick = () => {
     setOpen(!open);
   };
@@ -61,7 +62,7 @@ export const MainListItems = () => {
         <ListItemIcon>
           <SupervisorAccountIcon />
         </ListItemIcon>
-        <ListItemText primary="Admin Corner" />
+        { manager.role && <ListItemText primary="Admin Corner" disabled={!manager.role && !manager.role.name !== "Director"} />}
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List disablePadding >

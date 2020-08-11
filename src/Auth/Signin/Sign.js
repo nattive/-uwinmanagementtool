@@ -62,7 +62,7 @@ function SignIn(props) {
     <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        img
+        {/* img */}
 
         {/* <p className="alert alert-danger">{item.email}</p> */}
         <Typography component="h1" variant="h5">
@@ -105,9 +105,9 @@ function SignIn(props) {
             type="password"
             id="password"
             autoComplete="current-password"
-            error={props.loginError.password ? true : false}
+            error={props.loginError ? props.loginError.password ? true : false : props.loginError}
             helperText={
-              props.loginError.password && props.loginError.password[0]
+              props.loginError ? props.loginError.password && props.loginError.password[0] : JSON.stringify(props.loginError)
             }
           />
           <FormControlLabel
@@ -133,11 +133,11 @@ function SignIn(props) {
                 Forgot password?
               </Link>
             </Grid>
-            <Grid item>
+            {/* <Grid item>
               <Link component={RouterLink} to="/createManager" variant="body2">
                 {"Don't have an account? Sign Up"}
               </Link>
-            </Grid>
+            </Grid> */}
           </Grid>
         </form>
       </div>

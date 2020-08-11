@@ -10,37 +10,68 @@ import {
 import { getUsers } from "../../actions/usersAction";
 import { getWSKPA, LatestWSKPA } from "../../actions/reportAction";
 import Echo from "laravel-echo";
+import { baseUrlNoApi } from "../../Misc/baseUrl";
 class DashboardClass extends Component {
     componentDidMount() {
+
         // this.props.ChecklistExist()
         this.props.getWSKPA();
         this.props.getLatestChecklist();
         this.props.LatestWSKPA();
         this.props.verifyRedirect();
-        this.props.getUsers();
-        if (this.props.manager === {}) {
-            return <Redirect to = "/login" / > ;
+        if (!this.props.manager.user) {
+            this.props.getUsers();
+            return <Redirect to="/login" />;
         }
-        // Echo.private('users.' + this.user.id)
-        //     .listen('GroupCreated', (e) => {
-        //         this.groups.push(e.group);
-        //     });
+
+
     }
     UNSAFE_componentWillReceiveProps(props) {
-        if (props.manager) {
+        if (props.manager.user) {
+            if (props.manager.user.id !== undefined) {
+                const token = localStorage.getItem('uwin_manager_token')
+
+                window.Echo = new Echo({
+                    broadcaster: 'pusher',
+                    key: '43c8f03f6308989dfc9b',
+                    cluster: 'eu',
+                    encrypted: true,
+                    authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
+                    auth: {
+                        headers: {
+                            Authorization: "Bearer " + token,
+                        },
+                    }
+                });
+
+                window.Echo
+                    .join("private-chat-" + props.manager.user.id)
+                    .here(user => {
+                        console.log(user);
+                    })
+                    .joining(user => {
+                        console.log(user);
+                    })
+                    .leaving(user => {
+                        console.log(user)
+                    })
+                    .listen('.chat', (event) => {
+                        console.log(event)
+                    })
+            }
             if (props.manager === {}) {
-                return <Redirect to = "/login" / > ;
+                return <Redirect to="/login" />;
             }
         }
         if (props.redirectTo) {
-            return <Redirect to = { props.redirectTo }
+            return <Redirect to={props.redirectTo}
             />
         }
     }
 
     render() {
         const token = localStorage.getItem("uwin_manager_token");
-        return !token && this.props.manager === {} ? ( <Redirect to = "/login" />
+        return !token && this.props.manager === {} ? (<Redirect to="/login" />
         ) : (<Dashboard />)
     }
 }
