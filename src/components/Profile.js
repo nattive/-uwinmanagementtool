@@ -29,16 +29,16 @@ const Profile = (props) => {
   return (
     <div {...rest} className={clsx(classes.root, className)}>
       <Avatar
-        alt={props.manager.user.name}
+        alt={props.manager && props.manager.user && props.manager.user.name}
         className={classes.avatar}
         component={RouterLink}
-        src={props.manager.user.thumbnail_url}
+        src={props.manager && props.manager.user && props.manager.user.thumbnail_url}
         to="/update/profile"
       />
       <Typography className={classes.name} variant="h6">
         {props.manager && props.manager.user.name}
       </Typography>
-      <Typography variant="body2">{props.manager && props.manager.user.phoneNumber}</Typography>
+      <Typography variant="body2">{props.manager && props.manager.user && props.manager.user.phoneNumber}</Typography>
     </div>
   );
 };
