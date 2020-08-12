@@ -17,7 +17,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import { secondaryListItems, MainListItems } from "../../components/listItems";
-import { Switch, Route, BrowserRouter, useHistory, Link } from "react-router-dom";
+import { Switch, Route, BrowserRouter, useHistory, Link, useRouteMatch } from "react-router-dom";
 import { connect } from "react-redux";
 import ChecklistComponent from "../../components/ChecklistComponent";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -147,6 +147,7 @@ function Dashboard(props) {
   const handleGoBack = () => {
     history.goBack();
   };
+  const { path } = useRouteMatch()
   useEffect(() => {
     props.fetchChats();
     props.ChecklistExist();
@@ -159,29 +160,50 @@ function Dashboard(props) {
           <CircularProgress color="inherit" />
         </Backdrop>
         <div>
-         
+          <Dialog
+            open={props.err}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{"Error occurred!"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                <Alert severity="error">{props.err || 'An error occurred'}</Alert>
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button component={'a'} href={path} color="primary" autoFocus>
+                refresh
+                    </Button>
+            </DialogActions>
+          </Dialog>
+        </div>
+        <div>
+
           <Dialog
             open={props.isLogin === 'wait' || !props.isLogin}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
           >
-            <DialogTitle id="alert-dialog-title">{props.isLogin === 'wait' ? "Authenticating": "You are Logged out!"}</DialogTitle>
+            <DialogTitle id="alert-dialog-title">{props.isLogin === 'wait' ? "Authenticating" : "You are Logged out!"}</DialogTitle>
             <DialogContent>
               <DialogContentText id="alert-dialog-description">
-               { props.isLogin === 'wait' ? (
-                  <Alert severity="info">Checking You login status</Alert>
-               ) : <Alert severity="error">You are not logged in, Please proceed to the Log in page to continue using this App</Alert>
+                {props.isLogin === 'wait' ? (
+                  <Alert severity="info">Checking Your login status</Alert>
+                ) : <> <Alert severity="error">You are not logged in, Please proceed to the Log in page to continue using this App</Alert>
 
-               }
+                  </>}
               </DialogContentText>
             </DialogContent>
             <DialogActions>
               <Button component={'a'} href='/login' color="primary" autoFocus>
-             {   props.isLogin === 'wait' ? (<CircularProgress size={22} />) :  "Log In" }
-          </Button>
+                {props.isLogin === 'wait' ? (<CircularProgress size={22} />) : "Log In"}
+              </Button>
             </DialogActions>
           </Dialog>
         </div>
+
+
         <CssBaseline />
         <AppBar
           position="absolute"
@@ -267,6 +289,7 @@ function Dashboard(props) {
 const mapStateToProps = (state) => ({
   checkExist: state.checklist.isExist,
   checklist: state.checklist.open,
+  err: state.checklist.err,
   manager: state.auth.manager,
   redirectTo: state.auth.redirectTo,
   isLogin: state.auth.isLogin,

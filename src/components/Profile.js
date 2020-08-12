@@ -6,6 +6,8 @@ import { makeStyles } from "@material-ui/styles";
 import { Avatar, Typography } from "@material-ui/core";
 import { verifyRedirect } from '../actions/authAction'
 import { connect } from 'react-redux'
+import { useEffect } from "react";
+import Skeleton from "@material-ui/lab/Skeleton";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -24,21 +26,34 @@ const useStyles = makeStyles((theme) => ({
 
 const Profile = (props) => {
   const { className, ...rest } = props;
+  useEffect(() => {
+    !props.manager.user && props.verifyRedirect()
+    // callEveryHour()
+  }, [])
 
+  //   const callEveryHour = () => {
+  //     setInterval(props.checkExist(), (1000 * 60 * 60) * 3);
+  // }
   const classes = useStyles();
   return (
     <div {...rest} className={clsx(classes.root, className)}>
-      <Avatar
-        alt={props.manager && props.manager.user && props.manager.user.name}
-        className={classes.avatar}
-        component={RouterLink}
-        src={props.manager && props.manager.user && props.manager.user.thumbnail_url}
-        to="/update/profile"
-      />
-      <Typography className={classes.name} variant="h6">
-        {props.manager && props.manager.user.name}
-      </Typography>
-      <Typography variant="body2">{props.manager && props.manager.user && props.manager.user.phoneNumber}</Typography>
+      {
+        props.manager !== undefined ?
+          <>
+            <Avatar
+              alt={props.manager.name || props.manager && props.manager.user && props.manager.user.name}
+              className={classes.avatar}
+              component={RouterLink}
+              src={props.manager.thumbnail_url || props.manager && props.manager.user && props.manager.user.thumbnail_url}
+              to="/update/profile"
+            />
+            <Typography className={classes.name} variant="h6">
+              {props.manager.name || props.manager && props.manager.user ? props.manager.user.name : (<Skeleton />)}
+            </Typography>
+            <Typography variant="body2">{props.manager.phoneNumber || props.manager && props.manager.user && props.manager.user.phoneNumber}</Typography>
+          </> : <Typography variant='body2'>Loading profile...</Typography>
+      }
+
     </div>
   );
 };
@@ -54,6 +69,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = {
-    verifyRedirect
+  verifyRedirect
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Profile);

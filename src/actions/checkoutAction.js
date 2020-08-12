@@ -43,9 +43,12 @@ export const ChecklistExist = (id) => dispatch => {
         }
 
     ).catch(err => {
+        alert(err.message || err.response && err.response.data || JSON.stringify(err) || ' error occurred')
+
+
         dispatch({
             type: ERR_CHECKLIST_EXIST_STATUS,
-            payload: err.response
+            payload: err.message || err.response && err.response.data || JSON.stringify(err) || ' error occurred'
         })
         dispatch({
             type: APP_IS_LOADING,
@@ -73,9 +76,12 @@ export const getLatestChecklist = (id) => dispatch => {
         }
 
     ).catch(err => {
+        alert(err.message || err.response && err.response.data || JSON.stringify(err) || ' error occurred')
+
+
         dispatch({
             type: ERR_CHECKLIST_EXIST_STATUS,
-            payload: err.response
+            payload: err.message || err.response && err.response.data || JSON.stringify(err) || ' error occurred'
         })
         dispatch({
             type: APP_IS_LOADING,
@@ -112,13 +118,15 @@ export const storeChecklist = () => dispatch => {
         }
 
     ).catch(err => {
+        alert(err.message || err.response !== undefined ? err.response.data : JSON.stringify(err))
+
         dispatch({
             type: APP_IS_LOADING,
             payload: false
         })
         dispatch({
             type: ERR_STORING_CHECKLIST,
-            payload: err.response
+            payload: err.message || err.response !== undefined ? err.response.data : JSON.stringify(err)
         })
     })
 }

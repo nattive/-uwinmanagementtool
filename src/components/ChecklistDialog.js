@@ -158,6 +158,7 @@ ChecklistDialog.propTypes = {
 
 const mapStateToProps = (state) => ({
   open: state.checklist.open,
+  err: state.checklist.err,
   manager: state.auth.manager,
   appIsLoading: state.loadingState.appIsLoading,
 });
