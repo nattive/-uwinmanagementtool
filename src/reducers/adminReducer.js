@@ -23,6 +23,10 @@ import {
     FETCH_ROLES,
     ADMIN_FETCHED_ROLES,
     ADMIN_ERR_FETCHING_ROLES,
+    ASSIGN_ROLE,
+    ASSIGNING_ROLE,
+    ROLE_ASSIGNED,
+    ERR_ASSIGNING_ROLE,
 } from "../actions/types";
 
 const initialState = {
@@ -45,7 +49,9 @@ const initialState = {
     FetchingRoles: null,
     fetchedRoles: null,
     errorFetchingRole: null,
-
+    errAssigningRole: null,
+    isAssigningRole: false,
+    roleIsAssigned: null
 }
 export default function(state = initialState, action) {
     switch (action.type) {
@@ -178,6 +184,31 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 errorFetchingRole: action.payload
+            }
+
+        case ASSIGN_ROLE:
+            return {
+                ...state,
+                errAssigningRole: null,
+                isAssigningRole: false,
+                roleIsAssigned: null
+            }
+
+        case ASSIGNING_ROLE:
+            return {
+                ...state,
+                isAssigningRole: true
+            }
+        case ROLE_ASSIGNED:
+            return {
+                ...state,
+                isAssigningRole: false,
+                roleIsAssigned: action.payload,
+            }
+        case ERR_ASSIGNING_ROLE:
+            return {
+                ...state,
+                errAssigningRole: action.payload
             }
 
         default:

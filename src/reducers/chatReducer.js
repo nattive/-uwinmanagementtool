@@ -16,6 +16,7 @@ import {
     GETTING_PRIVATE_CHAT,
     ERROR_PRIVATE_CHAT,
     PRIVATE_CHATS,
+    OPEN_CHAT
 } from "../actions/types";
 // import Echo from "laravel-echo";
 import socketio from "socket.io-client";
@@ -39,7 +40,9 @@ const initialState = {
      * Private chats
      */
     isFetchingPrivate: false,
+    hasInitiatedChat: false,
     privateChats: [],
+    receiver: [],
     privateChatError: null,
 }
 const token = localStorage.getItem('uwin_manager_token')
@@ -101,6 +104,13 @@ export default function(state = initialState, action) {
                 ...state,
                 chats: action.payload
             }
+        case OPEN_CHAT:
+            return {
+                ...state,
+                receiver: action.payload,
+                hasInitiatedChat: true,
+            }
+
         case NEW_MESSAGE:
             return {
                 ...state,

@@ -21,6 +21,9 @@ import {
     DialogContentText,
     DialogActions,
 } from "@material-ui/core";
+import { css } from 'glamor';
+import ScrollToBottom from 'react-scroll-to-bottom';
+
 import {
     fetchChats,
     postMessage,
@@ -40,72 +43,134 @@ import {
     SideBar,
     ChatList,
 } from "react-chat-elements";
+import Echo from "laravel-echo";
 import chatBackground from "./image/chat.jpg";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { getUser } from "../../../actions/usersAction";
+import { baseUrlNoApi } from "../../../Misc/baseUrl";
 class ChatArena extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: [],
+            message: '',
+            notSentMessage: [],
             receiver: {},
             open: false,
-            queuedMessage: null,
+            queuedMessage: [],
             AnchorEl: null,
             messages: [],
+            messageData: [],
+            width: 0, height: 0
         };
+
         // this.containsObject = this.containsObject.bind(this);
         this.handlePostMessage = this.handlePostMessage.bind(this);
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.chats) {
+        if (newProps.chats && newProps.chats !== this.props.chats) {
             this.setState({ messages: newProps.chats.chat_messages });
+            newProps.chats &&
+                newProps.chats.chat_messages.map(message => {
+                    this.state.messageData.push({
+                        position: message.position ?
+                            message.position :
+                            message.user_id === this.props.manager.user.id ?
+                                "right" :
+                                "left",
+                        type: "text",
+                        text: message.text,
+                        date: message.updated_at,
+                    })
+                })
         }
-        if (newProps.FetchedManager) {
+        if (newProps.FetchedManager !== this.props.FetchedManager) {
             this.setState({ receiver: newProps.FetchedManager });
         }
-
-        // console.log()
-        if (newProps.myMessage) {
-            this.setState({ queuedMessage: "" });
-            if (newProps.newMessage !== this.props.newMessage) {
-                if (newProps.newMessage.id !== this.state.messages[this.state.messages.length - 1].id) {
-                    this.state.messages.push({
-                        user: newProps.chat.user,
-                        ...newProps.newMessage,
-                    });
-                }
-            }
-
+        if (newProps.receiver !== this.props.receiver) {
+            this.setState({ receiver: newProps.receiver });
         }
+        if (newProps.activeChat !== this.props.activeChat && newProps.activeChat) {
+            const token = localStorage.getItem('uwin_manager_token')
+            newProps.fetchChatsById(newProps.activeChat.chat.id);
+            window.Echo = new Echo({
+                broadcaster: 'pusher',
+                key: '43c8f03f6308989dfc9b',
+                cluster: 'eu',
+                encrypted: false,
+                authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
+                auth: {
+                    headers: {
+                        Authorization: "Bearer " + token,
+                    },
+                }
+            });
 
-
-    }
-
-    UNSAFE_componentWillMount() {
-        if (this.props.activeChat.chat.id) {
-            this.props.fetchChatsById(this.props.activeChat.chat.id);
+            window.Echo
+                .join(newProps.activeChat.channel)
+                .here(user => {
+                    console.log(user);
+                })
+                .joining(user => {
+                    console.log(user);
+                })
+                .leaving(user => {
+                    console.log(user)
+                })
+                .listen('.chat', (event) => {
+                    const { message } = event
+                    console.log(message)
+                    this.setState({ queuedMessage: [] })
+                    this.setState({
+                        messageData: [
+                            ...this.state.messageData,
+                            {
+                                position: message.position ?
+                                    message.position :
+                                    message.user_id === this.props.manager.user.id ?
+                                        "right" :
+                                        "left",
+                                type: "text",
+                                text: message.text,
+                                dateString: message.created_at
+                            }
+                        ]
+                    })
+                })
         }
     }
     handlePostMessage() {
         const now = new Date();
-
-        this.props.postMessage(
-            this.state.message,
-            this.state.receiver.id,
-            this.props.activeChat.chat.id
-        );
-        this.state.messages.push({
+        this.setState({ message: [] })
+        this.state.queuedMessage.push({
             user_id: this.props.manager.user.id,
             receiver_id: this.state.receiver.id,
             text: this.state.message,
-            updated_at:date.format(now, 'hh:mm A'),
-            created_at:date.format(now, 'hh:mm A'),
+            updated_at: date.format(now, 'hh:mm A'),
+            created_at: date.format(now, 'hh:mm A'),
             id: Math.random() * 10
         })
+        if (this.props.activeChat) {
+            this.props.postMessage(
+                this.state.message,
+                this.state.receiver.id,
+                this.props.activeChat.chat.id
+            )
+        } else {
+            this.state.notSentMessage.push({
+                user_id: this.props.manager.user.id,
+                receiver_id: this.state.receiver.id,
+                text: this.state.message,
+                updated_at: date.format(now, 'hh:mm A'),
+                created_at: date.format(now, 'hh:mm A'),
+                id: Math.random() * 10
+            })
+        }
+
         // this.setState({ queuedMessage: this.state.message });
         // this.props.fetchChats()
     }
@@ -120,18 +185,23 @@ class ChatArena extends Component {
     handleClose() {
         this.setState({ open: false });
     }
-    scrollToBottom = () => {
-        this.messagesEnd.scrollIntoView({ behavior: "smooth" });
-    }
 
+    updateWindowDimensions() {
+        this.setState({ width: window.innerWidth, height: window.innerHeight });
+    }
     componentDidMount() {
-        this.scrollToBottom();
+        this.updateWindowDimensions();
+        window.addEventListener('resize', this.updateWindowDimensions);
     }
 
-    componentDidUpdate() {
-        this.scrollToBottom();
-    }
+
     render() {
+        const { innerWidth: width, innerHeight: height } = window;
+        const now = new Date();
+        const ROOT_CSS = css({
+            backgroundImage: `url(${chatBackground})`,
+            height: this.state.height - 150,
+        });
         const { anchorEl } = this.state;
         const chatMenu = (
             <>
@@ -163,11 +233,12 @@ class ChatArena extends Component {
                 </div>
             </>
         );
+
         return (
             <>
                 <Card >
                     <CardHeader title={
-                        this.state.receiver !== {} ? (
+                        this.props.receiver !== [] ? (
                             this.state.receiver.name
                         ) : (<CircularProgress />
                             )
@@ -180,42 +251,46 @@ class ChatArena extends Component {
                                 color: "rgb(46, 44, 44)",
                             }
                         }
-                    /> <CardContent id="cardMessage"
-                        style={
-                            {
-                                height: "400px",
-                                overflowY: "scroll",
-                                backgroundImage: `url(${chatBackground})`,
-                            }
-                        } >
-                        {this.props.isFetching && (<SystemMessage text='Fetching Messages' />)}{
-                            this.state.messages.length > 0 ? (
-                                this.state.messages.map((message) => (
-                                    <React.Fragment >
-                                        <MessageBox position={
-                                            message.position ?
-                                                message.position :
-                                                message.user_id === this.props.manager.user.id ?
-                                                    "right" :
-                                                    "left"
-                                        }
-                                            type={"text"}
-                                            text={message.text}
-                                            dateString={message.created_at}
-                                            status={message.status ? "waiting" : "sent"} />
-                                    </React.Fragment>
-                                ))
-                            ) :
-                                (<SystemMessage text={' No message sent'} />)
-                        } {
-                            this.state.queuedMessage && (<>
-                                <MessageBox position={"right"}
-                                    type={"text"}
-                                    text={this.state.queuedMessage}
-                                    status={"waiting"}
-                                /> </>
-                            )
+                    />
+                    <CardContent id="cardMessage" style={
+                        {
+                            height: this.state.height - 100,
+                            overflowY: "hidden",
                         }
+                    } >
+                        <ScrollToBottom className={ROOT_CSS}>
+                            {this.props.isFetching && (<SystemMessage text={<CircularProgress size={22} />} />)}
+                            {
+
+                                this.state.messages.length > 0 ? (
+                                    <MessageList
+                                        className='message-list'
+                                        lockable={true}
+                                        toBottomHeight={this.state.height}
+                                        dataSource={this.state.messageData} />)
+                                    :
+                                    (<SystemMessage text={' No message sent'} />)
+                            } {
+                                this.state.queuedMessage.length > 0 && (
+                                    this.state.queuedMessage.map((message) => (
+                                        <React.Fragment >
+                                            <MessageBox position={
+                                                message.position ?
+                                                    message.position :
+                                                    message.user_id === this.props.manager.user.id ?
+                                                        "right" :
+                                                        "left"
+                                            }
+                                                type={"text"}
+                                                text={message.text}
+                                                dateString={date.format(now, 'hh:mm A')}
+                                                status={"waiting"} />
+                                        </React.Fragment>
+                                    ))
+                                )
+                            } 
+                        </ScrollToBottom>
+                      
                     </CardContent>
                     <div style={{ float: "left", clear: "both" }}
                         ref={(el) => { this.messagesEnd = el; }}>
@@ -247,7 +322,9 @@ const mapStateToProps = (state) => ({
     echo: state.chat.echo,
     isFetching: state.chat.isFetching,
     chat: state.chat.chat,
+    receiver: state.chat.receiver,
     chats: state.chat.chats.data,
+    receiver: state.chat.receiver,
     activeChat: state.chat.activeChat,
     chatError: state.chat.chatError,
     newMessage: state.chat.newMessage,
@@ -265,6 +342,7 @@ const mapDispatchToProps = {
 };
 
 ChatArena.propTypes = {
-    activeChat: PropTypes.object.isRequired,
+    channel: PropTypes.string.isRequired,
+    receiver: PropTypes.object.isRequired,
 };
 export default connect(mapStateToProps, mapDispatchToProps)(ChatArena);

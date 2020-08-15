@@ -27,42 +27,42 @@ class DashboardClass extends Component {
 
     }
     UNSAFE_componentWillReceiveProps(props) {
-        if (props.manager.user) {
-            if (props.manager.user.id !== undefined) {
-                const token = localStorage.getItem('uwin_manager_token')
+        // if (props.manager.user) {
+        //     if (props.manager.user.id !== undefined) {
+        //         const token = localStorage.getItem('uwin_manager_token')
 
-                window.Echo = new Echo({
-                    broadcaster: 'pusher',
-                    key: '43c8f03f6308989dfc9b',
-                    cluster: 'eu',
-                    encrypted: true,
-                    authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-                    auth: {
-                        headers: {
-                            Authorization: "Bearer " + token,
-                        },
-                    }
-                });
+        //         window.Echo = new Echo({
+        //             broadcaster: 'pusher',
+        //             key: '43c8f03f6308989dfc9b',
+        //             cluster: 'eu',
+        //             encrypted: true,
+        //             authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
+        //             auth: {
+        //                 headers: {
+        //                     Authorization: "Bearer " + token,
+        //                 },
+        //             }
+        //         });
 
-                window.Echo
-                    .join("private-chat-" + props.manager.user.id)
-                    .here(user => {
-                        console.log(user);
-                    })
-                    .joining(user => {
-                        console.log(user);
-                    })
-                    .leaving(user => {
-                        console.log(user)
-                    })
-                    .listen('.chat', (event) => {
-                        console.log(event)
-                    })
-            }
-            if (props.manager === {}) {
-                return <Redirect to="/login" />;
-            }
-        }
+        //         window.Echo
+        //             .join("private-chat-" + props.manager.user.id)
+        //             .here(user => {
+        //                 console.log(user);
+        //             })
+        //             .joining(user => {
+        //                 console.log(user);
+        //             })
+        //             .leaving(user => {
+        //                 console.log(user)
+        //             })
+        //             .listen('.chat', (event) => {
+        //                 console.log(event)
+        //             })
+        //     }
+        //     if (props.manager === {}) {
+        //         return <Redirect to="/login" />;
+        //     }
+        // }
         if (props.redirectTo) {
             return <Redirect to={props.redirectTo}
             />

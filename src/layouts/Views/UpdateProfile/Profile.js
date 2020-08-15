@@ -52,16 +52,16 @@ export const Profile = (props) => {
     const [thumbnail_url, setThumbnail_url] = useState('')
     const [url, setUrl] = useState('')
     const classes = useStyles();
-    // const myWidget = window.cloudinary.createUploadWidget({
-    //     cloudName: 'charisbiz-africa',
-    //     upload_preset: 'qtwirqod',
-    // }, (error, result) => {
-    //     if (result.event == "success") {
-    //         setThumbnail_url(result.info.thumbnail_url)
-    //         setUrl(result.info.url)
-    //         console.log(result.info) // result.info contains data from upload
-    //     }
-    // })
+    const myWidget = window.cloudinary.createUploadWidget({
+        cloudName: 'charisbiz-africa',
+        upload_preset: 'qtwirqod',
+    }, (error, result) => {
+        if (result.event == "success") {
+            setThumbnail_url(result.info.thumbnail_url)
+            setUrl(result.info.url)
+            console.log(result.info) // result.info contains data from upload
+        }
+    })
     const handleDialogClose = () => {
         setDialogOpen(false)
     }
@@ -215,9 +215,9 @@ export const Profile = (props) => {
                                 <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
                                 <label htmlFor="icon-button-file">
                                     <IconButton color="primary" aria-label="upload picture" component="span">
-                                        <Avatar src={url} size='large' style={{ width: 200, height: 200, alignSelf: 'center' }} />
+                                        <Avatar src={url} size='large' style={{ width: 200, height: 200, alignSelf: 'center' }}
+                                            onClick={() => myWidget.open()} />
                                     </IconButton>
-                                    {/* onClick={() => myWidget.open()} /> */}
                                 </label>
                             </Grid>
                             <Divider />

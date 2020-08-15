@@ -12,21 +12,26 @@ export const Home = (props) => {
   const { manager } = props
   return (
     <Container>
-      {manager.role ? manager.role.name === "Director" ? (
-        <Switch>
-          <Route path={`${path}/report`}>
-            <Reports />
-          </Route>
-          <Route path={`${path}/manage`}>
-            <Manage />
-          </Route>
+      <Switch>
+        {manager.role && manager.role.name === "supervisor" ? (
+          <>
+            <Route path={`${path}/report`}>
+              <Reports />
+            </Route>
+            <Route path={`${path}/manage`}>
+              <Manage />
+            </Route>
+          </>
+        ) : (<p>You are not authorized to view this page</p>)
+        }
+
+        {manager.role && manager.role.name === "supervisor" ? (
           <Route path={`${path}/manager/create`}>
             <SignUpClass />
           </Route>
-        </Switch>
-      ) : (<p>You are not authorized to view this page</p>)
-        : <p>You are not authorized to view this page</p>
-      }
+        ) : (<p>You are not authorized to view this page</p>)
+        }
+      </Switch>
     </Container >
   );
 }

@@ -24,6 +24,10 @@ import {
     ADMIN_FETCHED_USER,
     ADMIN_ERR_FETCHING_USERS,
     NULL_ALL_ERRORS,
+    ASSIGN_ROLE,
+    ASSIGNING_ROLE,
+    ROLE_ASSIGNED,
+    ERR_ASSIGNING_ROLE,
 } from './types'
 import { baseUrl } from '../Misc/baseUrl'
 import Axios from 'axios'
@@ -52,6 +56,44 @@ export const getAllRoles = () => dispatch => {
     ).catch(err => {
         dispatch({
             type: ADMIN_ERR_FETCHING_ROLES,
+            payload: err.response
+        })
+    })
+}
+
+
+
+
+export const assignRole = (data) => dispatch => {
+
+    dispatch({
+        type: ASSIGN_ROLE
+    })
+
+    dispatch({
+        type: ASSIGNING_ROLE
+
+    })
+
+    const { user_id, role_id } = data
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.post(`${baseUrl}supervisor/roles/assign/${role_id}`, {
+        user_id: data.user_id
+    }, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: ROLE_ASSIGNED,
+                payload: res.data
+            })
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_ASSIGNING_ROLE,
             payload: err.response
         })
     })

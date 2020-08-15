@@ -33,8 +33,8 @@ import ChatArena from "./ChatArena";
 import ContactTab from "./ContactTab";
 
 class ChatHome extends Component {
- 
-  
+
+
   render() {
     const messageCard = {
       backgroundColor: "#dc004e",
@@ -49,12 +49,21 @@ class ChatHome extends Component {
       <div>
         <Grid container>
           <Grid item xs={12} sm={12} md={7}>
-            {!this.props.activeChat ? (
-              <Grid container justify="center" alignContent="center">
-                <Typography variant="h3">Please select a chat</Typography>
+            {!this.props.hasInitiatedChat ? (
+              <Grid item justify="center" alignContent="center">
+                <Paper style={
+                  {
+                    height: '100%',
+                    alignContent: 'center',
+                    justify: 'center',
+                    padding: '20px'
+                  }
+                } >
+                  <Typography variant='h6'></Typography>
+                </Paper>
               </Grid>
             ) : (
-                <ChatArena activeChat={this.props.activeChat} />
+                <ChatArena />
               )}
           </Grid>
           <Grid item xs={12} sm={12} md={5}>
@@ -72,6 +81,8 @@ const mapStateToProps = (state) => ({
   chat: state.chat.chat,
   chats: state.chat.chats,
   activeChat: state.chat.activeChat,
+  receiver: state.chat.receiver,
+  hasInitiatedChat: state.chat.hasInitiatedChat,
   pusher: state.chat.pusher,
   chatError: state.chat.chatError,
   manager: state.auth.manager,

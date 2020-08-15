@@ -8,7 +8,7 @@ import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { getUser } from "../../../actions/usersAction";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { getUsers } from "../../../actions/usersAction";
 import { initPrivateChat } from "../../../actions/chatAction";
@@ -24,6 +24,7 @@ import {
   CircularProgress,
   Divider,
 } from "@material-ui/core";
+import { OPEN_CHAT } from "../../../actions/types";
 
 const StyledBadge = withStyles((theme) => ({
   badge: {
@@ -112,7 +113,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ContactTab(props) {
-
+  const dispatch = useDispatch()
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
@@ -127,9 +128,10 @@ function ContactTab(props) {
     setValue(index);
   };
 
-  const handleInitChat = (id) => {
-    props.initPrivateChat(id);
-    props.getUser(id);
+  const handleInitChat = (user) => {
+    dispatch({ type: OPEN_CHAT, payload: user})
+    props.initPrivateChat(user.id);
+    props.getUser(user.id);
   };
   return (
     <div className={classes.root}>
@@ -200,7 +202,7 @@ function ContactTab(props) {
             ? props.managers.map((item) => (
               <React.Fragment key={item.id}>
                 <List>
-                  <ListItem button onClick={() => handleInitChat(item.id)}>
+                  <ListItem button onClick={() => handleInitChat(item)}>
                     <ListItemAvatar>
                       <StyledBadge
                         overlap="circle"

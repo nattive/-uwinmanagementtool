@@ -15,10 +15,22 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
-import AddBoxIcon from '@material-ui/icons/AddBox';
+import AddBoxIcon from "@material-ui/icons/AddBox";
 import { useEffect } from "react";
-import { getAllRoles, admin_GetUsers } from "../../../actions/adminAction";
-import { Card, CardHeader, Grid, Container, FormControlLabel, Checkbox } from "@material-ui/core";
+import {
+    getAllRoles,
+    admin_GetUsers,
+    assignRole,
+} from "../../../actions/adminAction";
+import {
+    Card,
+    CardHeader,
+    Grid,
+    Container,
+    FormControlLabel,
+    Checkbox,
+    CircularProgress,
+} from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { Link, useRouteMatch } from "react-router-dom";
 const useRowStyles = makeStyles({
@@ -28,13 +40,12 @@ const useRowStyles = makeStyles({
         },
     },
 });
-
 const Manage = (props) => {
     useEffect(() => {
         props.admin_GetUsers();
         props.getAllRoles();
     }, []);
-    const { path } = useRouteMatch()
+    const { path } = useRouteMatch();
     return (
         <Container>
             <Card>
@@ -60,7 +71,7 @@ const Manage = (props) => {
                     <TableBody>
                         {props.managers.length > 0 ? (
                             props.managers.map((item) => (
-                                <Row key={item.id} item={item} />
+                                <Row key={item.id} item={item} {...props} />
                             ))
                         ) : (
                                 <p>No data</p>
@@ -73,6 +84,14 @@ const Manage = (props) => {
 };
 
 function Row(props) {
+    const handleAssignRole = (role_id, user_id) => {
+        const data = {
+            role_id,
+            user_id,
+        };
+        props.assignRole(data);
+    };
+    console.log(props.fetchedRoles);
     const { item } = props;
     const [open, setOpen] = React.useState(false);
     const classes = useRowStyles();
@@ -90,8 +109,10 @@ function Row(props) {
                 </TableCell>
                 <TableCell align="left">{item.name}</TableCell>
                 <TableCell align="left">{item.duty}</TableCell>
-                <TableCell align="left">{'lagos'}</TableCell>
-                <TableCell align="left">{item.isActive ? "true" : "false"}</TableCell>
+                <TableCell align="left">{"lagos"}</TableCell>
+                <TableCell align="left">
+                    <Checkbox checked={item.isActive} />
+                </TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
@@ -99,7 +120,7 @@ function Row(props) {
                         <Box margin={1}>
                             <Typography variant="h6" gutterBottom component="div">
                                 Assign a Role
-                             </Typography>
+                            </Typography>
                             <Table size="small" aria-label="purchases">
                                 <TableHead>
                                     <TableRow>
@@ -109,19 +130,33 @@ function Row(props) {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {
-                                        props.fetchedRoles && props.fetchedRoles.roles.map > 0 ?
-                                            props.fetchedRoles.roles.map(role => (
-                                                <TableRow>
-                                                    <TableCell>{role.name}</TableCell>
-                                                    <TableCell>can see all report</TableCell>
-                                                    <TableCell> <FormControlLabel
-                                                        control={<Checkbox checked onClick={() => alert('role assigned')} />}
-                                                        label="Active"
-                                                    /></TableCell>
-                                                </TableRow>
-                                            )) : <p>No data</p>
-                                    }
+                                    {props.fetchedRoles && props.fetchedRoles.roles.length > 0 ? (
+                                        props.fetchedRoles.roles.map((role) => (
+                                            <TableRow key={role.id}>
+                                                <TableCell>{role.name}</TableCell>
+                                                <TableCell>
+                                                    {role.permissions && role.permissions.length > 0 ? (
+                                                        <Typography variant="body1">
+                                                            {role.permissions.name}
+                                                        </Typography>
+                                                    ) : (
+                                                            "No permissions set"
+                                                        )}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <FormControlLabel
+                                                        onClick={() => handleAssignRole(role.id, item.id)}
+                                                        control={!props.isAssigningRole ?
+                                                            <Checkbox checked={props.roleIsAssigned} /> : <CircularProgress size={20} />
+                                                        }
+                                                        label={item.roles && item.roles.id === role.id ? 'Assigned' : "Assign"}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                            <p>No data</p>
+                                        )}
                                 </TableBody>
                             </Table>
                         </Box>
@@ -144,11 +179,16 @@ const mapStateToProps = (state) => ({
     FetchingRoles: state.admin.FetchingRoles,
     fetchedRoles: state.admin.fetchedRoles,
     errorFetchingRole: state.admin.errorFetchingRole,
+    errAssigningRole: state.admin.errAssigningRole,
+    isAssigningRole: state.admin.isAssigningRole,
+    roleIsAssigned: state.admin.roleIsAssigned,
+
 });
 
 const mapDispatchToProps = {
     admin_GetUsers,
-    getAllRoles
+    getAllRoles,
+    assignRole
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Manage);
