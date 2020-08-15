@@ -23,6 +23,7 @@ import {
 } from "@material-ui/core";
 import { css } from 'glamor';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import { GiftedChat } from 'react-gifted-chat';
 
 import {
     fetchChats,
@@ -73,19 +74,12 @@ class ChatArena extends Component {
 
     componentWillReceiveProps(newProps) {
         if (newProps.chats && newProps.chats !== this.props.chats) {
-            this.setState({ messages: newProps.chats.chat_messages });
-            newProps.chats &&
-                newProps.chats.chat_messages.map(message => {
-                    this.state.messageData.push({
-                        position: message.position ?
-                            message.position :
-                            message.user_id === this.props.manager.user.id ?
-                                "right" :
-                                "left",
-                        type: "text",
-                        text: message.text,
-                        date: message.updated_at,
-                    })
+            // this.setState({ messages: newProps.chats.chat_messages });
+            newProps.chats.messages &&
+                newProps.chats.messages.map(message => {
+                    this.state.messageData.push(
+                       message
+                    )
                 })
         }
         if (newProps.FetchedManager !== this.props.FetchedManager) {
@@ -125,35 +119,34 @@ class ChatArena extends Component {
                     const { message } = event
                     console.log(message)
                     this.setState({ queuedMessage: [] })
-                    this.setState({
-                        messageData: [
-                            ...this.state.messageData,
-                            {
-                                position: message.position ?
-                                    message.position :
-                                    message.user_id === this.props.manager.user.id ?
-                                        "right" :
-                                        "left",
-                                type: "text",
-                                text: message.text,
-                                dateString: message.created_at
-                            }
-                        ]
-                    })
+                    const newMessage = {
+                        _id: message.id,
+                        text: message.text,
+                        createdAt: message.updated_at,
+                        user: {
+                            _id: message.user_id,
+                            // name: message.user.name,
+                            // avatar: message.user.thumbnail_url,
+                            // ...message.user
+                        },
+                        ...message
+                    }
+                    this.setState((state) => {
+                        return { messageData: GiftedChat.append(state.messageData, newMessage) };
+                    });
                 })
         }
     }
     handlePostMessage() {
         const now = new Date();
-        this.setState({ message: [] })
-        this.state.queuedMessage.push({
-            user_id: this.props.manager.user.id,
-            receiver_id: this.state.receiver.id,
-            text: this.state.message,
-            updated_at: date.format(now, 'hh:mm A'),
-            created_at: date.format(now, 'hh:mm A'),
-            id: Math.random() * 10
-        })
+        // this.state.queuedMessage.push({
+        //     user_id: this.props.manager.user.id,
+        //     receiver_id: this.state.receiver.id,
+        //     text: this.state.message,
+        //     updated_at: date.format(now, 'hh:mm A'),
+        //     created_at: date.format(now, 'hh:mm A'),
+        //     id: Math.random() * 10
+        // })
         if (this.props.activeChat) {
             this.props.postMessage(
                 this.state.message,
@@ -258,60 +251,20 @@ class ChatArena extends Component {
                             overflowY: "hidden",
                         }
                     } >
-                        <ScrollToBottom className={ROOT_CSS}>
-                            {this.props.isFetching && (<SystemMessage text={<CircularProgress size={22} />} />)}
-                            {
-
-                                this.state.messages.length > 0 ? (
-                                    <MessageList
-                                        className='message-list'
-                                        lockable={true}
-                                        toBottomHeight={this.state.height}
-                                        dataSource={this.state.messageData} />)
-                                    :
-                                    (<SystemMessage text={' No message sent'} />)
-                            } {
-                                this.state.queuedMessage.length > 0 && (
-                                    this.state.queuedMessage.map((message) => (
-                                        <React.Fragment >
-                                            <MessageBox position={
-                                                message.position ?
-                                                    message.position :
-                                                    message.user_id === this.props.manager.user.id ?
-                                                        "right" :
-                                                        "left"
-                                            }
-                                                type={"text"}
-                                                text={message.text}
-                                                dateString={date.format(now, 'hh:mm A')}
-                                                status={"waiting"} />
-                                        </React.Fragment>
-                                    ))
-                                )
-                            } 
-                        </ScrollToBottom>
-                      
+                        <GiftedChat
+                        backgroundImage={chatBackground}
+                            messages={this.state.messageData}
+                            onSend={() => this.handlePostMessage()}
+                            onInputTextChanged={(e) => this.setState({ message: e })}
+                            user={this.props.manager && {
+                                _id: this.props.manager.user.id,
+                                avatar: this.props.manager.user.thumbnail_url,
+                                ...this.props.manager.user
+                            }}
+                        />
                     </CardContent>
-                    <div style={{ float: "left", clear: "both" }}
-                        ref={(el) => { this.messagesEnd = el; }}>
-                    </div>
-                    <CardActions >
-                        <Input placeholder="Type here..."
-                            ref={
-                                (el) => (this.inputRef = el)}
-                            value={this.state.message}
-                            multiline={true}
-                            onChange={
-                                (e) => this.setState({ message: e.target.value })}
-                            rightButtons={<
-                                Button
-                                onClick={this.handlePostMessage}
-                                color="primary"
-                                backgroundColor="black"
-                                text="Send" /
-                            >
-                            }
-                        /> </CardActions>
+
+
                 </Card>
             </>
         );
@@ -323,7 +276,7 @@ const mapStateToProps = (state) => ({
     isFetching: state.chat.isFetching,
     chat: state.chat.chat,
     receiver: state.chat.receiver,
-    chats: state.chat.chats.data,
+    chats: state.chat.chats,
     receiver: state.chat.receiver,
     activeChat: state.chat.activeChat,
     chatError: state.chat.chatError,

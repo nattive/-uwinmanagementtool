@@ -21,8 +21,6 @@ import {
 // import Echo from "laravel-echo";
 import socketio from "socket.io-client";
 import { baseUrl, baseUrlNoApi } from "../Misc/baseUrl";
-import EchoRedux from 'laravel-echo-redux';
-import store from '../Misc/store'
 const Pusher = require("pusher-js");
 
 const initialState = {
