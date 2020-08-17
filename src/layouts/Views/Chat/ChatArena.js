@@ -49,6 +49,7 @@ import chatBackground from "./image/chat.jpg";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { getUser } from "../../../actions/usersAction";
 import { baseUrlNoApi } from "../../../Misc/baseUrl";
+import ChatSideAreaMenu from "./ChatSideAreaMenu";
 class ChatArena extends Component {
     constructor(props) {
         super(props);
@@ -78,13 +79,14 @@ class ChatArena extends Component {
             newProps.chats.messages &&
                 newProps.chats.messages.map(message => {
                     this.state.messageData.push(
-                       message
+                        message
                     )
                 })
         }
         if (newProps.FetchedManager !== this.props.FetchedManager) {
             this.setState({ receiver: newProps.FetchedManager });
         }
+
         if (newProps.receiver !== this.props.receiver) {
             this.setState({ receiver: newProps.receiver });
         }
@@ -103,6 +105,14 @@ class ChatArena extends Component {
                     },
                 }
             });
+             window.Echo
+                .join('notification.' + this.props.manager.id)
+                .here(user => {
+                    console.log(user);
+                })
+                 .listen('.notification', (event) => {
+                 console.log(event)
+                })
 
             window.Echo
                 .join(newProps.activeChat.channel)
@@ -115,6 +125,15 @@ class ChatArena extends Component {
                 .leaving(user => {
                     console.log(user)
                 })
+                .listenForWhisper('typing', (e) => {
+                    //   this.user = e.user;
+                    //   this.typing = e.typing;
+                    console.log(e)
+                    // remove is typing indicator after 0.9s
+                    //   setTimeout(function() {
+                    //     _this.typing = false
+                    //   }, 900);
+                })
                 .listen('.chat', (event) => {
                     const { message } = event
                     console.log(message)
@@ -125,9 +144,9 @@ class ChatArena extends Component {
                         createdAt: message.updated_at,
                         user: {
                             _id: message.user_id,
-                            // name: message.user.name,
-                            // avatar: message.user.thumbnail_url,
-                            // ...message.user
+                            name: this.props.receiver.name,
+                            avatar: this.props.receiver.thumbnail_url,
+                            ...this.props.receiver
                         },
                         ...message
                     }
@@ -150,7 +169,7 @@ class ChatArena extends Component {
         if (this.props.activeChat) {
             this.props.postMessage(
                 this.state.message,
-                this.state.receiver.id,
+                this.props.receiver.id,
                 this.props.activeChat.chat.id
             )
         } else {
@@ -187,7 +206,17 @@ class ChatArena extends Component {
         window.addEventListener('resize', this.updateWindowDimensions);
     }
 
+    isTyping() {
+        let channel = window.Echo
+                .join(this.props.activeChat.channel)
 
+        setTimeout(function () {
+            channel.whisper('typing', {
+                user: this.manageer.user,
+                typing: true
+            });
+        }, 300);
+    }
     render() {
         const { innerWidth: width, innerHeight: height } = window;
         const now = new Date();
@@ -232,12 +261,12 @@ class ChatArena extends Component {
                 <Card >
                     <CardHeader title={
                         this.props.receiver !== [] ? (
-                            this.state.receiver.name
+                            this.props.receiver.name
                         ) : (<CircularProgress />
                             )
                     }
                         subheader="online"
-                        action={chatMenu}
+                        action={<ChatSideAreaMenu />}
                         style={
                             {
                                 backgroundColor: "#373737099",
@@ -247,13 +276,16 @@ class ChatArena extends Component {
                     />
                     <CardContent id="cardMessage" style={
                         {
-                            height: this.state.height - 100,
+                            height: this.state.height - 150,
                             overflowY: "hidden",
                         }
                     } >
                         <GiftedChat
-                        backgroundImage={chatBackground}
+                            isLoadingEarlier={this.props.isFetching}
+                            // renderChatFooter={() => 'typing'}
+                            backgroundImage={chatBackground}
                             messages={this.state.messageData}
+                            onInputTextChanged={() => this.isTyping()}
                             onSend={() => this.handlePostMessage()}
                             onInputTextChanged={(e) => this.setState({ message: e })}
                             user={this.props.manager && {

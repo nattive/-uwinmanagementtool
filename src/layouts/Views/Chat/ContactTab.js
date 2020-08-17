@@ -131,7 +131,7 @@ function ContactTab(props) {
   const handleInitChat = (user) => {
     dispatch({ type: OPEN_CHAT, payload: user})
     props.initPrivateChat(user.id);
-    props.getUser(user.id);
+    // props.getUser(user.id);
   };
   return (
     <div className={classes.root}>

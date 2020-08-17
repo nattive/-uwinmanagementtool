@@ -159,8 +159,31 @@ function Dashboard(props) {
         <Backdrop className={classes.backdrop} open={props.appIsLoading}>
           <CircularProgress color="inherit" />
         </Backdrop>
-        <div>
+      
+
           <Dialog
+          open={!props.isLogin && !props.authIsLoading && !props.appIsLoading}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">{props.isLogin === 'wait' ? "Authenticating" : "You are Logged out!"}</DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+              {props.authIsLoading ? (
+                  <Alert severity="info">Checking Your login status</Alert>
+                ) : <> <Alert severity="error">You are not logged in, Please proceed to the Log in page to continue using this App</Alert>
+
+                  </>}
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button component={'a'} href='/login' color="primary" autoFocus>
+              {props.authIsLoading  ? (<CircularProgress size={22} />) : "Log In"}
+              </Button>
+            </DialogActions>
+          </Dialog>
+            <div>
+          {/* <Dialog
             open={props.err}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
@@ -172,35 +195,13 @@ function Dashboard(props) {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button component={'a'} href={path} color="primary" autoFocus>
+              <Button onClick={()=>props.ChecklistExist()} color="primary" autoFocus>
                 refresh
                     </Button>
             </DialogActions>
-          </Dialog>
+          </Dialog> */}
         </div>
         <div>
-
-          <Dialog
-            open={props.isLogin === 'wait' || !props.isLogin}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">{props.isLogin === 'wait' ? "Authenticating" : "You are Logged out!"}</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">
-                {props.isLogin === 'wait' ? (
-                  <Alert severity="info">Checking Your login status</Alert>
-                ) : <> <Alert severity="error">You are not logged in, Please proceed to the Log in page to continue using this App</Alert>
-
-                  </>}
-              </DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button component={'a'} href='/login' color="primary" autoFocus>
-                {props.isLogin === 'wait' ? (<CircularProgress size={22} />) : "Log In"}
-              </Button>
-            </DialogActions>
-          </Dialog>
         </div>
 
 

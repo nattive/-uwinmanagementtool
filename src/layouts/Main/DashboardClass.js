@@ -11,6 +11,7 @@ import { getUsers } from "../../actions/usersAction";
 import { getWSKPA, LatestWSKPA } from "../../actions/reportAction";
 import Echo from "laravel-echo";
 import { baseUrlNoApi } from "../../Misc/baseUrl";
+import Pusher from "pusher-js";
 class DashboardClass extends Component {
     componentDidMount() {
 
@@ -27,42 +28,31 @@ class DashboardClass extends Component {
 
     }
     UNSAFE_componentWillReceiveProps(props) {
-        // if (props.manager.user) {
-        //     if (props.manager.user.id !== undefined) {
-        //         const token = localStorage.getItem('uwin_manager_token')
-
-        //         window.Echo = new Echo({
-        //             broadcaster: 'pusher',
-        //             key: '43c8f03f6308989dfc9b',
-        //             cluster: 'eu',
-        //             encrypted: true,
-        //             authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-        //             auth: {
-        //                 headers: {
-        //                     Authorization: "Bearer " + token,
-        //                 },
-        //             }
-        //         });
-
-        //         window.Echo
-        //             .join("private-chat-" + props.manager.user.id)
-        //             .here(user => {
-        //                 console.log(user);
-        //             })
-        //             .joining(user => {
-        //                 console.log(user);
-        //             })
-        //             .leaving(user => {
-        //                 console.log(user)
-        //             })
-        //             .listen('.chat', (event) => {
-        //                 console.log(event)
-        //             })
-        //     }
-        //     if (props.manager === {}) {
-        //         return <Redirect to="/login" />;
-        //     }
-        // }
+        if (props.manager.user) {
+            if (props.manager.user.id !== undefined) {
+                const token = localStorage.getItem('uwin_manager_token')
+                window.Echo = new Echo({
+                    broadcaster: 'pusher',
+                    key: '43c8f03f6308989dfc9b',
+                    cluster: 'eu',
+                    encrypted: false,
+                    authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
+                    auth: {
+                        headers: {
+                            Authorization: "Bearer " + token,
+                        },
+                    }
+                });
+                window.Echo
+                    .private('notification.' + props.manager.user.id)
+                    .listen('.notification', (event) => {
+                        console.log(event);
+                    })
+            }
+            if (props.manager === {}) {
+                return <Redirect to="/login" />;
+            }
+        }
         if (props.redirectTo) {
             return <Redirect to={props.redirectTo}
             />

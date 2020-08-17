@@ -24,7 +24,7 @@ const initialState = {
     registerStatus: null,
     redirectTo: null,
     token: '',
-    isLogin: 'wait'
+    isLogin: false
 }
 
 export default function(state = initialState, action) {

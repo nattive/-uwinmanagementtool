@@ -68,12 +68,13 @@ function SalesReportFunction(props) {
   const [sub_total2, setSubTotal2] = useState(0);
   const [fuel, setFuel] = useState(0);
   const [misc, setMisc] = useState(0);
+  const [pos, setPos] = useState(0); //add
 
   const HandleTotals = () => {
-    setExpenseTotal(Number(misc) + Number(totalPayout));
-    setTotalRunCred(Number(eCreditFunded) + Number(cashFunded));
-    setSubTotal1(Number(unsettledWinnings) + Number(totalRunCred));
-    setExpectedCashAtHand(Number(sub_total1) - Number(sub_total2));
+    setExpenseTotal(Number(misc) + Number(totalPayout) + Number(fuel) + Number(pos));
+    setTotalRunCred(Number(eCreditFunded) + Number(cashFunded) + Number(unsettledWinnings));
+    setSubTotal1(Number(unsettledWinnings) + Number(totalRunCred)); // yank
+    setExpectedCashAtHand(Number(expenseTotal) - Number(totalRunCred));
     setSubTotal2(Number(expenseTotal) + Number(onlineBalance));
   };
   const handleSubmit = () => {

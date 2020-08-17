@@ -49,13 +49,13 @@ export const login = (email, password) => dispatch => {
             payload: res.data.success.token
         })
         dispatch({
-            type: STORE_USER,
-            payload: res.data.user
-        })
-        dispatch({
-            type: LOGIN_STATUS,
-            payload: false
-        })
+                type: STORE_USER,
+                payload: res.data.user
+            })
+            // dispatch({
+            //     type: LOGIN_STATUS,
+            //     payload: false
+            // })
         dispatch(ChecklistExist(res.data.user.id))
 
     }).catch(err => {
