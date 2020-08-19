@@ -155,7 +155,7 @@ function Reports(props) {
             {...a11yProps(1)}
           />
           <Tab label="Account/Sales Report" {...a11yProps(2)} />
-          <Tab label="Checklist Report" {...a11yProps(3)} />
+          {/* <Tab label="Checklist Report" {...a11yProps(3)} /> */}
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -177,9 +177,9 @@ function Reports(props) {
           <TabSelect report="sales" {...props} />
           <Salesall />
         </TabPanel>
-        <TabPanel value={value} index={3} dir={theme.direction}>
+        {/* <TabPanel value={value} index={3} dir={theme.direction}>
           <TabSelect report="checklist" {...props} />
-        </TabPanel>
+        </TabPanel> */}
       </SwipeableViews>
     </div>
   );

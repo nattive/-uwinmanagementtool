@@ -62,7 +62,7 @@ export const MainListItems = () => {
         <ListItemIcon>
           <SupervisorAccountIcon />
         </ListItemIcon>
-        { manager.role && <ListItemText primary="Admin Corner" disabled={!manager.role && !manager.role.name !== "Director"} />}
+        {<ListItemText primary="Admin Corner"  />}
       </ListItem>
       <Collapse in={open} timeout="auto" unmountOnExit>
         <List disablePadding >

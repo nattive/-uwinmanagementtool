@@ -16,7 +16,13 @@ import {
     GETTING_PRIVATE_CHAT,
     ERROR_PRIVATE_CHAT,
     PRIVATE_CHATS,
-    OPEN_CHAT
+    OPEN_CHAT,
+    GET_ONLINE_MANAGERS,
+    GETTING_ONLINE_MANAGERS,
+    ONLINE_MANAGERS,
+    ERROR_GETTING_ONLINE_MANAGERS,
+    OPEN_NOTIFICATION,
+    OPEN_TOP_NOTIFICATION,
 } from "../actions/types";
 // import Echo from "laravel-echo";
 import socketio from "socket.io-client";
@@ -42,6 +48,14 @@ const initialState = {
     privateChats: [],
     receiver: [],
     privateChatError: null,
+    notification: null,
+    notifications: [],
+    /**
+     * Who is online
+     */
+    onlineManager: [],
+    OM_err: null,
+    isFetchingOM: false
 }
 const token = localStorage.getItem('uwin_manager_token')
     //uwinitni_uwinitnigeria
@@ -50,52 +64,10 @@ export default function(state = initialState, action) {
     switch (action.type) {
         case INIT_CHAT:
 
-
-            // EchoRedux.init(config)
-            // const initEcho = new Echo({
-
-            // const initEcho = new Pusher('43c8f03f6308989dfc9b', {
-            //     authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-            //     cluster: 'eu',
-            //     encrypted: true,
-            //     auth: {
-            //         headers: {
-            //             Authorization: "Bearer " + token,
-            //         },
-            //     }
-            // });
-
-            // const initEcho = new Echo({
-            //     broadcaster: 'pusher',
-            //     key: '43c8f03f6308989dfc9b',
-            //     cluster: 'eu',
-            //     encrypted: true,
-            //     authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-            //     auth: {
-            //         headers: {
-            //             Authorization: "Bearer " + token,
-            //         },
-            //     }
-            // })
             return {
                 ...state,
                 echo: true
             }
-            // case INIT_CHAT_PUSHER:
-            //     var pusher = new Pusher('message.posted', {
-            //         authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-            //         cluster: 'eu',
-            //         encrypted: false,
-            //         auth: {
-            //             headers: {
-            //                 Authorization: "Bearer " + token,
-            //             },
-            //         }
-            //     });
-            //     return {
-            //         ...state,
-            //         pusher: pusher
-            //     }
 
         case FETCHED_CHATS:
             return {
@@ -107,6 +79,7 @@ export default function(state = initialState, action) {
                 ...state,
                 receiver: action.payload,
                 hasInitiatedChat: true,
+                chats: [],
             }
 
         case NEW_MESSAGE:
@@ -114,6 +87,17 @@ export default function(state = initialState, action) {
                 ...state,
                 newMessage: action.payload
             }
+        case OPEN_NOTIFICATION:
+            return {
+                ...state,
+                notification: action.payload,
+            }
+        case OPEN_TOP_NOTIFICATION:
+            return {
+                ...state,
+                notifications: initialState.notifications.push(action.payload)
+            }
+
         case MY_SENT_MESSAGE:
             return {
                 ...state,
@@ -189,6 +173,32 @@ export default function(state = initialState, action) {
                 privateChats: action.payload,
                 isFetchingPrivate: false,
                 privateChatError: null,
+            }
+        case GET_ONLINE_MANAGERS:
+            return {
+                ...state,
+                onlineManager: [],
+                OM_err: null,
+                isFetchingOM: false,
+
+            }
+        case GETTING_ONLINE_MANAGERS:
+            return {
+                ...state,
+                isFetchingOM: true
+            }
+        case ONLINE_MANAGERS:
+            return {
+                ...state,
+                onlineManager: action.payload,
+                OM_err: null,
+                isFetchingOM: false
+            }
+        case ERROR_GETTING_ONLINE_MANAGERS:
+            return {
+                ...state,
+                isFetchingOM: false,
+                OM_err: action.payload,
             }
 
         default:

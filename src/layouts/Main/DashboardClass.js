@@ -28,27 +28,8 @@ class DashboardClass extends Component {
 
     }
     UNSAFE_componentWillReceiveProps(props) {
-        if (props.manager.user) {
-            if (props.manager.user.id !== undefined) {
-                const token = localStorage.getItem('uwin_manager_token')
-                window.Echo = new Echo({
-                    broadcaster: 'pusher',
-                    key: '43c8f03f6308989dfc9b',
-                    cluster: 'eu',
-                    encrypted: false,
-                    authEndpoint: `${baseUrlNoApi}broadcasting/auth`,
-                    auth: {
-                        headers: {
-                            Authorization: "Bearer " + token,
-                        },
-                    }
-                });
-                window.Echo
-                    .private('notification.' + props.manager.user.id)
-                    .listen('.notification', (event) => {
-                        console.log(event);
-                    })
-            }
+        if (props.manager.user !== this.props.manager.user) {
+           
             if (props.manager === {}) {
                 return <Redirect to="/login" />;
             }

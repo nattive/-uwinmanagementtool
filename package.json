@@ -5,7 +5,7 @@
     "private": true,
     "dependencies": {
         "@date-io/date-fns": "^2.6.2",
-        "@material-ui/core": "^4.2.1",
+        "@material-ui/core": "^4.11.0",
         "@material-ui/icons": "^4.2.1",
         "@material-ui/lab": "^4.0.0-alpha.56",
         "@material-ui/styles": "^4.2.1",
@@ -31,6 +31,7 @@
         "pusher-js": "^6.0.3",
         "react": "^16.13.1",
         "react-bootstrap-sweetalert": "^5.1.15",
+        "react-browser-notifications": "^1.0.14",
         "react-calendar": "^3.1.0",
         "react-chartjs-2": "^2.7.6",
         "react-chat-elements": "^10.9.2",

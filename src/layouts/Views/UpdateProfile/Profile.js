@@ -98,7 +98,7 @@ export const Profile = (props) => {
             url,
             user_id: props.manager.id
         }
-        props.updateProfile({ data })
+        props.updateProfile(data)
     }
     const feild = [
         {

@@ -90,20 +90,8 @@ export const getUser = (id) => dispatch => {
     })
 }
 
-export const updateProfile = ({ data }) => dispatch => {
-    const {
-        name,
-        password,
-        location,
-        email,
-        phoneNumber,
-        guarantorPhone,
-        guarantorAddress,
-        thumbnail_url,
-        url,
-        user_id,
-        oldPassword
-    } = data
+export const updateProfile = (data) => dispatch => {
+
     console.log(data);
     dispatch({ type: UPDATE_PROFILE })
     dispatch({ type: UPDATING_PROFILE })
@@ -111,17 +99,18 @@ export const updateProfile = ({ data }) => dispatch => {
     const token = localStorage.getItem('uwin_manager_token')
 
     axios.post(`${baseUrl}users/update/${data.user_id}`, {
-        name,
-        password,
-        location,
-        email,
-        phoneNumber,
-        guarantorPhone,
-        guarantorAddress,
-        thumbnail_url,
-        url,
-        user_id,
-        oldPassword
+        name: data.name,
+        password: data.password,
+        location: data.location,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        guarantorPhone: data.guarantorPhone,
+        guarantorAddress: data.guarantorAddress,
+        thumbnail_url: data.thumbnail_url,
+        url: data.url,
+        user_id: data.user_id,
+        oldPassword: data.oldPassword,
+        isOnline: data.isOnline,
     }, {
         headers: { Authorization: `Bearer ${token}` }
     }).then(res => {

@@ -31,9 +31,22 @@ import {
 import chatBackground from "./image/chatbg.jpg";
 import ChatArena from "./ChatArena";
 import ContactTab from "./ContactTab";
+import ChatSideAreaMenu from "./ChatSideAreaMenu";
 
 class ChatHome extends Component {
-
+  constructor(props) {
+    super(props);
+    this.state = {
+      width: 0, height: 0
+    };
+  }
+  updateWindowDimensions() {
+    this.setState({ width: window.innerWidth, height: window.innerHeight });
+  }
+  componentDidMount() {
+    this.updateWindowDimensions();
+    window.addEventListener('resize', this.updateWindowDimensions);
+  }
 
   render() {
     const messageCard = {
@@ -51,16 +64,25 @@ class ChatHome extends Component {
           <Grid item xs={12} sm={12} md={7}>
             {!this.props.hasInitiatedChat ? (
               <Grid item justify="center" alignContent="center">
-                <Paper style={
-                  {
-                    height: '100%',
-                    alignContent: 'center',
-                    justify: 'center',
-                    padding: '20px'
-                  }
-                } >
-                  <Typography variant='h6'></Typography>
-                </Paper>
+                <Card styled={{ backgroundColor: '#373737044' }}>
+                  <CardHeader
+                    action={<ChatSideAreaMenu />}
+                    style={
+                      {
+                        backgroundColor: "#373737099",
+                        color: "rgb(46, 44, 44)",
+                      }
+                    }
+                  />
+                  <CardContent id="cardMessage" style={
+                    {
+                      height: this.state.height - 150,
+                      overflowY: "hidden",
+                    }
+                  } >
+                    <Typography variant='h5'>Select a manager to view/chat with them</Typography>
+                  </CardContent>
+                </Card>
               </Grid>
             ) : (
                 <ChatArena />

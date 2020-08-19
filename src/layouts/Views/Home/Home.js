@@ -4,6 +4,7 @@ import { Grid } from "@material-ui/core";
 import SummaryCard from "../../../components/SummaryCard";
 import { connect } from "react-redux";
 import TimerCard from "../../../components/TimerCard";
+import Notification from "../../../components/Notification";
 
 function Home(props) {
   return (
@@ -27,7 +28,7 @@ function Home(props) {
           {/* <TotalProfit /> */}
         </Grid>
         <Grid item lg={8} md={12} xl={9} xs={12}>
-          {/* <LatestSales /> */}
+          <Notification />
         </Grid>
         <Grid item lg={4} md={6} xl={3} xs={12}>
           {/* <UsersByDevice /> */}

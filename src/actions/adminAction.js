@@ -341,7 +341,7 @@ export const admin_GetUsers = () => dispatch => {
     ).catch(err => {
         dispatch({
             type: ADMIN_ERR_FETCHING_USERS,
-            payload: err.response
+            payload: err.response !== undefined && err.response.data ? err.response.data.message : JSON.stringify(err.response)
         })
         dispatch({
             type: ADMIN_FETCHING_USERS,

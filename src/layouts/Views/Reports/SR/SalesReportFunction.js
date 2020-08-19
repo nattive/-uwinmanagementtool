@@ -18,7 +18,9 @@ import {
   FormControl,
   FilledInput,
   CircularProgress,
+  IconButton,
 } from "@material-ui/core";
+import ReplayIcon from '@material-ui/icons/Replay';
 import { makeStyles } from "@material-ui/core/styles";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
@@ -69,36 +71,39 @@ function SalesReportFunction(props) {
   const [fuel, setFuel] = useState(0);
   const [misc, setMisc] = useState(0);
   const [pos, setPos] = useState(0); //add
+  const [unsettledWinnings, setUnsettledWinnings] = useState(0);
+  const [totalPayout, setTotalPayout] = useState(0);
+  const [balance, setBalance] = useState(0);
 
   const HandleTotals = () => {
     setExpenseTotal(Number(misc) + Number(totalPayout) + Number(fuel) + Number(pos));
     setTotalRunCred(Number(eCreditFunded) + Number(cashFunded) + Number(unsettledWinnings));
-    setSubTotal1(Number(unsettledWinnings) + Number(totalRunCred)); // yank
-    setExpectedCashAtHand(Number(expenseTotal) - Number(totalRunCred));
+    setExpectedCashAtHand(Number(totalRunCred) - Number(expenseTotal));
     setSubTotal2(Number(expenseTotal) + Number(onlineBalance));
+    setBalance(Number(actualCashAtHand) - Number(expectedCashAtHand));
   };
   const handleSubmit = () => {
     const data = {
-      unsettledWinnings,
+      misc,
       totalPayout,
-      actualCashAtHand,
-      sub_total1,
-      totalRunCred,
+      fuel,
+      pos,
       eCreditFunded,
-      cashFunded, //
-      creditUnpaidTotal,
+      cashFunded,
+      unsettledWinnings,
+      totalRunCred,
       expenseTotal,
       onlineBalance,
+      actualCashAtHand,
       expectedCashAtHand,
-      sub_total2,
-      fuel,
-      misc,
+      totalRunCred,
+      expenseTotal,
+      expectedCashAtHand,
+      setBalance,
     };
 
     props.storeSalesReport({ data });
   };
-  const [unsettledWinnings, setUnsettledWinnings] = useState(0);
-  const [totalPayout, setTotalPayout] = useState(0);
   const isFirstRun = useRef(true);
   useEffect(() => {
     if (isFirstRun.current) {
@@ -123,9 +128,17 @@ function SalesReportFunction(props) {
                 ACCOUNT REPORT
               </Typography>
               <Divider className={classes.topDivider} />
+              <Typography
+                variant="subtitle1"
+                component="h6"
+                color="secondary"
+                className="p-3"
+              >
+                Credit
+              </Typography>
               <form className={classes.root} noValidate autoComplete="off">
                 <Grid container spacing={3}>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} md={4}>
                     <TextField
                       id="outlined-basic"
                       label="E-CREDIT FUNDED"
@@ -136,7 +149,7 @@ function SalesReportFunction(props) {
                       onBlur={() => HandleTotals()}
                     />
                   </Grid>
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} md={4}>
                     <TextField
                       id="outlined-basic"
                       label="CASH FUNDED"
@@ -146,112 +159,174 @@ function SalesReportFunction(props) {
                       variant="outlined"
                     />
                   </Grid>
-                </Grid>
-              </form>
-              <Grid container>
-                <Grid item sm={12} md={6}>
-                  <Typography
-                    variant="overline"
-                    className={classes.headerTitle}
-                  >
-                    WINNINGS
-                  </Typography>
-                  <Divider className={classes.topDivider} />
-
-                  <form className="m-4" noValidate autoComplete="off">
-                    <Grid container spacing={3}>
-                      <Grid item xs={6} md={6}>
-                        <TextField
-                          id="standard-basic"
-                          value={unsettledWinnings}
-                          onBlur={() => HandleTotals()}
-                          onChange={(e) => setUnsettledWinnings(e.target.value)}
-                          label="Unsettled Winnings"
-                        />
-                      </Grid>
-                      <Grid item xs={6} md={6}>
-                        <TextField
-                          id="standard-basic"
-                          onBlur={() => HandleTotals()}
-                          value={totalPayout}
-                          onChange={(e) => setTotalPayout(e.target.value)}
-                          label="Total Payout"
-                        />
-                      </Grid>
-                    </Grid>
-                  </form>
-                </Grid>
-                <Grid item sm={12} md={6}>
-                  <Typography
-                    variant="overline"
-                    className={classes.headerTitle}
-                  >
-                    EXPENSES
-                  </Typography>
-                  <Divider className={classes.topDivider} />
-                  <form className="m-4" noValidate autoComplete="off">
-                    <Grid container spacing={3}>
-                      <Grid item xs={12} md={6}>
-                        <TextField
-                          id="standard-basic"
-                          value={fuel}
-                          onBlur={() => HandleTotals()}
-                          onChange={(e) => setFuel(e.target.value)}
-                          label="Fuel"
-                        />
-                      </Grid>
-                      <Grid item xs={12} md={6}>
-                        <TextField
-                          id="standard-basic"
-                          onBlur={() => HandleTotals()}
-                          value={misc}
-                          onChange={(e) => setMisc(e.target.value)}
-                          label="Miscellaneous/POS"
-                        />
-                      </Grid>
-                    </Grid>
-                  </form>
-                </Grid>
-              </Grid>
-
-              <form
-                className={classes.fromContainer}
-                noValidate
-                autoComplete="off"
-              >
-                <Grid container spacing={3}>
                   <Grid item xs={12} md={4}>
                     <TextField
                       id="outlined-basic"
-                      label="ONLINE BALANCE @ E.O.D"
+                      label="UNPAID WINNINGS"
+                      value={unsettledWinnings}
+                      onBlur={() => HandleTotals()}
+                      onChange={(e) => setUnsettledWinnings(e.target.value)}
                       variant="outlined"
-                      fullWidth
-                      value={onlineBalance}
-                      onChange={(e) => setOnlineBalance(e.target.value)}
                     />
                   </Grid>
-                  <Grid item xs={12} md={4}>
+
+                </Grid>
+              </form>
+              <div style={{ margin: '20px 0' }}>
+                <Divider variant='middle' />
+                <Typography
+                  variant="subtitle1"
+                  component="h6"
+                  color="secondary"
+                  className="p-3"
+                >
+                  Expense
+              </Typography>
+                <Divider variant='middle' />
+              </div>
+              <form className={classes.root} noValidate autoComplete="off">
+                <Grid container spacing={3} >
+                  <Grid item xs={12} md={3}>
                     <TextField
                       id="outlined-basic"
+                      label="PAID WINNINGS"
+                      type="number"
+                      variant="outlined"
+                      value={totalPayout}
+                      onChange={(e) => setTotalPayout(e.target.value)}
+                      onBlur={() => HandleTotals()}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      id="outlined-basic"
+                      label="FUEL"
+                      value={fuel}
+                      onChange={(e) => setFuel(e.target.value)}
+                      onBlur={() => HandleTotals()}
+                      variant="outlined"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      id="outlined-basic"
+                      label="MISCELLENOUS EXPENSES"
+                      value={misc}
+                      onBlur={() => HandleTotals()}
+                      onChange={(e) => setMisc(e.target.value)}
+                      variant="outlined"
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      id="outlined-basic"
+                      label="POS/TRANSFER"
+                      value={pos}
+                      onBlur={() => HandleTotals()}
+                      onChange={(e) => setPos(e.target.value)}
+                      variant="outlined"
+                    />
+                  </Grid>
+                </Grid>
+              </form>
+              <FormControl className={classes.textField} style={{ float: 'right' }} variant="filled">
+                <InputLabel htmlFor="filled-adornment-amount">
+                  Total Expenditure
+                  </InputLabel>
+                <FilledInput
+                  aria-label="Summation of credit and unpaid winnings"
+                  id="filled-adornment-amount"
+                  value={expenseTotal}
+                  disabled
+                  startAdornment={
+                    <InputAdornment position="start"> ₦</InputAdornment>
+                  }
+                />
+                <small className="text-muted">
+                  Summation of all expense"
+            </small>
+              </FormControl>
+              <div className="clearfix"></div>
+              {/* Totals */}
+              <div style={{ margin: '20px 0' }}>
+                <Divider variant='middle' />
+                <Typography
+                  variant="subtitle1"
+                  component="h6"
+                  color="secondary"
+                  className="p-3"
+                >
+                  Totals
+              </Typography>
+                <Divider variant='middle' />
+              </div>
+              <form className={classes.root} noValidate autoComplete="off">
+                <Grid container spacing={3} >
+                  <Grid item xs={12} md={3}>
+                    <FormControl className={classes.textField} variant="filled">
+                      <InputLabel htmlFor="filled-adornment-amount">
+                        EXPECTED CASH
+                  </InputLabel>
+                      <FilledInput
+                        aria-label="Summation of credit and unpaid winnings"
+                        id="filled-adornment-amount"
+                        value={expectedCashAtHand}
+                        disabled
+                        startAdornment={
+                          <InputAdornment position="start"> ₦</InputAdornment>
+                        }
+                      />
+                      <small className="text-muted">
+                        The amount expected to be with you
+            </small>
+                    </FormControl>
+                  </Grid>
+
+                  <Grid item xs={12} md={3}>
+                    <TextField
+                      className={classes.textField}
+                      id="outlined-basic"
+                      label="ACTUAL CASH"
                       value={actualCashAtHand}
+                      onBlur={() => HandleTotals()}
                       onChange={(e) => setActualCashAtHand(e.target.value)}
-                      label="ACTUAL CASH @ HAND"
                       variant="outlined"
-                      fullWidth
+                      helperText='The actual cash at hand'
                     />
                   </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      label="EXPECTED CASH @ HAND"
-                      variant="outlined"
-                      fullWidth
-                      disabled
-                      value={expectedCashAtHand}
-                    />
+                  <Grid item xs={12} md={3}>
+                    <FormControl className={classes.textField} variant="filled">
+                      <InputLabel htmlFor="filled-adornment-amount">
+                        BALANCE
+                  </InputLabel>
+                      <FilledInput
+                        aria-label="Summation of credit and unpaid winnings"
+                        id="filled-adornment-amount"
+                        value={balance}
+                        disabled
+                        startAdornment={
+                          <InputAdornment position="start"> ₦</InputAdornment>
+                        }
+                      />
+                      <small className="text-muted">
+                        This is expected to be zero, if it's negative, your account is not balance
+                      </small>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={12} md={3}>
+                    <Button
+                      variant="text"
+                      color="secondary"
+                      startIcon={<ReplayIcon />}
+                      onClick={HandleTotals}
+                      style={{ padding: 10, margin: 3 }}
+                    >
+                      Redo Calc
+                  </Button>
                   </Grid>
                 </Grid>
               </form>
+
               <div className="float-right">
                 <Button
                   onClick={handleSubmit}
@@ -260,14 +335,14 @@ function SalesReportFunction(props) {
                   className="m-4"
                   disabled={props.isSendingSR}
                 >
-                  {props.isSendingSR ? <CircularProgress size={24} /> : " Send Report"}
+                  {props.isSendingSR ? (<> <CircularProgress size={24} /> <p>Sending Report</p> </>) : " Send Report"}
                 </Button>
               </div>
             </CardContent>
           </Card>
         </Grid>
         <Grid item xs={12} sm={12} md={3}>
-          <FormControl className={classes.textField} variant="filled">
+          {/* <FormControl className={classes.textField} variant="filled">
             <InputLabel htmlFor="filled-adornment-amount">SubTotal</InputLabel>
             <FilledInput
               aria-label="Summation of credit and unpaid winnings"
@@ -281,25 +356,9 @@ function SalesReportFunction(props) {
             <small className="text-muted">
               Summation of credit and unsettled winnings"
             </small>
-          </FormControl>
-          <FormControl className={classes.textField} variant="filled">
-            <InputLabel htmlFor="filled-adornment-amount">
-              SubTotal 2
-            </InputLabel>
-            <FilledInput
-              aria-label="Summation of credit and unpaid winnings"
-              id="filled-adornment-amount"
-              value={sub_total2}
-              disabled
-              startAdornment={
-                <InputAdornment position="start"> ₦</InputAdornment>
-              }
-            />
-            <small className="text-muted">
-              Summation of expense and online balance"
-            </small>
-          </FormControl>
+          </FormControl> */}
 
+          {/* 
           <FormControl className={classes.textField} variant="filled">
             <InputLabel htmlFor="filled-adornment-amount">
               RUNNING CREDIT
@@ -336,7 +395,7 @@ function SalesReportFunction(props) {
             <small className="text-muted">
               Summation of total payout, POS/MISC
             </small>
-          </FormControl>
+          </FormControl> */}
 
           <SidebarContent />
         </Grid>

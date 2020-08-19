@@ -27,39 +27,35 @@ export const storeSalesReport = ({ data }) => dispatch => {
         dispatch({ type: SENDING_SALES_REPORT })
 
         const {
-            unsettledWinnings,
+            misc,
             totalPayout,
-            actualCashAtHand,
-            sub_total1,
-            totalRunCred,
+            fuel,
+            pos,
             eCreditFunded,
-            cashFunded, //
-            creditUnpaidTotal,
+            cashFunded,
+            unsettledWinnings,
+            totalRunCred,
             expenseTotal,
             onlineBalance,
+            actualCashAtHand,
             expectedCashAtHand,
-            sub_total2,
-            fuel,
-            misc,
+            balance,
         } = data
 
         Axios.post(`${baseUrl}report/sales/store`, {
-            unsettledWinnings,
+            misc,
             totalPayout,
-            expenseTotal,
-            totalPayout,
-            actualCashAtHand,
-            sub_total1,
-            totalRunCred,
+            fuel,
+            pos,
             eCreditFunded,
-            cashFunded, //
-            creditUnpaidTotal,
+            cashFunded,
+            unsettledWinnings,
+            totalRunCred,
             expenseTotal,
             onlineBalance,
+            actualCashAtHand,
             expectedCashAtHand,
-            sub_total2,
-            fuel,
-            misc,
+            balance,
         }, {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => {

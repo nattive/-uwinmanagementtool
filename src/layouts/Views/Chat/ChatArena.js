@@ -20,11 +20,11 @@ import {
     DialogContent,
     DialogContentText,
     DialogActions,
+    Avatar,
 } from "@material-ui/core";
 import { css } from 'glamor';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { GiftedChat } from 'react-gifted-chat';
-
 import {
     fetchChats,
     postMessage,
@@ -34,16 +34,9 @@ import {
 import SendIcon from "@material-ui/icons/Send";
 import store from "../../../Misc/store";
 import { FETCHED_CHAT } from "../../../actions/types";
-import { SystemMessage } from 'react-chat-elements'
+import MessageIcon from '@material-ui/icons/Message';
 import "react-chat-elements/dist/main.css";
-import {
-    MessageList,
-    Input,
-    MessageBox,
-    Button,
-    SideBar,
-    ChatList,
-} from "react-chat-elements";
+import { makeStyles } from '@material-ui/core/styles';
 import Echo from "laravel-echo";
 import chatBackground from "./image/chat.jpg";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
@@ -76,12 +69,12 @@ class ChatArena extends Component {
     componentWillReceiveProps(newProps) {
         if (newProps.chats && newProps.chats !== this.props.chats) {
             // this.setState({ messages: newProps.chats.chat_messages });
-            newProps.chats.messages &&
+            newProps.chats.messages && newProps.chats.messages.length > 0 ?
                 newProps.chats.messages.map(message => {
                     this.state.messageData.push(
                         message
                     )
-                })
+                }) : this.setState({ messageData: []})
         }
         if (newProps.FetchedManager !== this.props.FetchedManager) {
             this.setState({ receiver: newProps.FetchedManager });
@@ -135,6 +128,7 @@ class ChatArena extends Component {
                     //   }, 900);
                 })
                 .listen('.chat', (event) => {
+                    
                     const { message } = event
                     console.log(message)
                     this.setState({ queuedMessage: [] })
@@ -151,7 +145,7 @@ class ChatArena extends Component {
                         ...message
                     }
                     this.setState((state) => {
-                        return { messageData: GiftedChat.append(state.messageData, newMessage) };
+                        return { messageData: GiftedChat.prepend(state.messageData, newMessage) };
                     });
                 })
         }
@@ -258,7 +252,7 @@ class ChatArena extends Component {
 
         return (
             <>
-                <Card >
+                <Card styled={{backgroundColor: '#373737044'}}>
                     <CardHeader title={
                         this.props.receiver !== [] ? (
                             this.props.receiver.name
@@ -266,6 +260,7 @@ class ChatArena extends Component {
                             )
                     }
                         subheader="online"
+                        avatar={<Avatar src={this.props.manager.thumbnail_url || '' }/> }
                         action={<ChatSideAreaMenu />}
                         style={
                             {
@@ -281,9 +276,12 @@ class ChatArena extends Component {
                         }
                     } >
                         <GiftedChat
-                            isLoadingEarlier={this.props.isFetching}
+                            // isLoadingEarlier={this.props.isFetching}
+                            inverted={false}
+                            scrollToBottom 
+                            timeTextStyle={{ left: { color: 'red' }, right: { color: 'yellow' } }}
                             // renderChatFooter={() => 'typing'}
-                            backgroundImage={chatBackground}
+                            backgroundImage={'https://res.cloudinary.com/charisbiz-africa/image/upload/v1597662942/blank-card-chat-colors_exxnbn.jpg'}
                             messages={this.state.messageData}
                             onInputTextChanged={() => this.isTyping()}
                             onSend={() => this.handlePostMessage()}

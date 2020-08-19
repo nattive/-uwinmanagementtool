@@ -13,11 +13,19 @@ import {
     GETTING_PRIVATE_CHAT,
     ERROR_PRIVATE_CHAT,
     PRIVATE_CHATS,
+    GET_ONLINE_MANAGERS,
+    ERROR_GETTING_ONLINE_MANAGERS,
+    ONLINE_MANAGERS,
+    GETTING_ONLINE_MANAGERS,
+    UPDATE_PROFILE,
+    UPDATING_PROFILE,
+    STORE_USER,
+    ERR_UPDATING_PROFILE
 } from './types'
 import Axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
 import store from '../Misc/store';
-
+// 
 export const fetchChats = () => dispatch => {
 
     const token = localStorage.getItem('uwin_manager_token')
@@ -55,6 +63,33 @@ export const fetchChats = () => dispatch => {
         });
 }
 
+export const getOnlineManagers = () => dispatch => {
+
+    const token = localStorage.getItem('uwin_manager_token')
+    dispatch({
+        type: GET_ONLINE_MANAGERS,
+    })
+
+    dispatch({
+        type: GETTING_ONLINE_MANAGERS,
+    })
+
+    Axios.get(`${baseUrl}chat/online/all`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+            dispatch({
+                type: ONLINE_MANAGERS,
+                payload: res.data
+            })
+        })
+        .catch((err) => {
+            dispatch({
+                type: ERROR_GETTING_ONLINE_MANAGERS,
+                payload: err.message || err.response && err.response.data || JSON.stringify(err) || 'An error occurred while fetching data'
+            })
+        });
+}
 
 export const fetchPrivateChats = () => dispatch => {
 
@@ -207,4 +242,33 @@ export const postMessage = (text, receiver_id, chat) => dispatch => {
                 payload: err.response
             })
         });
+}
+
+
+export const toggleOnline = (data) => dispatch => {
+
+    console.log(data);
+    dispatch({ type: UPDATE_PROFILE })
+    dispatch({ type: UPDATING_PROFILE })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.post(`${baseUrl}users/update/${data.user_id}`, {
+        isOnline: data.isOnline,
+    }, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: STORE_USER,
+                payload: res.data
+            })
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_UPDATING_PROFILE,
+            payload: err.response
+        })
+    })
 }
