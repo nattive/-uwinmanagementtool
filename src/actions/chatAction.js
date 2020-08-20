@@ -20,7 +20,16 @@ import {
     UPDATE_PROFILE,
     UPDATING_PROFILE,
     STORE_USER,
-    ERR_UPDATING_PROFILE
+    ERR_UPDATING_PROFILE,
+    CREATE_GROUP,
+    CREATING_GROUP,
+    ERR_CREATING_GROUP,
+    GROUP_CREATED,
+    FETCHING_GROUPS,
+    FETCHED_GROUPS,
+    FETCHED_GROUP,
+    FETCH_GROUP,
+    ERR_FETCHING_GROUPS,
 } from './types'
 import Axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
@@ -119,6 +128,34 @@ export const fetchPrivateChats = () => dispatch => {
         });
 }
 
+export const getMyGroups = () => dispatch => {
+
+    const token = localStorage.getItem('uwin_manager_token')
+    dispatch({
+        type: FETCHING_GROUPS,
+    })
+
+
+    dispatch({
+        type: FETCH_GROUP
+    })
+
+    Axios.get(`${baseUrl}chat/group/all`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((res) => {
+            dispatch({
+                type: FETCHED_GROUPS,
+                payload: res.data.data
+            })
+        })
+        .catch((err) => {
+            dispatch({
+                type: ERR_FETCHING_GROUPS,
+                payload: err.response
+            })
+        });
+}
 
 export const fetchChatsById = (id) => dispatch => {
 
@@ -239,7 +276,10 @@ export const postMessage = (text, receiver_id, chat) => dispatch => {
         .catch((err) => {
             dispatch({
                 type: CHAT_ERROR,
-                payload: err.response
+                payload: {
+                    error: err.message || err.response !== undefined ? err.response.data : JSON.stringify(err),
+                    text: text
+                }
             })
         });
 }
@@ -268,6 +308,37 @@ export const toggleOnline = (data) => dispatch => {
     ).catch(err => {
         dispatch({
             type: ERR_UPDATING_PROFILE,
+            payload: err.response
+        })
+    })
+}
+
+
+
+export const createGroup = (data) => dispatch => {
+
+    console.log(data);
+    dispatch({ type: CREATE_GROUP })
+    dispatch({ type: CREATING_GROUP })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.post(`${baseUrl}chat/group/store`, {
+        name: data.name,
+        users: data.users,
+    }, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: GROUP_CREATED,
+                payload: res.data
+            })
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_CREATING_GROUP,
             payload: err.response
         })
     })

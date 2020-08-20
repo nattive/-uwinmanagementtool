@@ -10706,6 +10706,14 @@ react-chat-elements@^10.9.2:
     react-spinkit "^3.0.0"
     timeago.js "^4.0.0-beta.2"
 
+react-chat-plugin@^0.1.14:
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/react-chat-plugin/-/react-chat-plugin-0.1.14.tgz#9b83fac2beb6eb0c944760f504208bd3dfaa850c"
+  integrity sha512-6mDxKad7WGDdH1dV4dDwUQH6omBnBfZ7PE4XY4XyVkFSJq9PIh0eFRUw3zMq6DDaGO8gpKRPea4FStFUXx6kiw==
+  dependencies:
+    moment "^2.24.0"
+    react-textarea-autosize "^7.1.2"
+
 react-chat-ui@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/react-chat-ui/-/react-chat-ui-0.3.2.tgz#9698ca78affef93de31037594cc7325fc8b0492c"
@@ -11084,6 +11092,14 @@ react-swipeable-views@^0.13.9:
     react-swipeable-views-core "^0.13.7"
     react-swipeable-views-utils "^0.13.9"
     warning "^4.0.1"
+
+react-textarea-autosize@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/react-textarea-autosize/-/react-textarea-autosize-7.1.2.tgz#70fdb333ef86bcca72717e25e623e90c336e2cda"
+  integrity sha512-uH3ORCsCa3C6LHxExExhF4jHoXYCQwE5oECmrRsunlspaDAbS4mGKNlWZqjLfInWtFQcf0o1n1jC/NGXFdUBCg==
+  dependencies:
+    "@babel/runtime" "^7.1.2"
+    prop-types "^15.6.0"
 
 react-timer-mixin@^0.13.3:
   version "0.13.4"

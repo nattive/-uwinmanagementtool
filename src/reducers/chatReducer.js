@@ -23,6 +23,15 @@ import {
     ERROR_GETTING_ONLINE_MANAGERS,
     OPEN_NOTIFICATION,
     OPEN_TOP_NOTIFICATION,
+    CREATE_GROUP,
+    CREATING_GROUP,
+    ERR_CREATING_GROUP,
+    GROUP_CREATED,
+    FETCHED_GROUPS,
+    FETCH_GROUP,
+    ERR_FETCHING_GROUPS,
+    FETCHED_GROUP,
+    FETCHING_GROUPS
 } from "../actions/types";
 // import Echo from "laravel-echo";
 import socketio from "socket.io-client";
@@ -55,7 +64,18 @@ const initialState = {
      */
     onlineManager: [],
     OM_err: null,
-    isFetchingOM: false
+    isFetchingOM: false,
+    /**
+     * Chat Group
+     */
+    isCreatingGroup: false,
+    errCreatingGroup: null,
+    groupSuccess: null,
+    group: {},
+    isFetchingGroup: false,
+    fetchedGroups: [],
+    fetchedGroup: {},
+    errFetchingGroups: null
 }
 const token = localStorage.getItem('uwin_manager_token')
     //uwinitni_uwinitnigeria
@@ -199,6 +219,65 @@ export default function(state = initialState, action) {
                 ...state,
                 isFetchingOM: false,
                 OM_err: action.payload,
+            }
+        case FETCH_GROUP:
+            return {
+                ...state,
+                isFetchingGroup: false,
+                fetchedGroups: [],
+                fetchedGroup: {},
+                errFetchingGroups: null
+            }
+        case FETCHING_GROUPS:
+            return {
+                ...state,
+                isFetchingGroup: true,
+            }
+
+        case FETCHED_GROUPS:
+            return {
+                ...state,
+                isFetchingGroup: false,
+                fetchedGroups: action.payload
+            }
+        case ERR_FETCHING_GROUPS:
+            return {
+                ...state,
+                isFetchingGroup: false,
+                errFetchingGroups: action.payload,
+            }
+        case FETCHED_GROUP:
+            return {
+                ...state,
+                isFetchingGroup: false,
+                fetchedGroup: action.payload,
+            }
+
+        case CREATE_GROUP:
+            return {
+                ...state,
+                isCreatingGroup: false,
+                errCreatingGroup: null,
+                group: {}
+            }
+        case CREATING_GROUP:
+            return {
+                ...state,
+                isCreatingGroup: true,
+            }
+        case ERR_CREATING_GROUP:
+            return {
+                ...state,
+                isCreatingGroup: false,
+                errCreatingGroup: action.payload,
+            }
+        case GROUP_CREATED:
+            return {
+                ...state,
+                isCreatingGroup: false,
+                errCreatingGroup: null,
+                group: action.payload,
+                groupSuccess: "Group created Succesfully"
             }
 
         default:

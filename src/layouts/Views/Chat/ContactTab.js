@@ -11,9 +11,10 @@ import { getUser } from "../../../actions/usersAction";
 import { connect, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { getUsers } from "../../../actions/usersAction";
-import { initPrivateChat, fetchPrivateChats, getOnlineManagers } from "../../../actions/chatAction";
+import { initPrivateChat, fetchPrivateChats, getOnlineManagers, getMyGroups } from "../../../actions/chatAction";
 import Badge from '@material-ui/core/Badge';
 import { ChatItem } from 'react-chat-elements'
+import Skeleton from '@material-ui/lab/Skeleton';
 
 import {
   List,
@@ -67,7 +68,7 @@ function TabPanel(props) {
   // console.log(lastMessage)
   const { children, value, index, ...other } = props;
 
-  
+
   return (
     <div
       role="tabpanel"
@@ -112,6 +113,7 @@ function ContactTab(props) {
   const [value, setValue] = React.useState(0);
   useEffect(() => {
     props.getUsers();
+    props.getMyGroups();
     props.getOnlineManagers();
     props.fetchPrivateChats();
   }, []);
@@ -136,8 +138,8 @@ function ContactTab(props) {
 
 
   const handleInitChat = (user) => {
-    dispatch({ type: NULL_CHATS})
-    dispatch({ type: OPEN_CHAT, payload: user})
+    dispatch({ type: NULL_CHATS })
+    dispatch({ type: OPEN_CHAT, payload: user })
     props.initPrivateChat(user.id);
     // props.getUser(user.id);
   };
@@ -169,12 +171,12 @@ function ContactTab(props) {
           style={{ height: "450px", overflowY: "scroll" }}
         >
           {props.privateChats.length && props.privateChats.map(chat => (
-            
+
             <ChatItem
               avatar={chat.receiver.thumbnail_url}
               alt={chat.receiver.name}
               title={chat.receiver.name}
-              subtitle={lastItem(chat.messages) ? lastItem(chat.messages).text : 'no message sent' }
+              subtitle={lastItem(chat.messages) ? lastItem(chat.messages).text : 'no message sent'}
               date={lastItem(chat.messages) ? new Date(lastItem(chat.messages).updated_at) : new Date(chat.created_at)}
               onClick={() => handleInitChat(chat.receiver)}
               unread={0} />
@@ -206,8 +208,8 @@ function ContactTab(props) {
             ))
             : props.isFetching ? (<CircularProgress />) : (<p>No Manager</p>)} */}
         </TabPanel>
-         
-        <TabPanel value={value} index={1} dir={theme.direction}  style={{ height: "450px", overflowY: "scroll" }}>
+
+        <TabPanel value={value} index={1} dir={theme.direction} style={{ height: "450px", overflowY: "scroll" }}>
           {props.onlineManager.length > 0
             ? props.onlineManager.map((item) => (
               <React.Fragment key={item.id}>
@@ -234,7 +236,29 @@ function ContactTab(props) {
             : props.isFetching ? (<CircularProgress />) : (<p>No Manager</p>)}
         </TabPanel>
         <TabPanel value={value} index={2} dir={theme.direction}>
-          Coming soon
+          {
+            props.isFetchingGroup ? (
+              <>
+                <Box width='100%'>
+                  <Skeleton>
+                    <Avatar />
+                  </Skeleton>
+                  <Skeleton>
+                    <Typography />
+                  </Skeleton>
+                </Box>
+              </>
+            ) :
+            props.fetchedGroups && props.fetchedGroups.length && props.fetchedGroups.map(group => (
+            <ChatItem
+            avatar={group.thumbnail_url}
+            alt={group.name}
+            title={group.name}
+            subtitle={group.last_message || 'no message sent'}
+            // date={lastItem(group.messages) ? new Date(lastItem(group.messages).updated_at) : new Date(group.created_at)}
+            onClick={() => handleInitChat(group.id)}
+            unread={0} />
+          ))}
         </TabPanel>
       </SwipeableViews>
     </div>
@@ -250,12 +274,19 @@ const mapStateToProps = (state) => ({
   privateChatError: state.chat.privateChatError,
   chats: state.chat.chats,
   onlineManager: state.chat.onlineManager,
+  isFetchingGroup: state.chat.isFetchingGroup,
+  fetchedGroups: state.chat.fetchedGroups,
+  fetchedGroup: state.chat.fetchedGroup,
+  errFetchingGroups: state.chat.errFetchingGroups,
 });
 
 const mapDispatchToProps = {
   getUsers,
   getUser,
-  initPrivateChat, fetchPrivateChats, getOnlineManagers
+  initPrivateChat,
+  getMyGroups,
+  fetchPrivateChats,
+  getOnlineManagers
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactTab);

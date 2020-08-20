@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import date from 'date-and-time';
+import ChatBox, { ChatFrame } from 'react-chat-plugin';
+
 import {
     Grid,
     Card,
@@ -74,7 +76,7 @@ class ChatArena extends Component {
                     this.state.messageData.push(
                         message
                     )
-                }) : this.setState({ messageData: []})
+                }) : this.setState({ messageData: [] })
         }
         if (newProps.FetchedManager !== this.props.FetchedManager) {
             this.setState({ receiver: newProps.FetchedManager });
@@ -98,13 +100,13 @@ class ChatArena extends Component {
                     },
                 }
             });
-             window.Echo
+            window.Echo
                 .join('notification.' + this.props.manager.id)
                 .here(user => {
                     console.log(user);
                 })
-                 .listen('.notification', (event) => {
-                 console.log(event)
+                .listen('.notification', (event) => {
+                    console.log(event)
                 })
 
             window.Echo
@@ -128,29 +130,53 @@ class ChatArena extends Component {
                     //   }, 900);
                 })
                 .listen('.chat', (event) => {
-                    
+
                     const { message } = event
                     console.log(message)
                     this.setState({ queuedMessage: [] })
                     const newMessage = {
-                        _id: message.id,
+                        id: message.id,
                         text: message.text,
-                        createdAt: message.updated_at,
-                        user: {
-                            _id: message.user_id,
-                            name: this.props.receiver.name,
-                            avatar: this.props.receiver.thumbnail_url,
+                        type: 'text',
+                        timestamp: message.updated_at,
+                        author: {
+                            id: message.user_id,
+                            avatarUrl: this.props.receiver.thumbnail_url,
+                            username: this.props.receiver.name,
                             ...this.props.receiver
                         },
-                        ...message
                     }
                     this.setState((state) => {
-                        return { messageData: GiftedChat.prepend(state.messageData, newMessage) };
+                        return { messageData: state.messageData.concat(newMessage) };
                     });
                 })
         }
     }
-    handlePostMessage() {
+
+    componentWillReceiveProps(nextProps) {
+        // do things with nextProps.someProp and prevState.cachedSomeProp
+        if (nextProps.chatError !== this.props.chatError){
+            return {
+                messageData: this.state.messageData.concat({
+                    author: {
+                        username: this.props.manager.user.name,
+                        id: this.props.manager.user.id,
+                        avatarUrl: this.props.manager.user.thumbnail_url
+                    },
+                    text: nextProps.chatError && nextProps.chatError.text ,
+                    timestamp: +new Date(),
+                    type: 'text',
+                    hasError: true,
+                }), 
+            }
+        }
+        return {
+            cachedSomeProp: nextProps.someProp,
+            // ... other derived state properties
+        };
+    }
+
+    handlePostMessage(message) {
         const now = new Date();
         // this.state.queuedMessage.push({
         //     user_id: this.props.manager.user.id,
@@ -162,7 +188,7 @@ class ChatArena extends Component {
         // })
         if (this.props.activeChat) {
             this.props.postMessage(
-                this.state.message,
+                message,
                 this.props.receiver.id,
                 this.props.activeChat.chat.id
             )
@@ -202,7 +228,7 @@ class ChatArena extends Component {
 
     isTyping() {
         let channel = window.Echo
-                .join(this.props.activeChat.channel)
+            .join(this.props.activeChat.channel)
 
         setTimeout(function () {
             channel.whisper('typing', {
@@ -252,7 +278,7 @@ class ChatArena extends Component {
 
         return (
             <>
-                <Card styled={{backgroundColor: '#373737044'}}>
+                <Card styled={{ backgroundColor: '#373737044' }}>
                     <CardHeader title={
                         this.props.receiver !== [] ? (
                             this.props.receiver.name
@@ -260,7 +286,7 @@ class ChatArena extends Component {
                             )
                     }
                         subheader="online"
-                        avatar={<Avatar src={this.props.manager.thumbnail_url || '' }/> }
+                        avatar={<Avatar src={this.props.manager.thumbnail_url || ''} />}
                         action={<ChatSideAreaMenu />}
                         style={
                             {
@@ -273,28 +299,18 @@ class ChatArena extends Component {
                         {
                             height: this.state.height - 150,
                             overflowY: "hidden",
+                            backgroundColor: '#fff'
                         }
                     } >
-                        <GiftedChat
-                            // isLoadingEarlier={this.props.isFetching}
-                            inverted={false}
-                            scrollToBottom 
-                            timeTextStyle={{ left: { color: 'red' }, right: { color: 'yellow' } }}
-                            // renderChatFooter={() => 'typing'}
-                            backgroundImage={'https://res.cloudinary.com/charisbiz-africa/image/upload/v1597662942/blank-card-chat-colors_exxnbn.jpg'}
+                        <ChatBox
+                            style={{ border: 'none' }}
                             messages={this.state.messageData}
-                            onInputTextChanged={() => this.isTyping()}
-                            onSend={() => this.handlePostMessage()}
-                            onInputTextChanged={(e) => this.setState({ message: e })}
-                            user={this.props.manager && {
-                                _id: this.props.manager.user.id,
-                                avatar: this.props.manager.user.thumbnail_url,
-                                ...this.props.manager.user
-                            }}
+                            userId={this.props.manager.user.id}
+                            onSendMessage={this.handlePostMessage}
+                            width={'1000px'}
+                            height={this.state.height - 155}
                         />
                     </CardContent>
-
-
                 </Card>
             </>
         );
@@ -307,7 +323,6 @@ const mapStateToProps = (state) => ({
     chat: state.chat.chat,
     receiver: state.chat.receiver,
     chats: state.chat.chats,
-    receiver: state.chat.receiver,
     activeChat: state.chat.activeChat,
     chatError: state.chat.chatError,
     newMessage: state.chat.newMessage,

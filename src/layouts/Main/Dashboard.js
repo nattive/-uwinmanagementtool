@@ -224,6 +224,9 @@ function Dashboard(props) {
         .joining(user => {
           props.toggleOnline(data)
         })
+        .notification((notification) => {
+          console.log(notification.type);
+        })
         .leaving(user => {
           props.toggleOnline(offline)
           console.log(user)

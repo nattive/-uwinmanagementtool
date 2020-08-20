@@ -61,7 +61,7 @@ class ChatHome extends Component {
     return (
       <div>
         <Grid container>
-          <Grid item xs={12} sm={12} md={7}>
+          <Grid item xs={12} sm={12} md={6}>
             {!this.props.hasInitiatedChat ? (
               <Grid item justify="center" alignContent="center">
                 <Card styled={{ backgroundColor: '#373737044' }}>

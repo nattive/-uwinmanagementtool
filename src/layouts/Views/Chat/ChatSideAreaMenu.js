@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import { ButtonGroup } from '@material-ui/core';
+import { ButtonGroup, Divider, TextField, DialogActions, Checkbox, Typography, ListItemIcon, CircularProgress } from '@material-ui/core';
 import MessageIcon from '@material-ui/icons/Message';
 import { makeStyles } from '@material-ui/core/styles';
 import Avatar from '@material-ui/core/Avatar';
@@ -17,16 +17,21 @@ import PersonIcon from '@material-ui/icons/Person';
 import AddIcon from '@material-ui/icons/Add';
 import { getUser } from "../../../actions/usersAction";
 import { connect, useDispatch } from 'react-redux';
-import { blue } from '@material-ui/core/colors'; 
+import { blue } from '@material-ui/core/colors';
 import { OPEN_CHAT } from "../../../actions/types";
-
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
+import swal from "@sweetalert/with-react";
 import {
     fetchChats,
     initPrivateChat,
     fetchChatsById,
+    createGroup,
 } from "../../../actions/chatAction";
 function ChatSideAreaMenu(props) {
+    const [showGroup, setShowGroup] = React.useState(false);
+    const [groupManager, setGrouproupManager] = React.useState([]);
     const [anchorEl, setAnchorEl] = React.useState(null);
+    const [groupName, setGroupName] = React.useState(null);
     const [anchorEl2, setAnchorEl2] = React.useState(null);
     const handleInitChat = (user) => {
         dispatch({ type: OPEN_CHAT, payload: user })
@@ -41,6 +46,21 @@ function ChatSideAreaMenu(props) {
 
     const handleClose = () => {
         setAnchorEl(null);
+    };
+
+    const handleAddManager = (id) => {
+        groupManager.includes(id) ? setGrouproupManager(groupManager.filter(i => i !== id)) : setGrouproupManager([...groupManager, id])
+    }
+
+    const handleCreate = () => {
+        const data = {
+            name: groupName,
+            users: groupManager
+        }
+        props.createGroup(data)
+    }
+    const handleShowGroup = () => {
+        setShowGroup((prev) => !prev);
     };
 
     const handleClick2 = (event) => {
@@ -58,14 +78,21 @@ function ChatSideAreaMenu(props) {
         },
     });
     const classes = useStyles();
-
+    const isFirstRun = useRef(true);
+    useEffect(() => {
+        if (isFirstRun.current) {
+            isFirstRun.current = false;
+            return;
+        }
+        swal("Successful", props.groupSuccess, "success");
+    }, [props.groupSuccess]);
     return (
         <div>
             <ButtonGroup style={{ margin: 5, padding: 5 }}>
                 {/* <Button aria-controls="simple-menu" aria-haspopup="true"  onClick={handleClick}> <MoreVertIcon /></Button> */}
                 <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick2}><MessageIcon /></Button>
-                
-               
+
+
             </ButtonGroup>
             {/* <Menu
                 id="simple-menu"
@@ -80,28 +107,77 @@ function ChatSideAreaMenu(props) {
             </Menu> */}
 
             <Dialog onClose={handleClose2} aria-labelledby="simple-dialog-title" open={Boolean(anchorEl2)}>
-                <DialogTitle id="simple-dialog-title">Chat with Other Managers</DialogTitle>
-                <List>
-                    {props.managers && props.managers.length > 0 ?  props.managers.map((manager) => (
-                        <ListItem button onClick={() => handleInitChat(manager)}>
+                {/* <DialogTitle id="simple-dialog-title">Chat with Other Managers</DialogTitle> */}
+
+                {!showGroup ?
+                    <List>
+                        <ListItem>
+                            <ListItemText primary='Chat with Other Managers' />
+                        </ListItem>
+                        <ListItem button onClick={handleShowGroup}>
                             <ListItemAvatar>
                                 <Avatar className={classes.avatar}>
-                                    <PersonIcon src={manager.thumbnail_url} />
+                                    <GroupAddIcon />
                                 </Avatar>
                             </ListItemAvatar>
-                            <ListItemText primary={manager.name} />
+                            <ListItemText primary="Create Group Chat" />
                         </ListItem>
-                    )): 'no manager fetched'}
+                        <Divider style={{ margin: 15 }} />
+                        {props.managers && props.managers.length > 0 ? props.managers.map((manager) => (
+                            <ListItem button onClick={() => handleInitChat(manager)}>
+                                <ListItemAvatar>
+                                    <Avatar className={classes.avatar}>
+                                        <PersonIcon src={manager.thumbnail_url} />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary={manager.name} />
+                            </ListItem>
+                        )) : 'no manager fetched'}
+                    </List>
+                    : <>
+                        <TextField
+                            label="Group name"
+                            id="outlined-size-small"
+                            variant="outlined"
+                            size="small"
+                            value={groupName}
+                            onChange={e => setGroupName(e.target.value)}
+                            style={{ margin: 10, borderRadius: 0 }}
+                        />
+                        <List>
+                            <ListItem button onClick={handleShowGroup}>
+                                <ListItemAvatar>
+                                    <Avatar className={classes.avatar}>
+                                        <PersonIcon />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary="Chat with Other Managers" />
+                            </ListItem>
+                            <Divider style={{ margin: 15 }} />
+                            <ListItem >
+                                <ListItemText primary="Select Manager to Add to group" />
+                            </ListItem>
+                            {props.managers && props.managers.length > 0 ? props.managers.map((manager) => (
+                                <>
+                                    <ListItem key={manager.id} role='list' dense button onClick={() => handleAddManager(manager.id)}>
+                                        <ListItemIcon>
+                                            <Checkbox
+                                                edge="start"
+                                                checked={groupManager.includes(manager.id)}
+                                                tabIndex={-1}
+                                                disableRipple
+                                                inputProps={{ 'aria-labelledby': manager.id }}
+                                            />
+                                        </ListItemIcon>
+                                        <ListItemText id={manager.id} primary={manager.name} />
 
-                    {/* <ListItem autoFocus button onClick={() => handleListItemClick('addAccount')}>
-                        <ListItemAvatar>
-                            <Avatar>
-                                <AddIcon />
-                            </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText primary="Add account" />
-                    </ListItem> */}
-                </List>
+                                    </ListItem>
+                                </>
+                            )) : 'no manager fetched'}
+                            <Button variant='contained' style={{ width: '100%' }} color='primary' disabled={props.isCreatingGroup} onClick={handleCreate}>{props.isCreatingGroup ? <CircularProgress size={22} /> : ' Create Group' }</Button>
+                        </List>
+                    </>
+                }
             </Dialog>
 
         </div>
@@ -111,6 +187,9 @@ function ChatSideAreaMenu(props) {
 const mapStateToProps = (state) => ({
     echo: state.chat.echo,
     isFetching: state.chat.isFetching,
+    isCreatingGroup: state.chat.isCreatingGroup,
+    errCreatingGroup: state.chat.errCreatingGroup,
+    group: state.chat.group,
     chat: state.chat.chat,
     receiver: state.chat.receiver,
     chats: state.chat.chats,
@@ -119,12 +198,14 @@ const mapStateToProps = (state) => ({
     chatError: state.chat.chatError,
     newMessage: state.chat.newMessage,
     myMessage: state.chat.myMessage,
+    groupSuccess: state.chat.groupSuccess,
     manager: state.auth.manager,
     managers: state.managers.allManagers,
 });
 
 const mapDispatchToProps = {
     fetchChats,
+    createGroup,
     initPrivateChat,
     getUser,
     fetchChatsById,
