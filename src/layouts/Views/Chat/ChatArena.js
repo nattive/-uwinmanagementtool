@@ -65,10 +65,28 @@ class ChatArena extends Component {
         this.handleClickOpen = this.handleClickOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
-
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
+        if (newProps.chatError !== this.props.chatError && newProps.chatError &&  newProps.chatError.text !== undefined) {
+            const newMessage = {
+                author: {
+                    username: this.props.manager.user.name,
+                    id: this.props.manager.user.id,
+                    avatarUrl: this.props.manager.user.thumbnail_url
+                },
+                text: newProps.chatError.text,
+                timestamp: +new Date(),
+                type: 'text',
+                id: Math.random() * 10,
+                hasError: true,
+            }
+            this.setState((state) => {
+                return { messageData: state.messageData.concat(newMessage) };
+            });
+
+        }
         if (newProps.chats && newProps.chats !== this.props.chats) {
             // this.setState({ messages: newProps.chats.chat_messages });
             newProps.chats.messages && newProps.chats.messages.length > 0 ?
@@ -130,12 +148,15 @@ class ChatArena extends Component {
                     //   }, 900);
                 })
                 .listen('.chat', (event) => {
-
+                   
                     const { message } = event
                     console.log(message)
                     this.setState({ queuedMessage: [] })
+                    if (message.user_id === this.props.manager.user.id){
+                        return
+                    }
                     const newMessage = {
-                        id: message.id,
+                        id: message.user_id,
                         text: message.text,
                         type: 'text',
                         timestamp: message.updated_at,
@@ -143,38 +164,18 @@ class ChatArena extends Component {
                             id: message.user_id,
                             avatarUrl: this.props.receiver.thumbnail_url,
                             username: this.props.receiver.name,
-                            ...this.props.receiver
                         },
                     }
                     this.setState((state) => {
                         return { messageData: state.messageData.concat(newMessage) };
                     });
+                    // let newMessagemessage = this.state.messageData.find(obj => obj.author.id === message.user_id);
+                    // console.log(newMessagemessage);
+
                 })
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        // do things with nextProps.someProp and prevState.cachedSomeProp
-        if (nextProps.chatError !== this.props.chatError){
-            return {
-                messageData: this.state.messageData.concat({
-                    author: {
-                        username: this.props.manager.user.name,
-                        id: this.props.manager.user.id,
-                        avatarUrl: this.props.manager.user.thumbnail_url
-                    },
-                    text: nextProps.chatError && nextProps.chatError.text ,
-                    timestamp: +new Date(),
-                    type: 'text',
-                    hasError: true,
-                }), 
-            }
-        }
-        return {
-            cachedSomeProp: nextProps.someProp,
-            // ... other derived state properties
-        };
-    }
 
     handlePostMessage(message) {
         const now = new Date();
@@ -186,23 +187,42 @@ class ChatArena extends Component {
         //     created_at: date.format(now, 'hh:mm A'),
         //     id: Math.random() * 10
         // })
+        var newMessage = {}
         if (this.props.activeChat) {
             this.props.postMessage(
                 message,
                 this.props.receiver.id,
                 this.props.activeChat.chat.id
             )
-        } else {
-            this.state.notSentMessage.push({
-                user_id: this.props.manager.user.id,
-                receiver_id: this.state.receiver.id,
-                text: this.state.message,
-                updated_at: date.format(now, 'hh:mm A'),
-                created_at: date.format(now, 'hh:mm A'),
+            newMessage = {
+                author: {
+                    username: this.props.manager.user.name,
+                    id: this.props.manager.user.id,
+                    avatarUrl: this.props.manager.user.thumbnail_url
+                },
+                text: message,
+                timestamp: +new Date(),
+                type: 'text',
                 id: Math.random() * 10
-            })
+            }
+           
+        } else {
+            newMessage = {
+                author: {
+                    username: this.props.manager.user.name,
+                    id: this.props.manager.user.id,
+                    avatarUrl: this.props.manager.user.thumbnail_url
+                },
+                text: message,
+                timestamp: +new Date(),
+                type: 'text',
+                hasError: true,
+                id: Math.random() * 10
+            }
         }
-
+        this.setState((state) => {
+            return { messageData: state.messageData.concat(newMessage) };
+        });
         // this.setState({ queuedMessage: this.state.message });
         // this.props.fetchChats()
     }

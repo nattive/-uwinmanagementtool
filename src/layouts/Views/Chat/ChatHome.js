@@ -39,6 +39,8 @@ class ChatHome extends Component {
     this.state = {
       width: 0, height: 0
     };
+    this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
   updateWindowDimensions() {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
