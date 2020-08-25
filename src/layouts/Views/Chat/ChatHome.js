@@ -13,6 +13,7 @@ import {
   CircularProgress,
   TextField,
   Typography,
+  Container,
 } from "@material-ui/core";
 import { connect } from "react-redux";
 import { fetchChats, postMessage, fetchPrivateChats } from "../../../actions/chatAction";
@@ -61,9 +62,9 @@ class ChatHome extends Component {
       fontSize: 14,
     };
     return (
-      <div>
+      <Container>
         <Grid container>
-          <Grid item xs={12} sm={12} md={6}>
+          <Grid item xs={12} sm={12} md={7}>
             {!this.props.hasInitiatedChat ? (
               <Grid item justify="center" alignContent="center">
                 <Card styled={{ backgroundColor: '#373737044' }}>
@@ -94,7 +95,7 @@ class ChatHome extends Component {
             <ContactTab />
           </Grid>
         </Grid>
-      </div>
+      </Container>
     );
   }
 }

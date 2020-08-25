@@ -4,3 +4,7 @@
     margin-bottom: '10px';
     border: 10px 10px 10px 0;
 }
+
+.react-chat-container {
+    max-width: 100% !important;
+}

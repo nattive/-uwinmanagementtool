@@ -25,6 +25,7 @@ import Home from "../Views/Home/Home";
 import Chat from "../Views/Chat";
 import logo_white from "../../Assets/img/logo_white.png";
 import { fetchChats, postMessage } from "../../actions/chatAction";
+import { logout } from "../../actions/authAction";
 import { ChecklistExist } from "../../actions/checkoutAction";
 import { toggleOnline } from "../../actions/chatAction";
 import Report from "../Views/Reports/Report";
@@ -44,7 +45,8 @@ import Alert from "@material-ui/lab/Alert";
 import { baseUrlNoApi } from "../../Misc/baseUrl";
 import Notification from "../../components/Notification";
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import { dispatch } from "rxjs/internal/observable/pairs";
+import { dispatch } from "rxjs/internal/observable/pairs"; 
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { OPEN_NOTIFICATION, OPEN_TOP_NOTIFICATION } from "../../actions/types";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
@@ -322,6 +324,10 @@ function Dashboard(props) {
                 <NotificationsIcon />
               </Badge>
             </IconButton>
+            <IconButton onClick={props.logout} color="inherit" style={{ float: "right" }}>
+                <ExitToAppIcon />
+            </IconButton>
+            
             <IconButton
               aria-label="account of current user"
               aria-controls="primary-search-account-menu"
@@ -403,4 +409,4 @@ const mapStateToProps = (state) => ({
   notification: state.chat.notification,
 });
 
-export default connect(mapStateToProps, { fetchChats, ChecklistExist, toggleOnline })(Dashboard);
+export default connect(mapStateToProps, { fetchChats, ChecklistExist, toggleOnline, logout })(Dashboard);

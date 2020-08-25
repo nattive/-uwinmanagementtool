@@ -117,7 +117,7 @@ function SignUp(props) {
       <div className={classes.paper}>
 
         <Typography component="h1" variant="h5">
-          Create MAnager
+          Create Manager
         </Typography>
         {props.registerStatus && <Alert severity='success'>{'Manager successfully created!'}</Alert>}
         <form className={classes.form} noValidate>
@@ -169,7 +169,7 @@ function SignUp(props) {
             </Grid>
           </Grid>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={7}>
+            <Grid item xs={12} md={12}>
               <OutlinedInput
                 id="outlined-adornment-password"
                 type={showPassword ? "text" : "password"}
@@ -190,11 +190,11 @@ function SignUp(props) {
                 labelWidth={70}
               />
             </Grid>
-            <Grid item xs={12} md={5}>
+            {/* <Grid item xs={12} md={5}>
               <Button variant='contained' color='secondary' onClink={handleGenPassword}>
                 Generate Password
               </Button>
-            </Grid>
+            </Grid> */}
           </Grid>
           <Button
             fullWidth

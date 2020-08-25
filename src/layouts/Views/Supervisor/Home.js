@@ -21,6 +21,10 @@ export const Home = (props) => {
             <Route path={`${path}/manage`}>
               <Manage />
             </Route>
+            <Route path={`${path}/signup`}>
+              <SignUpClass />
+            </Route>
+            
           </>
         ) : (<p style={{ margin: 50 }}>You are not authorized to view this page</p>)
         }

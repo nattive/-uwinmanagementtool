@@ -24,9 +24,9 @@ import swal from "@sweetalert/with-react";
 import {
     fetchChats,
     initPrivateChat,
-    fetchChatsById,
-    createGroup,
+    fetchChatsById
 } from "../../../actions/chatAction";
+import { createGroup } from "../../../actions/groupChat";
 function ChatSideAreaMenu(props) {
     const [showGroup, setShowGroup] = React.useState(false);
     const [groupManager, setGrouproupManager] = React.useState([]);
@@ -174,7 +174,7 @@ function ChatSideAreaMenu(props) {
                                     </ListItem>
                                 </>
                             )) : 'no manager fetched'}
-                            <Button variant='contained' style={{ width: '100%' }} color='primary' disabled={props.isCreatingGroup} onClick={handleCreate}>{props.isCreatingGroup ? <CircularProgress size={22} /> : ' Create Group' }</Button>
+                            <Button variant='contained' style={{ width: '100%' }} color='primary' disabled={props.isCreatingGroup} onClick={handleCreate}>{props.isCreatingGroup ? <CircularProgress size={22} /> : ' Create Group'}</Button>
                         </List>
                     </>
                 }

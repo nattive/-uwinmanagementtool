@@ -10,8 +10,9 @@ import Box from "@material-ui/core/Box";
 import { getUser } from "../../../actions/usersAction";
 import { connect, useDispatch } from "react-redux";
 import { useEffect } from "react";
+import { getMyGroups, initGroup } from "../../../actions/groupChat";
 import { getUsers } from "../../../actions/usersAction";
-import { initPrivateChat, fetchPrivateChats, getOnlineManagers, getMyGroups } from "../../../actions/chatAction";
+import { initPrivateChat, fetchPrivateChats, getOnlineManagers } from "../../../actions/chatAction";
 import Badge from '@material-ui/core/Badge';
 import { ChatItem } from 'react-chat-elements'
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -143,6 +144,15 @@ function ContactTab(props) {
     props.initPrivateChat(user.id);
     // props.getUser(user.id);
   };
+
+  const handleInitGroupChat = (group) => {
+    dispatch({ type: NULL_CHATS })
+    dispatch({ type: OPEN_CHAT, payload: {type: 'group', ...group} })
+    props.initGroup(group.id);
+    // props.getUser(user.id);
+  };
+
+
   return (
     <div className={classes.root}>
       <AppBar position="static" color="default">
@@ -249,16 +259,16 @@ function ContactTab(props) {
                 </Box>
               </>
             ) :
-            props.fetchedGroups && props.fetchedGroups.length && props.fetchedGroups.map(group => (
-            <ChatItem
-            avatar={group.thumbnail_url}
-            alt={group.name}
-            title={group.name}
-            subtitle={group.last_message || 'no message sent'}
-            // date={lastItem(group.messages) ? new Date(lastItem(group.messages).updated_at) : new Date(group.created_at)}
-            onClick={() => handleInitChat(group.id)}
-            unread={0} />
-          ))}
+              props.fetchedGroups && props.fetchedGroups.length && props.fetchedGroups.map(group => (
+                <ChatItem
+                  avatar={group.thumbnail_url}
+                  alt={group.name}
+                  title={group.name}
+                  subtitle={group.last_message && group.last_message.text || 'no message sent'}
+                  // date={lastItem(group.messages) ? new Date(lastItem(group.messages).updated_at) : new Date(group.created_at)}
+                  onClick={() => handleInitGroupChat(group)}
+                  unread={0} />
+              ))}
         </TabPanel>
       </SwipeableViews>
     </div>
@@ -286,7 +296,8 @@ const mapDispatchToProps = {
   initPrivateChat,
   getMyGroups,
   fetchPrivateChats,
-  getOnlineManagers
+  getOnlineManagers,
+  initGroup
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactTab);

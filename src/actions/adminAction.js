@@ -28,6 +28,7 @@ import {
     ASSIGNING_ROLE,
     ROLE_ASSIGNED,
     ERR_ASSIGNING_ROLE,
+    APP_IS_LOADING,
 } from './types'
 import { baseUrl } from '../Misc/baseUrl'
 import Axios from 'axios'
@@ -71,6 +72,11 @@ export const assignRole = (data) => dispatch => {
     })
 
     dispatch({
+        type: APP_IS_LOADING,
+        payload: true
+    })
+
+    dispatch({
         type: ASSIGNING_ROLE
 
     })
@@ -89,6 +95,11 @@ export const assignRole = (data) => dispatch => {
                 type: ROLE_ASSIGNED,
                 payload: res.data
             })
+            dispatch({
+                type: APP_IS_LOADING,
+                payload: false
+            })
+
         }
 
     ).catch(err => {
@@ -96,6 +107,11 @@ export const assignRole = (data) => dispatch => {
             type: ERR_ASSIGNING_ROLE,
             payload: err.response
         })
+        dispatch({
+            type: APP_IS_LOADING,
+            payload: false
+        })
+
     })
 }
 
@@ -306,6 +322,37 @@ export const approveReport = (data) => dispatch => {
         dispatch({
             type: ERR_APPROVING_REPORT,
             payload: err.response
+        })
+    })
+}
+
+
+export const managerUser = (data) => dispatch => {
+
+    dispatch({
+        type: APP_IS_LOADING,
+        payload: true
+    })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.post(`${baseUrl}users/update/${data.id}`, {
+        isActive: data.isActive,
+    }, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: APP_IS_LOADING,
+                payload: false
+            })
+            alert('user activated')
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: APP_IS_LOADING,
+            payload: false
         })
     })
 }

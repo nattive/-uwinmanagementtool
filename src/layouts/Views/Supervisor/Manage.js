@@ -16,11 +16,12 @@ import Paper from "@material-ui/core/Paper";
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import AddBoxIcon from "@material-ui/icons/AddBox";
+import swal from "@sweetalert/with-react";
 import { useEffect } from "react";
 import {
     getAllRoles,
     admin_GetUsers,
-    assignRole,
+    assignRole, managerUser
 } from "../../../actions/adminAction";
 import {
     Card,
@@ -30,9 +31,11 @@ import {
     FormControlLabel,
     Checkbox,
     CircularProgress,
+    Button,
 } from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { Link, useRouteMatch } from "react-router-dom";
+import { useState } from "react";
 const useRowStyles = makeStyles({
     root: {
         "& > *": {
@@ -45,13 +48,19 @@ const Manage = (props) => {
         props.admin_GetUsers();
         props.getAllRoles();
     }, []);
+    useEffect(() => {
+        props.roleIsAssigned &&
+            swal("Successful", 'Role assigned successfully', "success");
+    }, [props.roleIsAssigned]);
+
     const { path } = useRouteMatch();
+    // roleIsAssigned
     return (
         <Container>
             <Card>
                 <CardHeader
                     action={
-                        <IconButton component={Link} to={`manager/create`}>
+                        <IconButton component={Link} to={`/supervisor/signup`}>
                             <AddBoxIcon />
                         </IconButton>
                     }
@@ -63,7 +72,7 @@ const Manage = (props) => {
                         <TableRow>
                             <TableCell />
                             <TableCell>Full Name</TableCell>
-                            <TableCell>Position</TableCell>
+                            <TableCell>Assigned Role(s)</TableCell>
                             <TableCell>Location</TableCell>
                             <TableCell>Activate/Deactivate</TableCell>
                         </TableRow>
@@ -108,10 +117,10 @@ function Row(props) {
                     </IconButton>
                 </TableCell>
                 <TableCell align="left">{item.name}</TableCell>
-                <TableCell align="left">{item.duty}</TableCell>
+                <TableCell align="left">{item.roles && item.roles.map(role => `${role.name}, `)}</TableCell>
                 <TableCell align="left">{"lagos"}</TableCell>
                 <TableCell align="left">
-                    <Checkbox checked={item.isActive} />
+                    <Checkbox onClick={() => props.managerUser({ isActive: !item.isActive, id: item.id})} checked={item.isActive} />
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -144,13 +153,9 @@ function Row(props) {
                                                         )}
                                                 </TableCell>
                                                 <TableCell>
-                                                    <FormControlLabel
-                                                        onClick={() => handleAssignRole(role.id, item.id)}
-                                                        control={!props.isAssigningRole ?
-                                                            <Checkbox checked={props.roleIsAssigned} /> : <CircularProgress size={20} />
-                                                        }
-                                                        label={item.roles && item.roles.id === role.id ? 'Assigned' : "Assign"}
-                                                    />
+                                                    <Button variant='contained' color='primary' onClick={() => handleAssignRole(role.id, item.id)}>
+                                                        {item.roles && item.roles.id === role.id ? 'Assigned' : "Assign"}
+                                                    </Button>
                                                 </TableCell>
                                             </TableRow>
                                         ))
@@ -188,7 +193,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
     admin_GetUsers,
     getAllRoles,
-    assignRole
+    assignRole, managerUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Manage);

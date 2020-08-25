@@ -13,7 +13,9 @@ import {
     APP_IS_LOADING,
     TOKEN,
     LOGIN_STATUS,
-    REDIRECT
+    REDIRECT,
+    LOGGED_OUT,
+    LOG_OUT
 } from './types'
 import { ChecklistExist } from './checkoutAction'
 import jwt from 'jsonwebtoken'
@@ -81,6 +83,69 @@ export const login = (email, password) => dispatch => {
 
     })
 }
+
+
+export const logout = () => dispatch => {
+    dispatch({
+        type: APP_IS_LOADING
+    })
+    const token = localStorage.getItem('uwin_manager_token')
+    axios.get(`${baseUrl}auth/logout`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+        console.log(res)
+        localStorage.removeItem('uwin_manager_token')
+        dispatch({
+            type: LOGGED_OUT
+        })
+        dispatch({
+            type: REDIRECT,
+            payload: '/login'
+        })
+        dispatch({
+            type: LOGIN_STATUS,
+            payload: false
+        })
+        dispatch({
+            type: TOKEN,
+            payload: null
+        })
+        dispatch({
+                type: STORE_USER,
+                payload: {}
+            })
+            // dispatch({
+            //     type: LOGIN_STATUS,
+            //     payload: false
+            // })
+        dispatch(ChecklistExist(res.data.user.id))
+
+    }).catch(err => {
+        console.log(err.response)
+        if (err.response !== undefined && err.response.status === 500) {
+            dispatch({
+                type: AUTH_STOPPED_LOADING
+            })
+            dispatch({
+                type: ERR_LOGIN,
+                payload: 'Server Error'
+            })
+        } else {
+
+            dispatch({
+                type: AUTH_STOPPED_LOADING
+            })
+            dispatch({
+                type: ERR_LOGIN,
+                payload: err.response !== undefined && err.response.data ? err.response.data.error : JSON.stringify(err.response)
+            })
+        }
+
+    })
+}
+
+
+
 export const register = data => dispatch => {
 
     dispatch({
@@ -199,13 +264,13 @@ export const verifyRedirect = () => dispatch => {
                 type: AUTH_STOPPED_LOADING
             })
             dispatch({
-                type: APP_IS_LOADING,
-                payload: false
-            })
-            dispatch({
-                type: LOGIN_STATUS,
-                payload: false
-            })
+                    type: APP_IS_LOADING,
+                    payload: false
+                })
+                // dispatch({
+                //     type: LOGIN_STATUS,
+                //     payload: false
+                // })
             dispatch({
                 type: ERR_LOGIN,
                 payload: err.response ? err.response.data : JSON.stringify(err)

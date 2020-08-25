@@ -96,7 +96,7 @@ export const Profile = (props) => {
             guarantorAddress,
             thumbnail_url,
             url,
-            user_id: props.manager.id
+            user_id: props.manager.user.id
         }
         props.updateProfile(data)
     }
@@ -182,6 +182,7 @@ export const Profile = (props) => {
     return (
         <Container className={classes.root}>
             <Grid alignContent='center' alignItems='center' justify='center' direction="column-reverse">
+               {props.updated && <Alert severity='success'>{props.updated}</Alert>}
                 <Dialog
                     open={dialogOpen}
                     aria-labelledby="alert-dialog-title"
@@ -212,13 +213,10 @@ export const Profile = (props) => {
                         <Typography variant='h6'>Update Profile</Typography>
                         <Grid container>
                             <Grid md={6} sm={6} xs={12}>
-                                <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
-                                <label htmlFor="icon-button-file">
                                     <IconButton color="primary" aria-label="upload picture" component="span">
                                         <Avatar src={url} size='large' style={{ width: 200, height: 200, alignSelf: 'center' }}
                                             onClick={() => myWidget.open()} />
                                     </IconButton>
-                                </label>
                             </Grid>
                             <Divider />
                             <Grid md={6} sm={6} xs={12}>
@@ -291,6 +289,7 @@ const mapStateToProps = (state) => ({
     manager: state.auth.manager,
     isUpdatingProfile: state.managers.isUpdatingProfile,
     errorUpdatingProfile: state.managers.errorUpdatingProfile,
+    updated: state.managers.updated,
 })
 
 const mapDispatchToProps = {

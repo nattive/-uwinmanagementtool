@@ -8,6 +8,7 @@ import {
     UPDATING_PROFILE,
     ERR_UPDATING_PROFILE,
     STORE_USER,
+    HAS_UPDATED_PROFILE,
 } from './types'
 import axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
@@ -119,6 +120,10 @@ export const updateProfile = (data) => dispatch => {
                 type: STORE_USER,
                 payload: res.data
             })
+            dispatch({
+                type: HAS_UPDATED_PROFILE
+            })
+
         }
 
     ).catch(err => {

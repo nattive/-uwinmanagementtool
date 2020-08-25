@@ -5,6 +5,7 @@ import {
     FETCHED_USER,
     UPDATE_PROFILE,
     UPDATING_PROFILE,
+    HAS_UPDATED_PROFILE,
     ERR_UPDATING_PROFILE,
 } from "../actions/types";
 
@@ -13,7 +14,8 @@ const initialState = {
     FetchedManager: {},
     fetchingManagers: false,
     fetchError: null,
-    isUpdatingProfile: false,
+    isUpdatingProfile: null,
+    updated: null,
     errorUpdatingProfile: null
 
 }
@@ -43,11 +45,20 @@ export default function(state = initialState, action) {
         case UPDATING_PROFILE:
             return {
                 ...state,
-                isUpdatingProfile: action.payload
+                isUpdatingProfile: true,
+                updated: null
             }
+        case HAS_UPDATED_PROFILE:
+            return {
+                ...state,
+                isUpdatingProfile: false,
+                updated: 'Profile Updated successfully'
+            }
+
         case ERR_UPDATING_PROFILE:
             return {
                 ...state,
+                isUpdatingProfile: false,
                 errorUpdatingProfile: action.payload
             }
 

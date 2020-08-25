@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import date from 'date-and-time';
 import ChatBox, { ChatFrame } from 'react-chat-plugin';
-
+import './chat.css'
 import {
     Grid,
     Card,
@@ -25,14 +25,15 @@ import {
     Avatar,
 } from "@material-ui/core";
 import { css } from 'glamor';
-import ScrollToBottom from 'react-scroll-to-bottom';
-import { GiftedChat } from 'react-gifted-chat';
+// import ScrollToBottom from 'react-scroll-to-bottom';
+// import { GiftedChat } from 'react-gifted-chat';
 import {
     fetchChats,
     postMessage,
     initPrivateChat,
-    fetchChatsById,
+    fetchChatsById, toggleOnline
 } from "../../../actions/chatAction";
+import { sendGroupMessage, fetchGroupChatsById } from "../../../actions/groupChat";
 import SendIcon from "@material-ui/icons/Send";
 import store from "../../../Misc/store";
 import { FETCHED_CHAT } from "../../../actions/types";
@@ -56,6 +57,7 @@ class ChatArena extends Component {
             queuedMessage: [],
             AnchorEl: null,
             messages: [],
+            isTyping: true,
             messageData: [],
             width: 0, height: 0
         };
@@ -69,7 +71,7 @@ class ChatArena extends Component {
     }
 
     componentWillReceiveProps(newProps) {
-        if (newProps.chatError !== this.props.chatError && newProps.chatError &&  newProps.chatError.text !== undefined) {
+        if (newProps.chatError !== this.props.chatError && newProps.chatError && newProps.chatError.text !== undefined) {
             const newMessage = {
                 author: {
                     username: this.props.manager.user.name,
@@ -104,8 +106,11 @@ class ChatArena extends Component {
             this.setState({ receiver: newProps.receiver });
         }
         if (newProps.activeChat !== this.props.activeChat && newProps.activeChat) {
+
             const token = localStorage.getItem('uwin_manager_token')
-            newProps.fetchChatsById(newProps.activeChat.chat.id);
+
+            newProps.receiver && newProps.receiver.type !== 'group' ? newProps.fetchChatsById(newProps.activeChat.chat.id) : newProps.fetchGroupChatsById(newProps.receiver.id);
+
             window.Echo = new Echo({
                 broadcaster: 'pusher',
                 key: '43c8f03f6308989dfc9b',
@@ -132,27 +137,30 @@ class ChatArena extends Component {
                 .here(user => {
                     console.log(user);
                 })
-                .joining(user => {
-                    console.log(user);
-                })
-                .leaving(user => {
-                    console.log(user)
-                })
+                // .joining(user => {
+                //     console.log(user);
+                //     this.props.toggleOnline({ isOnline: true, user_id: user.id })
+
+                // })
+                // .leaving(user => {
+                //     this.props.toggleOnline({ isOnline: false, user_id: user.id })
+                //     console.log(user)
+                // })
                 .listenForWhisper('typing', (e) => {
                     //   this.user = e.user;
-                    //   this.typing = e.typing;
+                    this.setState({ isTyping: true })
                     console.log(e)
                     // remove is typing indicator after 0.9s
-                    //   setTimeout(function() {
-                    //     _this.typing = false
-                    //   }, 900);
+                    setTimeout(function () {
+                        this.setState({ isTyping: false })
+                    }, 900);
                 })
                 .listen('.chat', (event) => {
-                   
+
                     const { message } = event
                     console.log(message)
                     this.setState({ queuedMessage: [] })
-                    if (message.user_id === this.props.manager.user.id){
+                    if (message.user_id === this.props.manager.user.id) {
                         return
                     }
                     const newMessage = {
@@ -189,23 +197,41 @@ class ChatArena extends Component {
         // })
         var newMessage = {}
         if (this.props.activeChat) {
-            this.props.postMessage(
-                message,
-                this.props.receiver.id,
-                this.props.activeChat.chat.id
-            )
-            newMessage = {
-                author: {
-                    username: this.props.manager.user.name,
-                    id: this.props.manager.user.id,
-                    avatarUrl: this.props.manager.user.thumbnail_url
-                },
-                text: message,
-                timestamp: +new Date(),
-                type: 'text',
-                id: Math.random() * 10
+            if (this.props.receiver.type === 'group') {
+                this.props.sendGroupMessage({
+                    text: message,
+                    group_id: this.props.receiver.id
+                })
+                newMessage = {
+                    author: {
+                        username: this.props.manager.user.name,
+                        id: this.props.manager.user.id,
+                        avatarUrl: this.props.manager.user.thumbnail_url
+                    },
+                    text: message,
+                    timestamp: +new Date(),
+                    type: 'text',
+                    id: Math.random() * 10
+                }
+            } else {
+                this.props.postMessage(
+                    message,
+                    this.props.receiver.id,
+                    this.props.activeChat.chat.id
+                )
+                newMessage = {
+                    author: {
+                        username: this.props.manager.user.name,
+                        id: this.props.manager.user.id,
+                        avatarUrl: this.props.manager.user.thumbnail_url
+                    },
+                    text: message,
+                    timestamp: +new Date(),
+                    type: 'text',
+                    id: Math.random() * 10
+                }
             }
-           
+
         } else {
             newMessage = {
                 author: {
@@ -265,37 +291,7 @@ class ChatArena extends Component {
             height: this.state.height - 150,
         });
         const { anchorEl } = this.state;
-        const chatMenu = (
-            <>
-                <div>
-                    <MaterialButton
-                        variant="text"
-                        color="primary"
-                        onClick={this.handleClickOpen}>
-                        Create Group
-                    </MaterialButton>
-                    <Dialog open={this.state.open} onClose={this.handleClose}
-                        aria-labelledby="form-dialog-title">
-                        <DialogTitle id="form-dialog-title"> Create Chat Group </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText> Chat Group name ? </DialogContentText>
-                            <TextField autoFocus margin="dense"
-                                id="name"
-                                label="Group name"
-                                type="text"
-                                fullWidth />
-                        </DialogContent>
-                        <DialogActions>
-                            <MaterialButton onClick={this.handleClose} color="primary" >
-                                Cancel </MaterialButton>
-                            <MaterialButton onClick={this.handleClose} color="primary" >
-                                Create </MaterialButton>
-                        </DialogActions>
-                    </Dialog>
-                </div>
-            </>
-        );
-
+        const { receiver } = this.props
         return (
             <>
                 <Card styled={{ backgroundColor: '#373737044' }}>
@@ -305,8 +301,8 @@ class ChatArena extends Component {
                         ) : (<CircularProgress />
                             )
                     }
-                        subheader="online"
-                        avatar={<Avatar src={this.props.manager.thumbnail_url || ''} />}
+                        subheader={'participants: ' + receiver && receiver.type === 'group' ? receiver.users.length > 0 && receiver.users.map(user => user.name + ', ') : receiver.isOnline === 1 ? "online" : "Offline"}
+                        avatar={<Avatar src={this.props.receiver.thumbnail_url || ''} />}
                         action={<ChatSideAreaMenu />}
                         style={
                             {
@@ -323,11 +319,12 @@ class ChatArena extends Component {
                         }
                     } >
                         <ChatBox
+                            showTypingIndicator={this.state.isTyping}
                             style={{ border: 'none' }}
                             messages={this.state.messageData}
                             userId={this.props.manager.user.id}
                             onSendMessage={this.handlePostMessage}
-                            width={'1000px'}
+                            width={'10000px'}
                             height={this.state.height - 155}
                         />
                     </CardContent>
@@ -357,6 +354,9 @@ const mapDispatchToProps = {
     initPrivateChat,
     getUser,
     fetchChatsById,
+    toggleOnline,
+    sendGroupMessage,
+    fetchGroupChatsById
 };
 
 ChatArena.propTypes = {
