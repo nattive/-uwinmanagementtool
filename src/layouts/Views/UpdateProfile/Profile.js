@@ -55,6 +55,7 @@ export const Profile = (props) => {
     const myWidget = window.cloudinary.createUploadWidget({
         cloudName: 'uwinitnigeria',
         upload_preset: 'zztbandk',
+        multiple: false,
     }, (error, result) => {
         if (result.event == "success") {
             setThumbnail_url(result.info.thumbnail_url)
