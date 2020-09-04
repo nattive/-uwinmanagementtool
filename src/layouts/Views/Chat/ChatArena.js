@@ -113,7 +113,7 @@ class ChatArena extends Component {
 
             window.Echo = new Echo({
                 broadcaster: 'pusher',
-                key: '43c8f03f6308989dfc9b',
+                key: 'a674f379dd9b6c200ba1',
                 cluster: 'eu',
                 encrypted: false,
                 authEndpoint: `${baseUrlNoApi}broadcasting/auth`,

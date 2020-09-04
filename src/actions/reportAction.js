@@ -15,6 +15,7 @@ import {
 import axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
 import store from '../Misc/store';
+import swal from "@sweetalert/with-react";
 
 export const storeWSKPA = ({ data }) => dispatch => {
 
@@ -55,7 +56,9 @@ export const storeWSKPA = ({ data }) => dispatch => {
             headers: { Authorization: `Bearer ${token}` }
         }).then(res => {
                 console.log(res);
-                alert(res.data.data)
+                // alert(res.data.data)
+                swal("Successful", res.data, "success");
+
                 dispatch({
                     type: WSKPA_LOADING_STATE,
                     payload: false

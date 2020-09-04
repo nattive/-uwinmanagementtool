@@ -7,14 +7,16 @@ import {
     SALES_REPORT,
     SALES_REPORTS,
     SALES_REPORT_ERR,
+    WSKPA_LOADING_STATE,
+    NULL_ERR_FETCHING_WSKPA,
+    FETCHED_SINGLE_WSKPA,
+    ERR_FETCHING_WSKPA,
 } from './types'
 import { baseUrl } from '../Misc/baseUrl';
 import Axios from 'axios';
 // 
-// store
-// show
-// update
-// destroy
+// sales
+// Latest
 
 export const storeSalesReport = ({ data }) => dispatch => {
 
@@ -124,4 +126,47 @@ export const showAllSalesReport = (id) => dispatch => {
     }
 
 
+}
+
+
+export const LatestWSKPA = () => dispatch => {
+    dispatch({
+        type: WSKPA_LOADING_STATE,
+        payload: true
+    })
+    dispatch({
+        type: NULL_ERR_FETCHING_WSKPA
+    })
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.get(`${baseUrl}report/sales/Latest`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: FETCHED_SINGLE_WSKPA,
+                payload: res.data
+            })
+            dispatch({
+                type: NULL_ERR_FETCHING_WSKPA
+            })
+            dispatch({
+                type: WSKPA_LOADING_STATE,
+                payload: false
+            })
+
+        }
+
+    ).catch(err => {
+        alert(err && err.response && err.response.data && err.response.data.message)
+        dispatch({
+            type: WSKPA_LOADING_STATE,
+            payload: false
+        })
+
+        dispatch({
+            type: ERR_FETCHING_WSKPA,
+            payload: err.response
+        })
+    })
 }

@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Card, CardContent, Grid, Typography, Avatar } from "@material-ui/core";
 import AccessAlarmIcon from "@material-ui/icons/AccessAlarm";
 import MoneyIcon from "@material-ui/icons/Money";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { ChecklistExist, getLatestChecklist } from "../actions/checkoutAction";
+import { storeNotification } from "../actions/usersAction";
 import Countdown from "react-countdown";
 import { Redirect } from "react-router-dom";
+import { OPEN_NOW, NEW_NOTIFICATION } from "../actions/types";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -43,8 +45,42 @@ const useStyles = makeStyles((theme) => ({
     marginRight: theme.spacing(1),
   },
 }));
-
 const TimerCard = (props) => {
+  const [open, setOpen] = useState()
+  const [day, setDay] = useState()
+  const [time, setTime] = useState()
+  useEffect(() => {
+    setOpen(props.open ? props.open.open : false)
+    setDay(props.open && props.open.type)
+    setTime(props.open && props.open.next)
+  }, [props.open])
+  useEffect(() => {
+    setOpen(props.open ? props.open.open : false)
+    setDay(props.open && props.open.type)
+    setTime(props.open && props.open.next)
+  }, [props.nextChecklist])
+
+  const dispatch = useDispatch()
+  const onComplete = () => {
+    dispatch({
+      type: OPEN_NOW, payload: {
+        open: true,
+        type: day
+      }
+    })
+    dispatch({
+      type: NEW_NOTIFICATION, payload: {
+        title: 'You have a due checklist',
+        type: day
+      }
+    })
+    const data = {
+      title: 'Missed Checklist',
+      body: 'You have a missed checklist',
+      type: 'other',
+    }
+    props.storeNotification(data)
+  }
   const {
     className,
     summaryTitle,
@@ -59,7 +95,8 @@ const TimerCard = (props) => {
   const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
       // Render a completed state
-      return <Redirect to='/' />;
+      return () => onComplete();
+
     } else {
       // Render a countdown
       return (
@@ -81,7 +118,7 @@ const TimerCard = (props) => {
             {props.open && <Countdown
               date={new Date(props.open && props.open.next)}
               renderer={renderer}
-              onComplete={() => props.ChecklistExist()}
+              onComplete={onComplete}
             />
             }
           </Grid>
@@ -114,6 +151,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
   ChecklistExist,
   getLatestChecklist,
+  storeNotification
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimerCard);

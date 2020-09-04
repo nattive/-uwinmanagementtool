@@ -22,7 +22,12 @@ function Home(props) {
           <TimerCard />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-          {/* <TasksProgress /> */}
+         <SummaryCard
+            summaryTitle="Last Fuel Disbursement Report"
+            summaryTittleAbbr="SFCR"
+            totalUpdated={props.wskpaReports.length}
+            lastUpdated={props.wskpaReport.created_at}
+          />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
           {/* <TotalProfit /> */}
@@ -49,6 +54,7 @@ const mapStateToProps = (state) => ({
   wskpaReport: state.reports.wskpaReport,
   wskpaReports: state.reports.wskpaReports,
   loadingState: state.reports.loadingState,
+  latestReport: state.reports.latestReport,
 });
 
 export default connect(mapStateToProps, null)(Home);

@@ -29,9 +29,12 @@ import {
     ROLE_ASSIGNED,
     ERR_ASSIGNING_ROLE,
     APP_IS_LOADING,
+    IS_DELETING,
+    DELETED,
 } from './types'
 import { baseUrl } from '../Misc/baseUrl'
 import Axios from 'axios'
+import swal from "@sweetalert/with-react";
 
 export const getAllRoles = () => dispatch => {
     dispatch({
@@ -355,6 +358,65 @@ export const managerUser = (data) => dispatch => {
             payload: false
         })
     })
+}
+
+
+export const deleteUser = (id) => dispatch => {
+
+    dispatch({ type: IS_DELETING })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    swal({
+            title: "Are you sure?",
+            text: "Once deleted, this user account will be deleted, and can't be recovered",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                dispatch({
+                    type: APP_IS_LOADING,
+                    payload: true
+                })
+                Axios.delete(`${baseUrl}supervisor/permission/user/delete/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                }).then(res => {
+                        console.log(res)
+                        dispatch({
+                            type: DELETED,
+                            payload: false
+                        })
+                        swal("Poof! Your imaginary file has been deleted!", {
+                            icon: "success",
+                        });
+                    }
+
+                ).catch(err => {
+                    dispatch({
+                        type: APP_IS_LOADING,
+                        payload: false
+                    })
+
+                    swal({
+                        title: "An Error occurred",
+                        text: err.response && err.response.data && err.response.data.message || 'An error occurred',
+                        icon: "error",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                })
+
+            } else {
+                swal("You choose to abort the action");
+                dispatch({
+                    type: DELETED,
+                    payload: false
+                })
+            }
+        });
+
 }
 
 

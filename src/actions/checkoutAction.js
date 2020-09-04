@@ -9,7 +9,8 @@ import {
     HAS_STORED_CHECKLIST,
     APP_IS_LOADING,
     NEXT_CHECKLIST,
-    CLOSE_ALL
+    CLOSE_ALL,
+    CLOSE_NOW
 } from './types'
 import axios from 'axios'
 import store from '../Misc/store'
@@ -109,7 +110,16 @@ export const storeChecklist = () => dispatch => {
                 payload: res.data.itExist === 'false' ? false : true
             })
             dispatch({
+                type: OPEN_DIALOG,
+                payload: res.data
+            })
+
+            dispatch({
                 type: APP_IS_LOADING,
+                payload: false
+            })
+            dispatch({
+                type: CLOSE_NOW,
                 payload: false
             })
 

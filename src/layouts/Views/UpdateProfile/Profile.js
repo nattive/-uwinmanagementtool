@@ -53,8 +53,8 @@ export const Profile = (props) => {
     const [url, setUrl] = useState('')
     const classes = useStyles();
     const myWidget = window.cloudinary.createUploadWidget({
-        cloudName: 'charisbiz-africa',
-        upload_preset: 'qtwirqod',
+        cloudName: 'uwinitnigeria',
+        upload_preset: 'zztbandk',
     }, (error, result) => {
         if (result.event == "success") {
             setThumbnail_url(result.info.thumbnail_url)

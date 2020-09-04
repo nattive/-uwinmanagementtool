@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActions from "@material-ui/core/CardActions";
@@ -10,7 +10,7 @@ import ReportCard from "../../../../components/ReportCard";
 import { Link, useRouteMatch } from "react-router-dom";
 import Tooltip from "@material-ui/core/Tooltip";
 import { connect } from "react-redux";
-import { getWSKPA, getLatestReport } from "../../../../actions/reportAction";
+import { getWSKPA, getLatestReport, LatestWSKPA } from "../../../../actions/reportAction";
 import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles((theme) => ({
@@ -46,10 +46,13 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ReportHomeScreen(params) {
+  
   useEffect(() => {
+    params.LatestWSKPA();
     params.getWSKPA();
     params.getLatestReport();
   }, []);
+
   const classes = useStyles();
   let { path } = useRouteMatch();
   const bull = <span className={classes.bullet}>•</span>;
@@ -67,19 +70,18 @@ function ReportHomeScreen(params) {
                 variant="contained"
                 className="m-2"
               >
-                SSR
+                CREATE SALES REPORT
               </Button>
             </Tooltip>
             <Tooltip title="Staff performance, appraisal and review" arrow>
               <Button
                 component={Link}
                 to={`${path}/spar`}
-                n
                 color="primary"
                 variant="contained"
                 className="m-2"
               >
-                SPAR
+                CREATE STAFF'S PERFORMANCE REPORT
               </Button>
             </Tooltip>
             <Tooltip title="Standard fuel consumption report" arrow>
@@ -90,34 +92,27 @@ function ReportHomeScreen(params) {
                 color="primary"
                 variant="contained"
               >
-                SFCR
+                CREATE FUEL CONSUMP. REPORT
               </Button>
             </Tooltip>
           </ButtonGroup>
         </Grid>
         <Grid container spacing={3}>
           <Grid item xs={6} md={3}>
-            {params.latestReport.account && params.latestReport.account.id ? (
-              <React.Fragment key={params.latestReport.account.id}>
+            {params.wskpaReports[params.wskpaReports.length - 1] && (
+              <React.Fragment key={params.wskpaReports[params.wskpaReports.length - 1] .id}>
                 <ReportCard
-                  reportTitle="Sales Account"
-                  lastSentHumanDate={params.latestReport.account.created_at}
-                  totalUpdated={params.latestReport.account.id}
-                  lastSentDate={JSON.stringify(
-                    new Date(params.latestReport.account.updated_at)
-                  )}
-                  navigationLink={`${path}/sales/all`}
+                  reportTitle="Staff performance appraisal"
+                  lastSentHumanDate={params.wskpaReports[params.wskpaReports.length - 1].created_at }
+                  totalUpdated={params.wskpaReports.length }
+                  navigationLink={`${path}/wskpa/all`}
                 />
               </React.Fragment>
-            ) : params.isGettingLatestReport ? (
-              <Skeleton height={250} variant="rect" />
-            ) : (
-              <p>No report Sent</p>
-            )}
+            ) }
           </Grid>
           <Grid item xs={6} md={3}>
             {params.latestReport.fuel && params.latestReport.fuel.id ? (
-              <React.Fragment key={params.latestReport.fuel.id}>
+              <React.Fragment key={params.wskpaReport.fuel.id}>
                 <ReportCard
                   reportTitle="Fuel Disbursement Report"
                   lastSentHumanDate={params.latestReport.fuel.created_at}
@@ -126,7 +121,7 @@ function ReportHomeScreen(params) {
                   lastSentDate={JSON.stringify(
                     new Date(params.latestReport.fuel.updated_at)
                   )}
-                  navigationLink={`${path}/fuel/all`}
+                 
                 />
               </React.Fragment>
             ) : params.isGettingLatestReport ? (
@@ -136,16 +131,16 @@ function ReportHomeScreen(params) {
             )}
           </Grid>
           <Grid item xs={6} md={3}>
-            {params.latestReport.wskpa && params.latestReport.wskpa.id ? (
-              <React.Fragment key={params.latestReport.wskpa.id}>
+            {params.latestReport.AccountReports && params.latestReport.AccountReports.length > 0 ? (
+              <React.Fragment>
                 <ReportCard
-                  reportTitle="Staff performance appraisal"
-                  lastSentHumanDate={params.latestReport.wskpa.created_at}
-                  totalUpdated={params.latestReport.wskpa.id}
+                  reportTitle="Sales Account"
+                  lastSentHumanDate={params.latestReport.AccountReports[params.latestReport.AccountReports.length - 1].created_at}
+                  totalUpdated={params.latestReport.AccountReports.length}
                   lastSentDate={JSON.stringify(
-                    new Date(params.latestReport.wskpa.updated_at)
+                    new Date(params.latestReport.AccountReports[params.latestReport.AccountReports.length - 1].updated_at)
                   )}
-                  navigationLink={`${path}/wskpa/all`}
+                  navigationLink={`${path}/sales/all`}
                 />
               </React.Fragment>
             ) : params.isGettingLatestReport ? (
@@ -171,6 +166,6 @@ const mapStateToProps = (state) => ({
   isGettingLatestReport: state.reports.isGettingLatestReport,
 });
 
-export default connect(mapStateToProps, { getWSKPA, getLatestReport })(
+export default connect(mapStateToProps, { getWSKPA, getLatestReport, LatestWSKPA })(
   ReportHomeScreen
 );

@@ -76,30 +76,31 @@ function SalesReportFunction(props) {
   const [balance, setBalance] = useState(0);
 
   const HandleTotals = () => {
-    setExpenseTotal(Number(misc) + Number(totalPayout) + Number(fuel) + Number(pos));
+    setExpenseTotal(Number(misc) + Number(totalPayout) + Number(onlineBalance) + Number(fuel) + Number(pos));
     setTotalRunCred(Number(eCreditFunded) + Number(cashFunded) + Number(unsettledWinnings));
     setExpectedCashAtHand(Number(totalRunCred) - Number(expenseTotal));
     setSubTotal2(Number(expenseTotal) + Number(onlineBalance));
     setBalance(Number(actualCashAtHand) - Number(expectedCashAtHand));
   };
   const handleSubmit = () => {
+    HandleTotals()
     const data = {
-      misc,
-      totalPayout,
-      fuel,
-      pos,
-      eCreditFunded,
-      cashFunded,
-      unsettledWinnings,
-      totalRunCred,
-      expenseTotal,
-      onlineBalance,
-      actualCashAtHand,
-      expectedCashAtHand,
-      totalRunCred,
-      expenseTotal,
-      expectedCashAtHand,
-      setBalance,
+      misc: Number(misc),
+      totalPayout: Number(totalPayout),
+      fuel: Number(fuel),
+      pos: Number(pos),
+      eCreditFunded: Number(eCreditFunded),
+      cashFunded: Number(cashFunded),
+      unsettledWinnings: Number(unsettledWinnings),
+      totalRunCred: Number(totalRunCred),
+      expenseTotal: Number(expenseTotal),
+      onlineBalance: Number(onlineBalance),
+      actualCashAtHand: Number(actualCashAtHand),
+      expectedCashAtHand: Number(expectedCashAtHand),
+      totalRunCred: Number(totalRunCred),
+      expenseTotal: Number(expenseTotal),
+      expectedCashAtHand: Number(expectedCashAtHand),
+      setBalance: Number(setBalance),
     };
 
     props.storeSalesReport({ data });
@@ -169,7 +170,23 @@ function SalesReportFunction(props) {
                       variant="outlined"
                     />
                   </Grid>
-
+                  <FormControl className={classes.textField} style={{ float: 'right' }} variant="filled">
+                    <InputLabel htmlFor="filled-adornment-amount">
+                      Total Credit
+                  </InputLabel>
+                    <FilledInput
+                      aria-label="Summation of credit, cash funded and unpaid winnings"
+                      id="filled-adornment-amount"
+                      value={totalRunCred}
+                      disabled
+                      startAdornment={
+                        <InputAdornment position="start"> ₦</InputAdornment>
+                      }
+                    />
+                    <small className="text-muted">
+                      Summation of all Credit"
+            </small>
+                  </FormControl>
                 </Grid>
               </form>
               <div style={{ margin: '20px 0' }}>
@@ -184,9 +201,9 @@ function SalesReportFunction(props) {
               </Typography>
                 <Divider variant='middle' />
               </div>
-              <form className={classes.root} noValidate autoComplete="off">
-                <Grid container spacing={3} >
-                  <Grid item xs={12} md={3}>
+              <Grid container spacing={3} >
+                {/* <form className={classes.root} noValidate autoComplete="off"> */}
+                  <Grid item xs={12} md={4}>
                     <TextField
                       id="outlined-basic"
                       label="PAID WINNINGS"
@@ -197,7 +214,7 @@ function SalesReportFunction(props) {
                       onBlur={() => HandleTotals()}
                     />
                   </Grid>
-                  <Grid item xs={12} md={3}>
+                  <Grid item xs={12} md={4}>
                     <TextField
                       id="outlined-basic"
                       label="FUEL"
@@ -207,7 +224,7 @@ function SalesReportFunction(props) {
                       variant="outlined"
                     />
                   </Grid>
-                  <Grid item xs={12} md={3}>
+                  <Grid item xs={12} md={4}>
                     <TextField
                       id="outlined-basic"
                       label="MISCELLENOUS EXPENSES"
@@ -217,52 +234,78 @@ function SalesReportFunction(props) {
                       variant="outlined"
                     />
                   </Grid>
-                  <Grid item xs={12} md={3}>
-                    <TextField
-                      id="outlined-basic"
-                      label="POS/TRANSFER"
-                      value={pos}
-                      onBlur={() => HandleTotals()}
-                      onChange={(e) => setPos(e.target.value)}
-                      variant="outlined"
-                    />
-                  </Grid>
+                  {/* </form> */}
+              </Grid>
+              <div style={{margin: '2em'}} />
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="outlined-basic"
+                    label="POS/TRANSFER"
+                    value={pos}
+                    onBlur={() => HandleTotals()}
+                    onChange={(e) => setPos(e.target.value)}
+                    variant="outlined"
+                  />
                 </Grid>
-              </form>
-              <FormControl className={classes.textField} style={{ float: 'right' }} variant="filled">
-                <InputLabel htmlFor="filled-adornment-amount">
-                  Total Expenditure
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="outlined-basic"
+                    label="ONLINE BALANCE"
+                    value={onlineBalance}
+                    onBlur={() => HandleTotals()}
+                    onChange={(e) => setOnlineBalance(e.target.value)}
+                    variant="outlined"
+                  />
+                </Grid>
+
+                <Grid item xs={12} md={4}>
+                  <FormControl className={classes.textField} variant="filled">
+                    <InputLabel htmlFor="filled-adornment-amount">
+                      Total Expenditure
                   </InputLabel>
-                <FilledInput
-                  aria-label="Summation of credit and unpaid winnings"
-                  id="filled-adornment-amount"
-                  value={expenseTotal}
-                  disabled
-                  startAdornment={
-                    <InputAdornment position="start"> ₦</InputAdornment>
-                  }
-                />
-                <small className="text-muted">
-                  Summation of all expense"
+                    <FilledInput
+                      aria-label="Summation all expense"
+                      id="filled-adornment-amount"
+                      value={expenseTotal}
+                      disabled
+                      startAdornment={
+                        <InputAdornment position="start"> ₦</InputAdornment>
+                      }
+                    />
+                    <small className="text-muted">
+                      Summation of all expense"
             </small>
-              </FormControl>
+                  </FormControl>
+                </Grid>
+              </Grid>
               <div className="clearfix"></div>
               {/* Totals */}
               <div style={{ margin: '20px 0' }}>
-                <Divider variant='middle' />
-                <Typography
-                  variant="subtitle1"
-                  component="h6"
-                  color="secondary"
-                  className="p-3"
-                >
-                  Totals
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography
+                    variant="subtitle1"
+                    component="h6"
+                    color="secondary"
+                    className="p-3"
+                  >
+                    Totals
               </Typography>
+                  <Button
+                    variant="text"
+                    color="secondary"
+                    startIcon={<ReplayIcon />}
+                    onClick={HandleTotals}
+                    style={{ padding: 10, margin: 3 }}
+                  >
+                    Re-Calculate
+                  </Button>
+                </div>
                 <Divider variant='middle' />
               </div>
               <form className={classes.root} noValidate autoComplete="off">
                 <Grid container spacing={3} >
-                  <Grid item xs={12} md={3}>
+                  <Grid item xs={12} md={4}>
                     <FormControl className={classes.textField} variant="filled">
                       <InputLabel htmlFor="filled-adornment-amount">
                         EXPECTED CASH
@@ -282,7 +325,7 @@ function SalesReportFunction(props) {
                     </FormControl>
                   </Grid>
 
-                  <Grid item xs={12} md={3}>
+                  <Grid item xs={12} md={4}>
                     <TextField
                       className={classes.textField}
                       id="outlined-basic"
@@ -313,17 +356,6 @@ function SalesReportFunction(props) {
                       </small>
                     </FormControl>
                   </Grid>
-                  <Grid item xs={12} md={3}>
-                    <Button
-                      variant="text"
-                      color="secondary"
-                      startIcon={<ReplayIcon />}
-                      onClick={HandleTotals}
-                      style={{ padding: 10, margin: 3 }}
-                    >
-                      Redo Calc
-                  </Button>
-                  </Grid>
                 </Grid>
               </form>
 
@@ -335,7 +367,7 @@ function SalesReportFunction(props) {
                   className="m-4"
                   disabled={props.isSendingSR}
                 >
-                  {props.isSendingSR ? (<> <CircularProgress size={24} /> <p>Sending Report</p> </>) : " Send Report"}
+                  {props.isSendingSR ? (<> <CircularProgress size={20} /> <p>Sending Report</p> </>) : " Send Report"}
                 </Button>
               </div>
             </CardContent>

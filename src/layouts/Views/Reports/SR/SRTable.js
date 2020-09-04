@@ -111,12 +111,10 @@ function Row(props) {
                 <TableHead>
                   <TableRow>
                     <TableCell>Actual Cash at hand</TableCell>
-                    <TableCell>SubTotal1</TableCell>
                     <TableCell>eCredit Funded</TableCell>
                     <TableCell>cash Funded</TableCell>
                     <TableCell>credit Unpaid Total</TableCell>
                     <TableCell>expected Cash At Hand</TableCell>
-                    <TableCell>subTotal 2</TableCell>
                     <TableCell>fuel</TableCell>
                     <TableCell>misc</TableCell>
                   </TableRow>
@@ -124,12 +122,10 @@ function Row(props) {
                 <TableBody>
                   <TableRow>
                     <TableCell>{item.actualCashAtHand}</TableCell>
-                    <TableCell>{item.sub_total1}</TableCell>
                     <TableCell>{item.eCreditFunded}</TableCell>
                     <TableCell>{item.cashFunded}</TableCell>
                     <TableCell>{item.creditUnpaidTotal}</TableCell>
                     <TableCell>{item.expectedCashAtHand}</TableCell>
-                    <TableCell>{item.sub_total2}</TableCell>
                     <TableCell>{item.fuel}</TableCell>
                     <TableCell>{item.misc}</TableCell>
                   </TableRow>

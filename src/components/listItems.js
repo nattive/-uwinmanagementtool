@@ -34,10 +34,14 @@ const useStyles = makeStyles((theme) => ({
 export const MainListItems = () => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+  const [openReport, setOpenReport] = React.useState(false);
   const manager = useSelector(state => state.auth.manager)
   const handleClick = () => {
     setOpen(!open);
-  };
+  }
+  const handleOpenReport = () => {
+    setOpenReport(!openReport);
+  }
   return (
     <div>
       <ListItem button component={Link} to="/">
@@ -46,12 +50,40 @@ export const MainListItems = () => {
         </ListItemIcon>
         <ListItemText primary="Dashboard" />
       </ListItem>
-      <ListItem button component={Link} to="/reports">
+      <ListItem button onClick={handleOpenReport}>
         <ListItemIcon>
           <BarChartIcon />
         </ListItemIcon>
         <ListItemText primary="Reports" />
       </ListItem>
+      <Collapse in={openReport} timeout="auto" unmountOnExit>
+        <List disablePadding >
+          <ListItem button className={classes.nested} component={Link} to="/reports">
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Your Reports" />
+          </ListItem>
+          <ListItem button className={classes.nested} component={Link} to="/reports/wskpa/all">
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Staff Appraisal" />
+          </ListItem>
+          <ListItem button className={classes.nested} component={Link} to="/reports/sales/all" >
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Account/Sales" />
+          </ListItem>
+          <ListItem button className={classes.nested} component={Link} to="/reports/fuel/all" >
+            <ListItemIcon>
+              <AssessmentIcon />
+            </ListItemIcon>
+            <ListItemText primary="Fuel Consumption" />
+          </ListItem>
+        </List>
+      </Collapse>
       <ListItem button component={Link} to="/chat">
         <ListItemIcon>
           <SendIcon />

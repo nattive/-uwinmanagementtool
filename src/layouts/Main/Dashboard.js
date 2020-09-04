@@ -45,9 +45,9 @@ import Alert from "@material-ui/lab/Alert";
 import { baseUrlNoApi } from "../../Misc/baseUrl";
 import Notification from "../../components/Notification";
 import ChatBubbleOutlineIcon from '@material-ui/icons/ChatBubbleOutline';
-import { dispatch } from "rxjs/internal/observable/pairs"; 
+import { dispatch } from "rxjs/internal/observable/pairs";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import { OPEN_NOTIFICATION, OPEN_TOP_NOTIFICATION } from "../../actions/types";
+import { OPEN_NOTIFICATION, OPEN_TOP_NOTIFICATION, OPEN_NOW } from "../../actions/types";
 const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -151,8 +151,10 @@ function Dashboard(props) {
   const menuId = 'primary-search-account-menu';
   const [open, setOpen] = React.useState(props.checkExist);
   const [messageOpen, setMessageOpen] = React.useState(null);
+  const [notificationOpen, setNotificationOpen] = React.useState(null);
   const [barNotification, setbarNotification] = React.useState([]);
   const isMenuOpen = Boolean(messageOpen);
+  const isNotificationOpen = Boolean(notificationOpen);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -164,6 +166,13 @@ function Dashboard(props) {
     setbarNotification([])
     // handleMobileMenuClose();
   };
+
+  const handleNotificationClose = () => {
+    setNotificationOpen(null);
+    // setbarNotification([])
+    // handleMobileMenuClose();
+  };
+
   const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
   const history = useHistory();
   const handleGoBack = () => {
@@ -174,6 +183,11 @@ function Dashboard(props) {
   const handleMessageMenuOpen = (event) => {
     setMessageOpen(event.currentTarget);
   };
+
+  const handleNotificationMenuOpen = (event) => {
+    setNotificationOpen(event.currentTarget);
+  };
+
   const renderMenu = (
     <Menu
       anchorEl={messageOpen}
@@ -185,8 +199,42 @@ function Dashboard(props) {
       onClose={handleMenuClose}
     >
       <MenuList>
+        <List className={classes.barNotification} >
+          {
+            barNotification.length > 0 ? barNotification.map(notify => (
+              <ListItem button onClick={dispatch({type: OPEN_NOW, payload: {
+                open: true,
+                type: notify.type
+              }})}>
+                <ListItemAvatar>
+                  <Avatar>
+                    <ChatBubbleOutlineIcon />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={notify.title} secondary={notify.body} />
+              </ListItem>
+            )) : null
+          }
+        </List>
+
+      </MenuList>
+    </Menu>
+  );
+
+  const { notifications } = props
+  const notificationMenu = (
+    <Menu
+      anchorEl={notificationOpen}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isNotificationOpen}
+      onClose={handleNotificationClose}
+    >
+      <MenuList>
         {
-          barNotification.length > 0 ? barNotification.map(notity => (
+          notifications.length > 0 ? notifications.map(notity => (
             <List className={classes.barNotification}>
               <ListItem>
                 <ListItemAvatar>
@@ -194,7 +242,7 @@ function Dashboard(props) {
                     <ChatBubbleOutlineIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={notity.title} secondary={notity.body}/>
+                <ListItemText primary={notity.title} />
               </ListItem>
             </List>
           )) : null
@@ -203,6 +251,8 @@ function Dashboard(props) {
       </MenuList>
     </Menu>
   );
+
+
   useEffect(() => {
 
     const token = localStorage.getItem('uwin_manager_token')
@@ -319,15 +369,15 @@ function Dashboard(props) {
             </IconButton>
             <img src={logo_white} alt="uwinit logo" style={{ width: 100 }} />
             <div className={classes.flexgrow} />
-            <IconButton color="inherit" style={{ float: "right" }}>
-              <Badge badgeContent={0} color="secondary">
+            <IconButton onClick={handleNotificationMenuOpen} color="inherit" style={{ float: "right" }}>
+              <Badge badgeContent={props.notifications.length} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
             <IconButton onClick={props.logout} color="inherit" style={{ float: "right" }}>
-                <ExitToAppIcon />
+              <ExitToAppIcon />
             </IconButton>
-            
+
             <IconButton
               aria-label="account of current user"
               aria-controls="primary-search-account-menu"
@@ -341,6 +391,7 @@ function Dashboard(props) {
               </Badge>
             </IconButton>
             {renderMenu}
+            {notificationMenu}
           </Toolbar>
         </AppBar>
         <Drawer
@@ -407,6 +458,7 @@ const mapStateToProps = (state) => ({
   appIsLoading: state.loadingState.appIsLoading,
   wskpaReports: state.reports.wskpaReports,
   notification: state.chat.notification,
+  notifications: state.managers.notifications,
 });
 
 export default connect(mapStateToProps, { fetchChats, ChecklistExist, toggleOnline, logout })(Dashboard);

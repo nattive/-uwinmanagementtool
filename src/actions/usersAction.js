@@ -9,6 +9,8 @@ import {
     ERR_UPDATING_PROFILE,
     STORE_USER,
     HAS_UPDATED_PROFILE,
+    STORE_NOTIFICATION,
+    GET_NOTIFICATION
 } from './types'
 import axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
@@ -130,6 +132,28 @@ export const updateProfile = (data) => dispatch => {
         dispatch({
             type: ERR_UPDATING_PROFILE,
             payload: err.response
+        })
+    })
+}
+export const storeNotification = (data) => dispatch => {
+
+    const token = localStorage.getItem('uwin_manager_token')
+    const {
+        title,
+        body,
+        type,
+    } = data
+    axios.post(`${baseUrl}notification`, {
+        title,
+        body,
+        type,
+    }, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+        console.log(res)
+        dispatch({
+            type: STORE_NOTIFICATION,
+            payload: res.data
         })
     })
 }

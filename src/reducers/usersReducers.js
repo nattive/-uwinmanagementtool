@@ -7,11 +7,14 @@ import {
     UPDATING_PROFILE,
     HAS_UPDATED_PROFILE,
     ERR_UPDATING_PROFILE,
+    NEW_NOTIFICATION,
+    STORE_NOTIFICATION,
 } from "../actions/types";
 
 const initialState = {
     allManagers: {},
     FetchedManager: {},
+    notifications: [],
     fetchingManagers: false,
     fetchError: null,
     isUpdatingProfile: null,
@@ -60,6 +63,17 @@ export default function(state = initialState, action) {
                 ...state,
                 isUpdatingProfile: false,
                 errorUpdatingProfile: action.payload
+            }
+
+        case NEW_NOTIFICATION:
+            return {
+                ...state,
+                notifications: state.notifications.concat(action.payload)
+            }
+        case STORE_NOTIFICATION:
+            return {
+                ...state,
+                notifications: state.notifications.concat(action.payload)
             }
 
         default:

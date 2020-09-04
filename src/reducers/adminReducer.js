@@ -27,9 +27,12 @@ import {
     ASSIGNING_ROLE,
     ROLE_ASSIGNED,
     ERR_ASSIGNING_ROLE,
+    IS_DELETING,
+    DELETED,
 } from "../actions/types";
 
 const initialState = {
+    isDeleting: false,
     isGettingAllWska: false,
     errGettingAllWska: null,
     allWska: {},
@@ -209,6 +212,16 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 errAssigningRole: action.payload
+            }
+        case IS_DELETING:
+            return {
+                ...state,
+                isDeleting: true
+            }
+        case DELETED:
+            return {
+                ...state,
+                isDeleting: false
             }
 
         default:

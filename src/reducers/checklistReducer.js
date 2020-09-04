@@ -7,6 +7,8 @@ import {
     OPEN_DIALOG_EVENING,
     ERR_CHECKLIST_EXIST_STATUS,
     CLOSE_ALL,
+    OPEN_NOW,
+    CLOSE_NOW,
 } from "../actions/types";
 
 const initialState = {
@@ -18,6 +20,7 @@ const initialState = {
     openAfternoon: false,
     openEvening: false,
     err: null,
+    openNow: {}
 }
 export default function(state = initialState, action) {
     switch (action.type) {
@@ -66,6 +69,21 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 nextChecklist: action.payload
+            }
+        case OPEN_NOW:
+            return {
+                ...state,
+                openNow: action.payload
+            }
+        case NEXT_CHECKLIST:
+            return {
+                ...state,
+                nextChecklist: action.payload
+            }
+        case CLOSE_NOW:
+            return {
+                ...state,
+                openNow: {}
             }
 
         default:

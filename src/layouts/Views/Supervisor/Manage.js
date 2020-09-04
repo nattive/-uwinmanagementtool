@@ -21,7 +21,7 @@ import { useEffect } from "react";
 import {
     getAllRoles,
     admin_GetUsers,
-    assignRole, managerUser
+    assignRole, managerUser, deleteUser
 } from "../../../actions/adminAction";
 import {
     Card,
@@ -120,7 +120,7 @@ function Row(props) {
                 <TableCell align="left">{item.roles && item.roles.map(role => `${role.name}, `)}</TableCell>
                 <TableCell align="left">{"lagos"}</TableCell>
                 <TableCell align="left">
-                    <Checkbox onClick={() => props.managerUser({ isActive: !item.isActive, id: item.id})} checked={item.isActive} />
+                    <Button onClick={() => props.deleteUser(item.id)} >Delete</Button>
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -181,6 +181,7 @@ const mapStateToProps = (state) => ({
     managers: state.admin.adminFetchedUsers,
     adminFetchedUser: state.admin.adminFetchedUser,
     errorAdminFetchingUser: state.admin.errorAdminFetchingUser,
+    isDeleting: state.admin.isDeleting,
     FetchingRoles: state.admin.FetchingRoles,
     fetchedRoles: state.admin.fetchedRoles,
     errorFetchingRole: state.admin.errorFetchingRole,
@@ -193,7 +194,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = {
     admin_GetUsers,
     getAllRoles,
-    assignRole, managerUser
+    assignRole, managerUser, deleteUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Manage);

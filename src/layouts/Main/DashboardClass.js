@@ -8,7 +8,7 @@ import {
     getLatestChecklist,
 } from "../../actions/checkoutAction";
 import { getUsers } from "../../actions/usersAction";
-import { getWSKPA, LatestWSKPA } from "../../actions/reportAction";
+import { getWSKPA, LatestWSKPA, getLatestReport } from "../../actions/reportAction";
 import Echo from "laravel-echo";
 import { baseUrlNoApi } from "../../Misc/baseUrl";
 import Pusher from "pusher-js";
@@ -18,7 +18,7 @@ class DashboardClass extends Component {
         // this.props.ChecklistExist()
         this.props.getWSKPA();
         this.props.getLatestChecklist();
-        this.props.LatestWSKPA();
+        this.props.getLatestReport();
         this.props.verifyRedirect();
         if (!this.props.manager.user) {
             this.props.getUsers();
@@ -57,5 +57,5 @@ export default connect(mapStateToProps, {
     LatestWSKPA,
     getLatestChecklist,
     verifyRedirect,
-    getUsers,
+    getUsers, getLatestReport
 })(DashboardClass);

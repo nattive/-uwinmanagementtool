@@ -21,11 +21,13 @@ import PersonIcon from "@material-ui/icons/Person";
 import { blue, green } from "@material-ui/core/colors";
 import {
   Morning, Afternoon,
-Evening } from "../Misc/Checklists";
+  Evening
+} from "../Misc/Checklists";
 import List from "@material-ui/core/List";
 import Typography from "@material-ui/core/Typography";
 import { connect } from "react-redux";
 import { storeChecklist } from "../actions/checkoutAction";
+import { storeNotification } from "../actions/usersAction";
 
 class ChecklistDialog extends Component {
   constructor(props) {
@@ -34,7 +36,9 @@ class ChecklistDialog extends Component {
       todos: {},
       checked: false,
       hour: "",
-      open: !this.props.isExist,
+      openObj: props.open,
+      open: props.open ? props.open.open : false,
+      day: props.open ? props.open.type : '',
       checklist: {}
     };
     // this.handleClose = this.handleClose.bind(this)
@@ -65,6 +69,15 @@ class ChecklistDialog extends Component {
     this.props.storeChecklist();
   }
 
+  // static getDerivedStateFromProps(prop, state) {
+  //   if (prop.open !== state.openObj) {
+  //     return {
+  //       open: prop.open.open
+  //     }
+  //   }
+  //   return null
+  // }
+
   handleChange(event) {
     this.setState({ checked: event.target.checked });
   }
@@ -90,64 +103,66 @@ class ChecklistDialog extends Component {
       position: "relative",
     };
     return (
-      <Dialog aria-labelledby="simple-dialog-title" open={this.props.open && this.props.open.open && this.props.manager.name !== undefined}>
-        <DialogContent>
-          <Typography variant="body1" className="p-4 m-3">
-            {`Good ${this.props.open.type}, ${this.props.manager.name}`}
-          </Typography>
-          <List>
-            {Object.keys(this.state.checklist).map((item, key) => (
-              <ListItem
-                button
-                key={key}
-                disabled={this.state.todos[key]}
-                onClick={() =>
-                  this.setState((state) => {
-                    return { todos: { [key]: true, ...state.todos } };
-                  })
-                }
-              >
-                <FormControlLabel
-                  style={
-                    this.state.todos[key]
-                      ? {
-                        textDecorationLine: "line-through",
-                        textDecorationStyle: "solid",
-                      }
-                      : null
-                  }
-                  // value={option}
+      <>
+        <Dialog aria-labelledby="simple-dialog-title" open={this.props.manager.user && (this.props.openNow.open || this.props.open.open)}>
+          <DialogContent>
+            <Typography variant="body1" className="p-4 m-3">
+              {`Good ${this.props.open.type}, ${this.props.manager.user && this.props.manager.user.name}`}
+            </Typography>
+            <List>
+              {Object.keys(this.state.checklist).map((item, key) => (
+                <ListItem
+                  button
                   key={key}
-                  control={<Checkbox />}
-                  label={this.state.checklist[item]}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </DialogContent>
+                  disabled={this.state.todos[key]}
+                  onClick={() =>
+                    this.setState((state) => {
+                      return { todos: { [key]: true, ...state.todos } };
+                    })
+                  }
+                >
+                  <FormControlLabel
+                    style={
+                      this.state.todos[key]
+                        ? {
+                          textDecorationLine: "line-through",
+                          textDecorationStyle: "solid",
+                        }
+                        : null
+                    }
+                    // value={option}
+                    key={key}
+                    control={<Checkbox />}
+                    label={this.state.checklist[item]}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </DialogContent>
 
-        <DialogActions>
-          <div style={wrapper}>
-            <Button
-              variant="contained"
-              color="primary"
-              className={
-                this.props.appIsLoading ? "btn btn-primary" : "btn btn-success"
-              }
-              disabled={
-                Object.keys(this.state.checklist).length !==
-                Object.keys(this.state.todos).length
-              }
-              onClick={this.handleListItemClick}
-            >
-              Continue
+          <DialogActions>
+            <div style={wrapper}>
+              <Button
+                variant="contained"
+                color="primary"
+                className={
+                  this.props.appIsLoading ? "btn btn-primary" : "btn btn-success"
+                }
+                disabled={this.props.appIsLoading ||
+                  Object.keys(this.state.checklist).length !==
+                  Object.keys(this.state.todos).length
+                }
+                onClick={this.handleListItemClick}
+              >
+                Continue
             </Button>
-            {this.props.appIsLoading && (
-              <CircularProgress size={24} style={buttonProgress} />
-            )}
-          </div>
-        </DialogActions>
-      </Dialog>
+              {this.props.appIsLoading && (
+                <CircularProgress size={24} style={buttonProgress} />
+              )}
+            </div>
+          </DialogActions>
+        </Dialog>
+      </>
     );
   }
 }
@@ -159,6 +174,7 @@ ChecklistDialog.propTypes = {
 const mapStateToProps = (state) => ({
   open: state.checklist.open,
   err: state.checklist.err,
+  openNow: state.checklist.openNow,
   manager: state.auth.manager,
   appIsLoading: state.loadingState.appIsLoading,
 });
@@ -167,4 +183,4 @@ const mapStateToProps = (state) => ({
 
 // }
 
-export default connect(mapStateToProps, { storeChecklist })(ChecklistDialog);
+export default connect(mapStateToProps, { storeChecklist, storeNotification })(ChecklistDialog);
