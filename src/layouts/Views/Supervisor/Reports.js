@@ -99,6 +99,7 @@ function Reports(props) {
           props.getAllSfcrById(event.target.value)
           break;
         case "sales":
+          // console.log(event.target.value);
           props.getAllSalesById(event.target.value)
           break;
 

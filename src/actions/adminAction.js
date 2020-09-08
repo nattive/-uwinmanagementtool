@@ -276,7 +276,7 @@ export const getAllSalesById = (id) => dispatch => {
 
     const token = localStorage.getItem('uwin_manager_token')
 
-    Axios.get(`${baseUrl}supervisor/report/sales/{id}`, {
+    Axios.get(`${baseUrl}supervisor/report/sales/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
             console.log(res)

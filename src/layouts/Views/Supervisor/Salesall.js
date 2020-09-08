@@ -48,6 +48,7 @@ function Salesall(props) {
                     <TableHead>
                         <TableRow>
                             <TableCell />
+                            <TableCell>Sent By</TableCell>
                             <TableCell>Sent</TableCell>
                             <TableCell align="right">Expense Total</TableCell>
                             <TableCell align="right">Total Payout</TableCell>
@@ -96,6 +97,7 @@ function Row(props) {
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
+                <TableCell align="right">{item.user && item.user.name}</TableCell>
                 <TableCell >
                     {item.created_at}
                 </TableCell>

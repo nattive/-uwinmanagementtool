@@ -32,7 +32,7 @@ export const login = (email, password) => dispatch => {
         email: email,
         password: password
     }).then(res => {
-        console.log(res)
+        console.log(res.data.success.token)
         localStorage.removeItem('uwin_manager_token')
         localStorage.setItem('uwin_manager_token', res.data.success.token)
         dispatch({
@@ -51,17 +51,17 @@ export const login = (email, password) => dispatch => {
             payload: res.data.success.token
         })
         dispatch({
-                type: STORE_USER,
-                payload: res.data.user
-            })
-            // dispatch({
-            //     type: LOGIN_STATUS,
-            //     payload: false
-            // })
+            type: STORE_USER,
+            payload: res.data.user
+        })
+        dispatch({
+            type: LOGIN_STATUS,
+            payload: false
+        })
         dispatch(ChecklistExist(res.data.user.id))
 
     }).catch(err => {
-        console.log(err.response)
+        console.log(err)
         if (err.response !== undefined && err.response.status === 500) {
             dispatch({
                 type: AUTH_STOPPED_LOADING
