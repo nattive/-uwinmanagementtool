@@ -17,6 +17,8 @@ import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import swal from "@sweetalert/with-react";
+import Alert from '@material-ui/lab/Alert'; 
+import RefreshIcon from '@material-ui/icons/Refresh';
 import { useEffect } from "react";
 import {
     getAllRoles,
@@ -32,17 +34,27 @@ import {
     Checkbox,
     CircularProgress,
     Button,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 } from "@material-ui/core";
 import FilterListIcon from "@material-ui/icons/FilterList";
 import { Link, useRouteMatch } from "react-router-dom";
 import { useState } from "react";
-const useRowStyles = makeStyles({
+import Skeleton from "@material-ui/lab/Skeleton";
+const useRowStyles = makeStyles((theme) => ({
     root: {
         "& > *": {
             borderBottom: "unset",
         },
     },
-});
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+    },
+}));
+
 const Manage = (props) => {
     useEffect(() => {
         props.admin_GetUsers();
@@ -60,9 +72,14 @@ const Manage = (props) => {
             <Card>
                 <CardHeader
                     action={
-                        <IconButton component={Link} to={`/supervisor/signup`}>
+                        <>
+                            <IconButton component={Link} color="primary"  to={`/supervisor/signup`} title="Add new manager" >
                             <AddBoxIcon />
                         </IconButton>
+                            <IconButton color="primary" onClick={props.admin_GetUsers} title="Reload all users" >
+                                <RefreshIcon />
+                            </IconButton>
+                        </>
                     }
                 />
             </Card>
@@ -72,19 +89,38 @@ const Manage = (props) => {
                         <TableRow>
                             <TableCell />
                             <TableCell>Full Name</TableCell>
-                            <TableCell>Assigned Role(s)</TableCell>
-                            <TableCell>Location</TableCell>
+                            <TableCell>Assigned Position</TableCell>
+                            <TableCell>Email</TableCell>
                             <TableCell>Activate/Deactivate</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {props.managers.length > 0 ? (
-                            props.managers.map((item) => (
-                                <Row key={item.id} item={item} {...props} />
-                            ))
-                        ) : (
-                                <p>No data</p>
-                            )}
+                        {
+                            props.errorAdminFetchingUser ? (
+                                <>
+                                    <TableRow>
+                                        <TableCell colSpan="4">
+                                            <Alert severity="error">{JSON.stringify(props.errorAdminFetchingUser)}</Alert>
+                                        </TableCell>
+                                    </TableRow>
+                                </>) : props.adminIsFetchingUsers ? 
+                                (
+                                        <>
+                                            <TableRow>
+                                                <TableCell colSpan="4">
+                                                   <Skeleton />
+                                                </TableCell>
+                                            </TableRow>
+                                        </>
+                                )
+                                :
+                                props.managers.length > 0 ? (
+                                    props.managers.map((item) => (
+                                        <Row key={item.id} item={item} {...props} />
+                                    ))
+                                ) : (
+                                        <p>No data</p>
+                                    )}
                     </TableBody>
                 </Table>
             </TableContainer>
@@ -93,14 +129,15 @@ const Manage = (props) => {
 };
 
 function Row(props) {
-    const handleAssignRole = (role_id, user_id) => {
+    const handleAssignRole = (position, user_id) => {
         const data = {
-            role_id,
+            position,
             user_id,
         };
+        console.log(data)
         props.assignRole(data);
     };
-    console.log(props.fetchedRoles);
+    // console.log(props.fetchedRoles);
     const { item } = props;
     const [open, setOpen] = React.useState(false);
     const classes = useRowStyles();
@@ -117,55 +154,25 @@ function Row(props) {
                     </IconButton>
                 </TableCell>
                 <TableCell align="left">{item.name}</TableCell>
-                <TableCell align="left">{item.roles && item.roles.map(role => `${role.name}, `)}</TableCell>
-                <TableCell align="left">{"lagos"}</TableCell>
+                <TableCell align="left">
+                    <FormControl className={classes.formControl}>
+                        <InputLabel id="demo-simple-select-label">{item.position}</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            // value={item.position}
+                            onChange={(e) => handleAssignRole(e.target.value, item.id)}
+                        >
+                            <MenuItem disabled >{"Choose manager's Position"}</MenuItem>
+                            <MenuItem value={'director'}>Director</MenuItem>
+                            <MenuItem value={'supervisor'}>Supervisor</MenuItem>
+                        </Select>
+                    </FormControl>
+                
+                </TableCell>
+                <TableCell align="left">{item.email}</TableCell>
                 <TableCell align="left">
                     <Button onClick={() => props.deleteUser(item.id)} >Delete</Button>
-                </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                            <Typography variant="h6" gutterBottom component="div">
-                                Assign a Role
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Role</TableCell>
-                                        <TableCell>Permissions</TableCell>
-                                        <TableCell>Activate</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {props.fetchedRoles && props.fetchedRoles.roles.length > 0 ? (
-                                        props.fetchedRoles.roles.map((role) => (
-                                            <TableRow key={role.id}>
-                                                <TableCell>{role.name}</TableCell>
-                                                <TableCell>
-                                                    {role.permissions && role.permissions.length > 0 ? (
-                                                        <Typography variant="body1">
-                                                            {role.permissions.name}
-                                                        </Typography>
-                                                    ) : (
-                                                            "No permissions set"
-                                                        )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <Button variant='contained' color='primary' onClick={() => handleAssignRole(role.id, item.id)}>
-                                                        {item.roles && item.roles.id === role.id ? 'Assigned' : "Assign"}
-                                                    </Button>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                            <p>No data</p>
-                                        )}
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
                 </TableCell>
             </TableRow>
         </React.Fragment>

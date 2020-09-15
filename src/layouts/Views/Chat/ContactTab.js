@@ -12,7 +12,7 @@ import { connect, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { getMyGroups, initGroup } from "../../../actions/groupChat";
 import { getUsers } from "../../../actions/usersAction";
-import { initPrivateChat, fetchPrivateChats, getOnlineManagers } from "../../../actions/chatAction";
+import { initPrivateChat, fetchPrivateChats, readMessage, getOnlineManagers } from "../../../actions/chatAction";
 import Badge from '@material-ui/core/Badge';
 import { ChatItem } from 'react-chat-elements'
 import Skeleton from '@material-ui/lab/Skeleton';
@@ -112,6 +112,7 @@ function ContactTab(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const [read, setRead] = React.useState(0);
   useEffect(() => {
     props.getUsers();
     props.getMyGroups();
@@ -119,6 +120,12 @@ function ContactTab(props) {
     props.fetchPrivateChats();
   }, []);
 
+  // useEffect(() => {
+  //   // props.chatM
+  //   return () => {
+  //     cleanup
+  //   }
+  // }, [input])
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -138,13 +145,16 @@ function ContactTab(props) {
   };
 
 
-  const handleInitChat = (user) => {
+  const handleInitChat = (user, id) => {
+    props.readMessage(id)
+    props.fetchPrivateChats()
     dispatch({ type: NULL_CHATS })
     dispatch({ type: OPEN_CHAT, payload: user })
     props.initPrivateChat(user.id);
     // props.getUser(user.id);
   };
 
+  
   const handleInitGroupChat = (group) => {
     dispatch({ type: NULL_CHATS })
     dispatch({ type: OPEN_CHAT, payload: {type: 'group', ...group} })
@@ -188,8 +198,8 @@ function ContactTab(props) {
               title={chat.receiver.name}
               subtitle={lastItem(chat.messages) ? lastItem(chat.messages).text : 'no message sent'}
               date={lastItem(chat.messages) ? new Date(lastItem(chat.messages).updated_at) : new Date(chat.created_at)}
-              onClick={() => handleInitChat(chat.receiver)}
-              unread={0} />
+              onClick={() => handleInitChat(chat.receiver, lastItem(chat.messages).id)}
+              unread={lastItem(chat.messages).receiver_id === props.manager && props.manager.user && props.manager.user.id && lastItem(chat.messages).isRead === 0 && 1} />
           ))}
           {/* {props.privateChats.length > 0
             ? props.privateChats.map((item) => (
@@ -288,6 +298,8 @@ const mapStateToProps = (state) => ({
   fetchedGroups: state.chat.fetchedGroups,
   fetchedGroup: state.chat.fetchedGroup,
   errFetchingGroups: state.chat.errFetchingGroups,
+  manager: state.auth.manager,
+
 });
 
 const mapDispatchToProps = {
@@ -297,6 +309,7 @@ const mapDispatchToProps = {
   getMyGroups,
   fetchPrivateChats,
   getOnlineManagers,
+  readMessage,
   initGroup
 };
 

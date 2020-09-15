@@ -102,7 +102,7 @@ export const showSalesReport = (id) => dispatch => {
 
 
 }
-export const showAllSalesReport = (id) => dispatch => {
+export const showAllSalesReport = () => dispatch => {
 
     dispatch({ type: GET_SALES_REPORT })
     const token = localStorage.getItem('uwin_manager_token')

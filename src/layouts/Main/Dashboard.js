@@ -25,7 +25,7 @@ import Home from "../Views/Home/Home";
 import Chat from "../Views/Chat";
 import logo_white from "../../Assets/img/logo_white.png";
 import { fetchChats, postMessage } from "../../actions/chatAction";
-import { logout } from "../../actions/authAction";
+import { logout, verifyRedirect } from "../../actions/authAction";
 import { ChecklistExist } from "../../actions/checkoutAction";
 import { toggleOnline } from "../../actions/chatAction";
 import Report from "../Views/Reports/Report";
@@ -303,28 +303,55 @@ function Dashboard(props) {
           <CircularProgress color="inherit" />
         </Backdrop>
         <Notification />
+{
+  props.loginError ? (
+            <Dialog
+              open={props.loginError }
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">Authentication error</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  <Alert severity="error">{props.loginError.message || JSON.stringify(props.loginError)}</Alert>
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button color="primary" autoFocus onClick={props.verifyRedirect}>
+                  {props.authIsLoading ? (<CircularProgress size={22} />) : "Re-attempt Logging in"}
+                </Button>
+              </DialogActions>
+            </Dialog>
 
-        <Dialog
-          open={!props.isLogin && !props.authIsLoading && !props.appIsLoading}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">{props.isLogin === 'wait' ? "Authenticating" : "You are Logged out!"}</DialogTitle>
-          <DialogContent>
-            <DialogContentText id="alert-dialog-description">
-              {props.authIsLoading ? (
-                <Alert severity="info">Checking Your login status</Alert>
-              ) : <> <Alert severity="error">You are not logged in, Please proceed to the Log in page to continue using this App</Alert>
-
-                </>}
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button component={'a'} href='/login' color="primary" autoFocus>
-              {props.authIsLoading ? (<CircularProgress size={22} />) : "Log In"}
-            </Button>
-          </DialogActions>
-        </Dialog>
+  ) : (
+    <>
+                <Dialog
+                  open={!props.isLogin && !props.authIsLoading && !props.appIsLoading}
+                  aria-labelledby="alert-dialog-title"
+                  aria-describedby="alert-dialog-description"
+                >
+                  <DialogTitle id="alert-dialog-title">{props.isLogin === 'wait' ? "Authenticating" : "You are Logged out!"}</DialogTitle>
+                  <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                      {props.authIsLoading ? (
+                        <Alert severity="info">Checking Your login status</Alert>
+                      ) : <> <Alert severity="error">You are not logged in, Please proceed to the Log in page to continue using this App,
+              If you think this is an error, Click re-attempt login</Alert>
+                        </>}
+                    </DialogContentText>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button color="primary" autoFocus onClick={verifyRedirect}>
+                      {props.authIsLoading ? (<CircularProgress size={22} />) : "Re-attempt Loging"}
+                    </Button>
+                    <Button component={'a'} href='/login' color="primary" autoFocus>
+                      {props.authIsLoading ? (<CircularProgress size={22} />) : "Log In"}
+                    </Button>
+                  </DialogActions>
+                </Dialog></>
+  )
+}
+       
         <div>
           {/* <Dialog
             open={props.err}
@@ -430,8 +457,14 @@ function Dashboard(props) {
             <Route path="/update/profile">
               <UpdateProfile />
             </Route>
+            {}
             <Route path="/supervisor">
-              <Supervisor />
+            {
+                props.manager && props.manager.position === 'director' || props.manager.position === 'supervisor' ? <Supervisor /> : (
+                  <Typography variant='h6' style={{margin: '5em'}}> You don't have the necessary permission to visit this page</Typography>
+                 ) 
+            }
+             
             </Route>
           </Switch>
           {/* <div className={classes.fabButton}>
@@ -453,6 +486,7 @@ const mapStateToProps = (state) => ({
   checklist: state.checklist.open,
   err: state.checklist.err,
   manager: state.auth.manager,
+  loginError: state.auth.loginError,
   redirectTo: state.auth.redirectTo,
   isLogin: state.auth.isLogin,
   appIsLoading: state.loadingState.appIsLoading,
@@ -461,4 +495,4 @@ const mapStateToProps = (state) => ({
   notifications: state.managers.notifications,
 });
 
-export default connect(mapStateToProps, { fetchChats, ChecklistExist, toggleOnline, logout })(Dashboard);
+export default connect(mapStateToProps, { fetchChats, ChecklistExist, toggleOnline, logout, verifyRedirect })(Dashboard);

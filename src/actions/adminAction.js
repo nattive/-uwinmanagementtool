@@ -31,6 +31,7 @@ import {
     APP_IS_LOADING,
     IS_DELETING,
     DELETED,
+    SALES_REPORTS,
 } from './types'
 import { baseUrl } from '../Misc/baseUrl'
 import Axios from 'axios'
@@ -84,12 +85,13 @@ export const assignRole = (data) => dispatch => {
 
     })
 
-    const { user_id, role_id } = data
+    const { user_id, position } = data
 
     const token = localStorage.getItem('uwin_manager_token')
 
-    Axios.post(`${baseUrl}supervisor/roles/assign/${role_id}`, {
-        user_id: data.user_id
+    Axios.post(`${baseUrl}supervisor/roles/assign`, {
+        user_id: data.user_id,
+        position: data.position
     }, {
         headers: { Authorization: `Bearer ${token}` }
     }).then(res => {
@@ -106,6 +108,13 @@ export const assignRole = (data) => dispatch => {
         }
 
     ).catch(err => {
+        swal({
+            title: "An Error occurred",
+            text: err.response && err.response.data && err.response.data.message || 'An error occurred',
+            icon: "error",
+            buttons: true,
+            dangerMode: true,
+        })
         dispatch({
             type: ERR_ASSIGNING_ROLE,
             payload: err.response
@@ -281,7 +290,7 @@ export const getAllSalesById = (id) => dispatch => {
     }).then(res => {
             console.log(res)
             dispatch({
-                type: ALL_SALES_REPORT,
+                type: SALES_REPORTS,
                 payload: res.data
             })
 
@@ -388,7 +397,7 @@ export const deleteUser = (id) => dispatch => {
                             type: DELETED,
                             payload: false
                         })
-                        swal("Poof! Your imaginary file has been deleted!", {
+                        swal("Poof! User has been deleted!", {
                             icon: "success",
                         });
                     }
@@ -448,9 +457,12 @@ export const admin_GetUsers = () => dispatch => {
         }
 
     ).catch(err => {
+        console.log(err.response)
         dispatch({
             type: ADMIN_ERR_FETCHING_USERS,
-            payload: err.response !== undefined && err.response.data ? err.response.data.message : JSON.stringify(err.response)
+            payload: err.response ? err.response.data ||
+                err.response.message ||
+                err.response.data.error : JSON.stringify(err)
         })
         dispatch({
             type: ADMIN_FETCHING_USERS,

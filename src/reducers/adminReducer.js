@@ -121,7 +121,7 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 isGettingAllSales: false,
-                allSales: action.payload
+                SalesReports: action.payload
             }
 
         case APPROVING_REPORT:

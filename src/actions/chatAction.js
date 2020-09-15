@@ -30,6 +30,10 @@ import {
     FETCHED_GROUP,
     FETCH_GROUP,
     ERR_FETCHING_GROUPS,
+    OPEN_CHAT,
+    FETCHING_USERS,
+    NULL_ALL_ERRORS,
+    ERR_FETCHING_USERS,
 } from './types'
 import Axios from 'axios'
 import { baseUrl } from '../Misc/baseUrl'
@@ -279,6 +283,56 @@ export const toggleOnline = (data) => dispatch => {
     ).catch(err => {
         dispatch({
             type: ERR_UPDATING_PROFILE,
+            payload: err.response
+        })
+    })
+}
+export const readMessage = (id) => dispatch => {
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.get(`${baseUrl}chat/read/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: FETCHED_CHATS,
+                payload: res.data
+            })
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_UPDATING_PROFILE,
+            payload: err.response
+        })
+    })
+}
+
+
+export const User = (id) => dispatch => {
+    console.log(id);
+    dispatch({
+        type: NULL_ALL_ERRORS
+    })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.get(`${baseUrl}users/get/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: OPEN_CHAT,
+                payload: res.data
+            })
+
+
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_FETCHING_USERS,
             payload: err.response
         })
     })

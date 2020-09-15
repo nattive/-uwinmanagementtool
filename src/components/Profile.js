@@ -41,14 +41,14 @@ const Profile = (props) => {
         props.manager !== undefined ?
           <>
             <Avatar
-              alt={props.manager.name || props.manager && props.manager.user && props.manager.user.name}
+              alt={props.manager.name}
               className={classes.avatar}
               component={RouterLink}
-              src={props.manager.thumbnail_url || props.manager && props.manager.user && props.manager.user.thumbnail_url}
+              src={props.manager.thumbnail_url}
               to="/update/profile"
             />
             <Typography className={classes.name} variant="h6">
-              {props.manager.name || props.manager && props.manager.user ? props.manager.user.name : (<Skeleton />)}
+              {props.manager ? props.manager.name : (<Skeleton />)}
             </Typography>
             <Typography variant="body2">{props.manager.phoneNumber || props.manager && props.manager.user && props.manager.user.phoneNumber}</Typography>
           </> : <Typography variant='body2'>Loading profile...</Typography>

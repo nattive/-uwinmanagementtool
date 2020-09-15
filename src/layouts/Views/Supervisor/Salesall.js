@@ -80,7 +80,7 @@ function Row(props) {
   const handleChange = (event) => {
     setApproveSelect(event.target.value)
     const data = {
-      report: 'wskpa',
+      report: 'sales',
       report_id: item.id,
     }
     approveReport(data)

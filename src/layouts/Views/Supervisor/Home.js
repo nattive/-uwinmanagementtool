@@ -13,28 +13,19 @@ export const Home = (props) => {
   return (
     <Container>
       <Switch>
-        {manager.role && (manager.role.name === "supervisor" || manager.role.name === "Director") ? (
-          <>
-            <Route path={`${path}/report`}>
-              <Reports />
-            </Route>
-            <Route path={`${path}/manage`}>
-              <Manage />
-            </Route>
-            <Route path={`${path}/signup`}>
-              <SignUpClass />
-            </Route>
-            
-          </>
-        ) : (<p style={{ margin: 50 }}>You are not authorized to view this page</p>)
-        }
+        <Route path={`${path}/report`}>
+          <Reports />
+        </Route>
+        <Route path={`${path}/manage`}>
+          <Manage />
+        </Route>
+        <Route path={`${path}/signup`}>
+          <SignUpClass />
+        </Route>
 
-        {manager.role && (manager.role.name === "supervisor" || manager.role.name === "Director") ? (
-          <Route path={`${path}/manager/create`}>
-            <SignUpClass />
-          </Route>
-        ) : (<p style={{ margin: 50 }}>You are not authorized to view this page</p>)
-        }
+        <Route path={`${path}/manager/create`}>
+          <SignUpClass />
+        </Route>
       </Switch>
     </Container >
   );

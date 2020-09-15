@@ -18,7 +18,7 @@ const initialState = {
     manager: {},
     authIsLoading: false,
     genPassword: '',
-    loginError: {},
+    loginError: null,
     user: {},
     registerError: {},
     registerStatus: null,

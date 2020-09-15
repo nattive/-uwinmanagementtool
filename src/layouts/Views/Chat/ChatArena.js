@@ -30,6 +30,7 @@ import { css } from 'glamor';
 import {
     fetchChats,
     postMessage,
+    fetchPrivateChats,
     initPrivateChat,
     fetchChatsById, toggleOnline
 } from "../../../actions/chatAction";
@@ -137,15 +138,15 @@ class ChatArena extends Component {
                 .here(user => {
                     console.log(user);
                 })
-                // .joining(user => {
-                //     console.log(user);
-                //     this.props.toggleOnline({ isOnline: true, user_id: user.id })
+                .joining(user => {
+                    console.log(user);
+                    this.props.toggleOnline({ isOnline: true, user_id: user.id })
 
-                // })
-                // .leaving(user => {
-                //     this.props.toggleOnline({ isOnline: false, user_id: user.id })
-                //     console.log(user)
-                // })
+                })
+                .leaving(user => {
+                    this.props.toggleOnline({ isOnline: false, user_id: user.id })
+                    console.log(user)
+                })
                 .listenForWhisper('typing', (e) => {
                     //   this.user = e.user;
                     this.setState({ isTyping: true })
@@ -159,6 +160,7 @@ class ChatArena extends Component {
 
                     const { message } = event
                     console.log(message)
+                    this.props.fetchPrivateChats()
                     this.setState({ queuedMessage: [] })
                     if (message.user_id === this.props.manager.user.id) {
                         return
@@ -301,7 +303,7 @@ class ChatArena extends Component {
                         ) : (<CircularProgress />
                             )
                     }
-                        subheader={'participants: ' + receiver && receiver.type === 'group' ? receiver.users.length > 0 && receiver.users.map(user => user.name + ', ') : receiver.isOnline === 1 ? "online" : "Offline"}
+                        subheader={'participants: ' + receiver && receiver.type === 'group' && receiver.users.length > 0 && receiver.users.map(user => user.name + ', ') }
                         avatar={<Avatar src={this.props.receiver.thumbnail_url || ''} />}
                         action={<ChatSideAreaMenu />}
                         style={
@@ -355,6 +357,7 @@ const mapDispatchToProps = {
     getUser,
     fetchChatsById,
     toggleOnline,
+    fetchPrivateChats,
     sendGroupMessage,
     fetchGroupChatsById
 };
