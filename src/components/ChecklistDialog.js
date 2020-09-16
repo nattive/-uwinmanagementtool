@@ -104,10 +104,10 @@ class ChecklistDialog extends Component {
     };
     return (
       <>
-        <Dialog aria-labelledby="simple-dialog-title" open={this.props.manager.user && (this.props.openNow.open || this.props.open.open)}>
+        <Dialog aria-labelledby="simple-dialog-title" open={this.props.openNow.open || this.props.open.open}>
           <DialogContent>
             <Typography variant="body1" className="p-4 m-3">
-              {`Good ${this.props.open.type}, ${this.props.manager.user && this.props.manager.user.name}`}
+              {`Good ${this.props.open.type}, ${this.props.manager.name}`}
             </Typography>
             <List>
               {Object.keys(this.state.checklist).map((item, key) => (

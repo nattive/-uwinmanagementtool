@@ -60,7 +60,7 @@ export default function(state = initialState, action) {
         case NULL_ERR_LOGIN:
             return {
                 ...state,
-                loginError: {},
+                loginError: null,
             }
             break;
 

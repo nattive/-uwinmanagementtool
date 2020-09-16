@@ -303,30 +303,8 @@ function Dashboard(props) {
           <CircularProgress color="inherit" />
         </Backdrop>
         <Notification />
-{
-  props.loginError ? (
-            <Dialog
-              open={props.loginError }
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">Authentication error</DialogTitle>
-              <DialogContent>
-                <DialogContentText id="alert-dialog-description">
-                  <Alert severity="error">{props.loginError.message || JSON.stringify(props.loginError)}</Alert>
-                </DialogContentText>
-              </DialogContent>
-              <DialogActions>
-                <Button color="primary" autoFocus onClick={props.verifyRedirect}>
-                  {props.authIsLoading ? (<CircularProgress size={22} />) : "Re-attempt Logging in"}
-                </Button>
-              </DialogActions>
-            </Dialog>
-
-  ) : (
-    <>
                 <Dialog
-                  open={!props.isLogin && !props.authIsLoading && !props.appIsLoading}
+                  open={props.loginError || !props.isLogin && !props.authIsLoading && !props.appIsLoading}
                   aria-labelledby="alert-dialog-title"
                   aria-describedby="alert-dialog-description"
                 >
@@ -341,17 +319,14 @@ function Dashboard(props) {
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
-                    <Button color="primary" autoFocus onClick={verifyRedirect}>
-                      {props.authIsLoading ? (<CircularProgress size={22} />) : "Re-attempt Loging"}
+                    <Button color="primary"  onClick={props.verifyRedirect}>
+              {props.appIsLoading ? (<CircularProgress size={22} />) : "Re-attempt Login"}
                     </Button>
-                    <Button component={'a'} href='/login' color="primary" autoFocus>
+                    <Button variant="contained" component={'a'} href='/login' color="primary" >
                       {props.authIsLoading ? (<CircularProgress size={22} />) : "Log In"}
                     </Button>
                   </DialogActions>
-                </Dialog></>
-  )
-}
-       
+                </Dialog>
         <div>
           {/* <Dialog
             open={props.err}
@@ -365,7 +340,7 @@ function Dashboard(props) {
               </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button onClick={()=>props.ChecklistExist()} color="primary" autoFocus>
+              <Button onClick={()=>props.ChecklistExist()} color="primary" >
                 refresh
                     </Button>
             </DialogActions>

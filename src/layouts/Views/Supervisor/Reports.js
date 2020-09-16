@@ -19,11 +19,12 @@ import {
 import { getUsers } from "../../../actions/usersAction";
 import {
   getAllWskpaById, getAllSfcrById,
-  getAllSalesById
+  getAllSalesById, getChecklistById
 } from "../../../actions/adminAction";
 import SfcrAllTable from "./SfcrAllTable";
 import SparTable from "./SparTable";
 import Salesall from "./Salesall";
+import Checklist from "./Checklist";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -102,6 +103,10 @@ function Reports(props) {
           // console.log(event.target.value);
           props.getAllSalesById(event.target.value)
           break;
+        case "checklist":
+          // console.log(event.target.value);
+          props.getChecklistById(event.target.value)
+          break;
 
         default:
           break;
@@ -156,7 +161,7 @@ function Reports(props) {
             {...a11yProps(1)}
           />
           <Tab label="Account/Sales Report" {...a11yProps(2)} />
-          {/* <Tab label="Checklist Report" {...a11yProps(3)} /> */}
+          <Tab label="Checklist Report" {...a11yProps(3)} />
         </Tabs>
       </AppBar>
       <SwipeableViews
@@ -178,9 +183,10 @@ function Reports(props) {
           <TabSelect report="sales" {...props} />
           <Salesall />
         </TabPanel>
-        {/* <TabPanel value={value} index={3} dir={theme.direction}>
+        <TabPanel value={value} index={3} dir={theme.direction}>
           <TabSelect report="checklist" {...props} />
-        </TabPanel> */}
+          <Checklist />
+        </TabPanel>
       </SwipeableViews>
     </div>
   );
@@ -194,6 +200,7 @@ const mapDispatchToProps = {
   getUsers, getAllSfcrById,
   getAllSalesById,
   getAllWskpaById,
+  getChecklistById
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Reports);

@@ -29,6 +29,10 @@ import {
     ERR_ASSIGNING_ROLE,
     IS_DELETING,
     DELETED,
+    GET_ALL_CHECKLIST,
+    GETTING_ALL_CHECKLIST,
+    ERR_GETTING_ALL_CHECKLIST,
+    ALL_CHECKLIST,
 } from "../actions/types";
 
 const initialState = {
@@ -54,7 +58,10 @@ const initialState = {
     errorFetchingRole: null,
     errAssigningRole: null,
     isAssigningRole: false,
-    roleIsAssigned: null
+    roleIsAssigned: null,
+    gettingAllChecklists: false,
+    allChecklists: [],
+    errorGettingChecklist: null
 }
 export default function(state = initialState, action) {
     switch (action.type) {
@@ -222,6 +229,29 @@ export default function(state = initialState, action) {
             return {
                 ...state,
                 isDeleting: false
+            }
+        case GET_ALL_CHECKLIST:
+            return {
+                ...state,
+                gettingAllChecklists: false,
+                errorGettingChecklist: null
+            }
+        case GETTING_ALL_CHECKLIST:
+            return {
+                ...state,
+                gettingAllChecklists: true
+            }
+        case ERR_GETTING_ALL_CHECKLIST:
+            return {
+                ...state,
+                errorGettingChecklist: action.payload,
+                gettingAllChecklists: false
+            }
+        case ALL_CHECKLIST:
+            return {
+                ...state,
+                gettingAllChecklists: false,
+                allChecklists: action.payload,
             }
 
         default:

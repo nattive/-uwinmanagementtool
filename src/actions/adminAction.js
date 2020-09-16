@@ -32,6 +32,10 @@ import {
     IS_DELETING,
     DELETED,
     SALES_REPORTS,
+    GETTING_ALL_CHECKLIST,
+    GET_ALL_CHECKLIST,
+    ERR_GETTING_ALL_CHECKLIST,
+    ALL_CHECKLIST,
 } from './types'
 import { baseUrl } from '../Misc/baseUrl'
 import Axios from 'axios'
@@ -241,6 +245,66 @@ export const getAllSales = () => dispatch => {
     ).catch(err => {
         dispatch({
             type: ERR_ALL_SALES_REPORT,
+            payload: err.response
+        })
+    })
+}
+
+export const getAllChecklists = () => dispatch => {
+
+    dispatch({
+        type: GETTING_ALL_CHECKLIST
+    })
+    dispatch({
+        type: GET_ALL_CHECKLIST
+    })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.get(`${baseUrl}supervisor/report/checklist`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: ALL_CHECKLIST,
+                payload: res.data
+            })
+
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_GETTING_ALL_CHECKLIST,
+            payload: err.response
+        })
+    })
+}
+
+export const getChecklistById = (id) => dispatch => {
+
+    dispatch({
+        type: GETTING_ALL_CHECKLIST
+    })
+    dispatch({
+        type: GET_ALL_CHECKLIST
+    })
+
+    const token = localStorage.getItem('uwin_manager_token')
+
+    Axios.get(`${baseUrl}supervisor/report/checklist/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+    }).then(res => {
+            console.log(res)
+            dispatch({
+                type: ALL_CHECKLIST,
+                payload: res.data
+            })
+
+        }
+
+    ).catch(err => {
+        dispatch({
+            type: ERR_GETTING_ALL_CHECKLIST,
             payload: err.response
         })
     })

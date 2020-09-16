@@ -241,6 +241,12 @@ export const verifyRedirect = () => dispatch => {
         type: APP_IS_LOADING,
         payload: true
     })
+
+    dispatch({
+        type: NULL_ERR_LOGIN,
+        payload: true
+    })
+
     axios.get(`${baseUrl}auth/user`, { headers: { Authorization: `Bearer ${token}` } })
         .then(res => {
             console.log(res)
