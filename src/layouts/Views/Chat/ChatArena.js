@@ -75,9 +75,9 @@ class ChatArena extends Component {
         if (newProps.chatError !== this.props.chatError && newProps.chatError && newProps.chatError.text !== undefined) {
             const newMessage = {
                 author: {
-                    username: this.props.manager.user.name,
-                    id: this.props.manager.user.id,
-                    avatarUrl: this.props.manager.user.thumbnail_url
+                    username: this.props.manager.name,
+                    id: this.props.manager.id,
+                    avatarUrl: this.props.manager.thumbnail_url
                 },
                 text: newProps.chatError.text,
                 timestamp: +new Date(),
@@ -162,7 +162,7 @@ class ChatArena extends Component {
                     console.log(message)
                     this.props.fetchPrivateChats()
                     this.setState({ queuedMessage: [] })
-                    if (message.user_id === this.props.manager.user.id) {
+                    if (message.user_id === this.props.manager.id) {
                         return
                     }
                     const newMessage = {
@@ -206,9 +206,9 @@ class ChatArena extends Component {
                 })
                 newMessage = {
                     author: {
-                        username: this.props.manager.user.name,
-                        id: this.props.manager.user.id,
-                        avatarUrl: this.props.manager.user.thumbnail_url
+                        username: this.props.manager.name,
+                        id: this.props.manager.id,
+                        avatarUrl: this.props.manager.thumbnail_url
                     },
                     text: message,
                     timestamp: +new Date(),
@@ -223,9 +223,9 @@ class ChatArena extends Component {
                 )
                 newMessage = {
                     author: {
-                        username: this.props.manager.user.name,
-                        id: this.props.manager.user.id,
-                        avatarUrl: this.props.manager.user.thumbnail_url
+                        username: this.props.manager.name,
+                        id: this.props.manager.id,
+                        avatarUrl: this.props.manager.thumbnail_url
                     },
                     text: message,
                     timestamp: +new Date(),
@@ -237,9 +237,9 @@ class ChatArena extends Component {
         } else {
             newMessage = {
                 author: {
-                    username: this.props.manager.user.name,
-                    id: this.props.manager.user.id,
-                    avatarUrl: this.props.manager.user.thumbnail_url
+                    username: this.props.manager.name,
+                    id: this.props.manager.id,
+                    avatarUrl: this.props.manager.thumbnail_url
                 },
                 text: message,
                 timestamp: +new Date(),
@@ -280,7 +280,7 @@ class ChatArena extends Component {
 
         setTimeout(function () {
             channel.whisper('typing', {
-                user: this.manageer.user,
+                user: this.props.manager,
                 typing: true
             });
         }, 300);
@@ -324,7 +324,7 @@ class ChatArena extends Component {
                             showTypingIndicator={this.state.isTyping}
                             style={{ border: 'none' }}
                             messages={this.state.messageData}
-                            userId={this.props.manager.user.id}
+                            userId={this.props.manager.id}
                             onSendMessage={this.handlePostMessage}
                             width={'10000px'}
                             height={this.state.height - 155}

@@ -190,7 +190,7 @@ function ContactTab(props) {
           dir={theme.direction}
           style={{ height: "450px", overflowY: "scroll" }}
         >
-          {props.privateChats.length && props.privateChats.map(chat => (
+          {props.privateChats.length && props.privateChats.map(chat => chat.messages.length && (
 
             <ChatItem
               avatar={chat.receiver.thumbnail_url}
@@ -199,7 +199,7 @@ function ContactTab(props) {
               subtitle={lastItem(chat.messages) ? lastItem(chat.messages).text : 'no message sent'}
               date={lastItem(chat.messages) ? new Date(lastItem(chat.messages).updated_at) : new Date(chat.created_at)}
               onClick={() => handleInitChat(chat.receiver, lastItem(chat.messages).id)}
-              unread={lastItem(chat.messages).receiver_id === props.manager && props.manager.user && props.manager.user.id && lastItem(chat.messages).isRead === 0 && 1} />
+              unread={lastItem(chat.messages) && lastItem(chat.messages).receiver_id === props.manager && props.manager.user && props.manager.user.id && lastItem(chat.messages).isRead === 0 && 1} />
           ))}
           {/* {props.privateChats.length > 0
             ? props.privateChats.map((item) => (
