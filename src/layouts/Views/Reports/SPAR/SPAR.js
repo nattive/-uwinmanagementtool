@@ -58,6 +58,8 @@ function Spar(props) {
   const [cr_rs, setCrRs] = useState(0);
   const [revenue_per_day, setRevenuePerDay] = useState(0);
   const [appearance, setAppearance] = useState(0);
+  const [report_date, setReportDate] = useState();
+
   const [
     general_equipment_maintenance,
     setGeneralEquipmentMaintenance,
@@ -69,13 +71,14 @@ function Spar(props) {
       work_attendance,
       punctuality,
       accountability,
+      report_date,
       cr_rs,
       revenue_per_day,
       general_equipment_maintenance,
       appearance,
       workPercentage: props.workPercentage,
     };
-    props.storeWSKPA({data });
+    props.storeWSKPA({ data });
   };
   // getAppraisalPercent;
   const textField = [
@@ -174,14 +177,29 @@ function Spar(props) {
       <Grid item sm={12} md={9}>
         <Card>
           <CardContent>
-            <Typography
-              variant="h6"
-              component="h6"
-              color="primary"
-              className="p-3"
-            >
-              STAFFS KEY PERFORMANCE APPRAISALS
-            </Typography>
+            <Grid item xs={12} md={6}>
+              <Typography
+                variant="h6"
+                component="h6"
+                color="primary"
+                className="p-3"
+              >
+                STAFFS KEY PERFORMANCE APPRAISALS
+              </Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <TextField
+                id="date"
+                label="REPORT DATE"
+                type="date"
+                defaultValue={new Date("2017-05-24")}
+                onChange={(e) => setReportDate(e.target.valueAsDate)}
+                className={classes.textField}
+                InputLabelProps={{
+                  shrink: true,
+                }}
+              />
+            </Grid>
             <Typography className={classes.topDivider} />
             <form className={classes.root} noValidate autoComplete="off">
               <Grid container>

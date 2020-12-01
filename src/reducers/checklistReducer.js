@@ -75,11 +75,6 @@ export default function(state = initialState, action) {
                 ...state,
                 openNow: action.payload
             }
-        case NEXT_CHECKLIST:
-            return {
-                ...state,
-                nextChecklist: action.payload
-            }
         case CLOSE_NOW:
             return {
                 ...state,

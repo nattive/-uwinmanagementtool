@@ -63,10 +63,9 @@ const SfcrAllTable = (props) => {
           <TableHead>
             <TableRow>
               <TableCell />
-              <TableCell component="th" scope="row">
-                Sent by
-              </TableCell>
+              <TableCell component="th" scope="row">  Sent by  </TableCell>
               <TableCell>Time</TableCell>
+              <TableCell align="right">Report Date</TableCell>
               <TableCell align="right">Date Supplied</TableCell>
               <TableCell align="right">Date Finished</TableCell>
               <TableCell align="right">Usage Duration</TableCell>
@@ -113,7 +112,6 @@ function Row(props) {
   return (
     <React.Fragment>
       <TableRow className={classes.root}>
-
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -125,12 +123,15 @@ function Row(props) {
         </TableCell>
         <TableCell>{item.user.name}</TableCell>
         <TableCell>{item.created_at}</TableCell>
-        <TableCell align="right">{item.date_finished}</TableCell>
+        <TableCell align="right">{item.report_date}</TableCell>
         <TableCell align="right">{item.date_supplied}</TableCell>
+        <TableCell align="right">{item.date_finished}</TableCell>
         <TableCell align="right">{item.usage_duration}</TableCell>
         <TableCell>
           <FormControl className={classes.formControl}>
-            <InputLabel id="demo-simple-select-label">Approve Report</InputLabel>
+            <InputLabel id="demo-simple-select-label">
+              Approve Report
+            </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -138,15 +139,11 @@ function Row(props) {
               value={approveSelect}
             >
               <MenuItem disabled value={0}>
-                {item.isApprovedBy ? 'Approved' : 'Unapproved'}
+                {item.isApprovedBy ? "Approved" : "Unapproved"}
               </MenuItem>
-              <MenuItem value={1}>
-                {'Approve'}
-              </MenuItem>
+              <MenuItem value={1}>{"Approve"}</MenuItem>
 
-              <MenuItem value={0}>
-                {'Disapprove'}
-              </MenuItem>
+              <MenuItem value={0}>{"Disapprove"}</MenuItem>
             </Select>
           </FormControl>
         </TableCell>

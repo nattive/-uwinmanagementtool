@@ -175,6 +175,7 @@ const mapStateToProps = (state) => ({
   open: state.checklist.open,
   err: state.checklist.err,
   openNow: state.checklist.openNow,
+  nextChecklist: state.checklist.nextChecklist,
   manager: state.auth.manager,
   appIsLoading: state.loadingState.appIsLoading,
 });

@@ -30,6 +30,7 @@ export const storeSFCR = ({ data }) => dispatch => {
             date_supplied,
             usage_duration,
             volume,
+            report_date,
             pricePerLitre,
             petrol_station,
         } = data
@@ -37,6 +38,7 @@ export const storeSFCR = ({ data }) => dispatch => {
         Axios.post(`${baseUrl}report/sfcr/store`, {
             hasReceive,
             date_finished,
+            report_date,
             date_supplied,
             usage_duration,
             pricePerLitre,

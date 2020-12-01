@@ -50,6 +50,7 @@ function Salesall(props) {
                             <TableCell />
                             <TableCell>Sent By</TableCell>
                             <TableCell>Sent</TableCell>
+                            <TableCell align="right">Report Date</TableCell>
                             <TableCell align="right">Expense Total</TableCell>
                             <TableCell align="right">Total Payout</TableCell>
                             <TableCell align="right">Total Running Credit</TableCell>
@@ -86,63 +87,62 @@ function Row(props) {
     approveReport(data)
   }
     return (
-        <React.Fragment>
-            <TableRow className={classes.root}>
-                <TableCell>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                </TableCell>
-                <TableCell align="right">{item.user && item.user.name}</TableCell>
-                <TableCell >
-                    {item.created_at}
-                </TableCell>
-                <TableCell align="right">{item.expenseTotal}</TableCell>
-                <TableCell align="right">{item.totalPayout}</TableCell>
-                <TableCell align="right">{item.totalRunCred}</TableCell>
-                <TableCell align="right">{item.onlineBalance}</TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Actual Cash at hand</TableCell>
-                                        <TableCell>SubTotal1</TableCell>
-                                        <TableCell>eCredit Funded</TableCell>
-                                        <TableCell>cash Funded</TableCell>
-                                        <TableCell>credit Unpaid Total</TableCell>
-                                        <TableCell>expected Cash At Hand</TableCell>
-                                        <TableCell>subTotal 2</TableCell>
-                                        <TableCell>fuel</TableCell>
-                                        <TableCell>misc</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>
-                                        <TableCell>{item.actualCashAtHand}</TableCell>
-                                        <TableCell>{item.sub_total1}</TableCell>
-                                        <TableCell>{item.eCreditFunded}</TableCell>
-                                        <TableCell>{item.cashFunded}</TableCell>
-                                        <TableCell>{item.creditUnpaidTotal}</TableCell>
-                                        <TableCell>{item.expectedCashAtHand}</TableCell>
-                                        <TableCell>{item.sub_total2}</TableCell>
-                                        <TableCell>{item.fuel}</TableCell>
-                                        <TableCell>{item.misc}</TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
-        </React.Fragment>
+      <React.Fragment>
+        <TableRow className={classes.root}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell align="right">{item.user && item.user.name}</TableCell>
+          <TableCell>{item.created_at}</TableCell>
+          <TableCell align="right">{item.report_date}</TableCell>
+          <TableCell align="right">{item.expenseTotal}</TableCell>
+          <TableCell align="right">{item.totalPayout}</TableCell>
+          <TableCell align="right">{item.totalRunCred}</TableCell>
+          <TableCell align="right">{item.onlineBalance}</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Actual Cash at hand</TableCell>
+                      <TableCell>SubTotal1</TableCell>
+                      <TableCell>eCredit Funded</TableCell>
+                      <TableCell>cash Funded</TableCell>
+                      <TableCell>credit Unpaid Total</TableCell>
+                      <TableCell>expected Cash At Hand</TableCell>
+                      <TableCell>subTotal 2</TableCell>
+                      <TableCell>fuel</TableCell>
+                      <TableCell>misc</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>{item.actualCashAtHand}</TableCell>
+                      <TableCell>{item.sub_total1}</TableCell>
+                      <TableCell>{item.eCreditFunded}</TableCell>
+                      <TableCell>{item.cashFunded}</TableCell>
+                      <TableCell>{item.creditUnpaidTotal}</TableCell>
+                      <TableCell>{item.expectedCashAtHand}</TableCell>
+                      <TableCell>{item.sub_total2}</TableCell>
+                      <TableCell>{item.fuel}</TableCell>
+                      <TableCell>{item.misc}</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </React.Fragment>
     );
 }
 

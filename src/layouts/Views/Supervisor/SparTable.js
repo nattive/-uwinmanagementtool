@@ -54,6 +54,7 @@ const SparTable = (props) => {
             <TableRow>
               <TableCell />
               <TableCell>Report by</TableCell>
+              <TableCell>Report Date</TableCell>
               <TableCell align="right">Staff's Full Name</TableCell>
               <TableCell>Time</TableCell>
               <TableCell align="right">Staff's Revenue Per Day</TableCell>
@@ -111,16 +112,17 @@ function Row(props) {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell >
-          {item.user.name}
-        </TableCell>
-        <TableCell align="right">{item.full_name}</TableCell>
+        <TableCell>{item.user.name}</TableCell>
+        <TableCell align="right">{item.report_date}</TableCell>
+        <TableCell align="right">{item.full_name}</TableCell>{" "}
         <TableCell align="right">{item.created_at}</TableCell>
         <TableCell align="right">{item.revenue_per_day}</TableCell>
         <TableCell align="right">{item.workPercentage}</TableCell>
         <TableCell>
           <FormControl className={classes.formControl}>
-            <InputLabel id="demo-simple-select-label">Approve Report</InputLabel>
+            <InputLabel id="demo-simple-select-label">
+              Approve Report
+            </InputLabel>
             <Select
               labelId="demo-simple-select-label"
               id="demo-simple-select"
@@ -128,15 +130,11 @@ function Row(props) {
               value={approveSelect}
             >
               <MenuItem disabled value={0}>
-                {item.isApprovedBy ? 'Approved' : 'Unapproved'}
+                {item.isApprovedBy ? "Approved" : "Unapproved"}
               </MenuItem>
-              <MenuItem value={1}>
-                {'Approve'}
-              </MenuItem>
+              <MenuItem value={1}>{"Approve"}</MenuItem>
 
-              <MenuItem value={0}>
-                {'Disapprove'}
-              </MenuItem>
+              <MenuItem value={0}>{"Disapprove"}</MenuItem>
             </Select>
           </FormControl>
         </TableCell>
@@ -150,7 +148,9 @@ function Row(props) {
                   <TableRow>
                     <TableCell>punctuality</TableCell>
                     <TableCell>accountability</TableCell>
-                    <TableCell>Customer Relations and retentive Skill</TableCell>
+                    <TableCell>
+                      Customer Relations and retentive Skill
+                    </TableCell>
                     <TableCell>Appearance</TableCell>
                     <TableCell>General Equipment Maintenance</TableCell>
                   </TableRow>

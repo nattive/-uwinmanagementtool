@@ -70,6 +70,7 @@ function Sfcr(props) {
   const [pricePerLitre, setPricePerLitre] = useState("");
   const [petrol_station, setPetrol_station] = useState("");
   const [hasReceive, setHasReceive] = useState("Bought");
+  const [report_date, setReportDate] = useState();
 
   const handSubmit = () => {
     const data = {
@@ -77,6 +78,7 @@ function Sfcr(props) {
       date_supplied,
       usage_duration,
       volume,
+      report_date,
       pricePerLitre,
       petrol_station,
       hasReceive,
@@ -126,7 +128,7 @@ function Sfcr(props) {
             <Divider className={classes.topDivider} />
             <form className={classes.root} noValidate autoComplete="off">
               <Grid container>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} md={3}>
                   <TextField
                     id="date"
                     label="DATE SUPPLIED"
@@ -139,7 +141,7 @@ function Sfcr(props) {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} md={3}>
                   <TextField
                     id="date"
                     label="DATE FINISHED"
@@ -152,7 +154,7 @@ function Sfcr(props) {
                     }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={6} md={4}>
+                <Grid item xs={12} md={3}>
                   <TextField
                     id="date"
                     label="USAGE DURATION"
@@ -160,6 +162,19 @@ function Sfcr(props) {
                     type="number"
                     helperText="The Fuel Estimated duration (in Hours)"
                     defaultValue="2017-05-24"
+                    className={classes.textField}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <TextField
+                    id="date"
+                    label="REPORT DATE"
+                    type="date"
+                    defaultValue={new Date("2017-05-24")}
+                    onChange={(e) => setReportDate(e.target.valueAsDate)}
                     className={classes.textField}
                     InputLabelProps={{
                       shrink: true,

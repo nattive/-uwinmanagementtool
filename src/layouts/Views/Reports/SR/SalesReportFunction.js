@@ -20,7 +20,7 @@ import {
   CircularProgress,
   IconButton,
 } from "@material-ui/core";
-import ReplayIcon from '@material-ui/icons/Replay';
+import ReplayIcon from "@material-ui/icons/Replay";
 import { makeStyles } from "@material-ui/core/styles";
 import "date-fns";
 import DateFnsUtils from "@date-io/date-fns";
@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 function SalesReportFunction(props) {
+var today = new Date();
+
+  // 
   const classes = useStyles();
   const [totalRunCred, setTotalRunCred] = useState(0);
   const [eCreditFunded, setECreditFunded] = useState(0);
@@ -66,7 +69,7 @@ function SalesReportFunction(props) {
   const [ecreditBalance, setEcreditBalance] = useState(0);
   const [expectedCashAtHand, setExpectedCashAtHand] = useState(0);
   const [actualCashAtHand, setActualCashAtHand] = useState(0);
-  const [sub_total1, setSubTotal1] = useState(0);
+  const [report_date, setReportDate] = useState();
   const [sub_total2, setSubTotal2] = useState(0);
   const [fuel, setFuel] = useState(0);
   const [misc, setMisc] = useState(0);
@@ -76,16 +79,25 @@ function SalesReportFunction(props) {
   const [balance, setBalance] = useState(0);
 
   const HandleTotals = () => {
-    setExpenseTotal(Number(misc) + Number(totalPayout) + Number(onlineBalance) + Number(fuel) + Number(pos));
-    setTotalRunCred(Number(eCreditFunded) + Number(cashFunded) + Number(unsettledWinnings));
+    setExpenseTotal(
+      Number(misc) +
+        Number(totalPayout) +
+        Number(onlineBalance) +
+        Number(fuel) +
+        Number(pos)
+    );
+    setTotalRunCred(
+      Number(eCreditFunded) + Number(cashFunded) + Number(unsettledWinnings)
+    );
     setExpectedCashAtHand(Number(totalRunCred) - Number(expenseTotal));
     setSubTotal2(Number(expenseTotal) + Number(onlineBalance));
     setBalance(Number(actualCashAtHand) - Number(expectedCashAtHand));
   };
   const handleSubmit = () => {
-    HandleTotals()
+    HandleTotals();
     const data = {
       misc: Number(misc),
+      report_date,
       totalPayout: Number(totalPayout),
       fuel: Number(fuel),
       pos: Number(pos),
@@ -120,14 +132,31 @@ function SalesReportFunction(props) {
         <Grid item sm={12} xs={12} md={9}>
           <Card>
             <CardContent>
-              <Typography
-                variant="h6"
-                component="h6"
-                color="primary"
-                className="p-3"
-              >
-                ACCOUNT REPORT
-              </Typography>
+              <Grid container>
+                <Grid item xs={12} md={6}>
+                  <Typography
+                    variant="h6"
+                    component="h6"
+                    color="primary"
+                    className="p-3"
+                  >
+                    ACCOUNT REPORT
+                  </Typography>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    id="date"
+                    label="REPORT DATE"
+                    type="date"
+                    defaultValue={new Date("2017-05-24")}
+                    onChange={(e) => setReportDate(e.target.valueAsDate)}
+                    className={classes.textField}
+                    InputLabelProps={{
+                      shrink: true,
+                    }}
+                  />
+                </Grid>
+              </Grid>
               <Divider className={classes.topDivider} />
               <Typography
                 variant="subtitle1"
@@ -137,6 +166,7 @@ function SalesReportFunction(props) {
               >
                 Credit
               </Typography>
+
               <form className={classes.root} noValidate autoComplete="off">
                 <Grid container spacing={3}>
                   <Grid item xs={12} md={4}>
@@ -170,10 +200,14 @@ function SalesReportFunction(props) {
                       variant="outlined"
                     />
                   </Grid>
-                  <FormControl className={classes.textField} style={{ float: 'right' }} variant="filled">
+                  <FormControl
+                    className={classes.textField}
+                    style={{ float: "right" }}
+                    variant="filled"
+                  >
                     <InputLabel htmlFor="filled-adornment-amount">
                       Total Credit
-                  </InputLabel>
+                    </InputLabel>
                     <FilledInput
                       aria-label="Summation of credit, cash funded and unpaid winnings"
                       id="filled-adornment-amount"
@@ -185,12 +219,12 @@ function SalesReportFunction(props) {
                     />
                     <small className="text-muted">
                       Summation of all Credit"
-            </small>
+                    </small>
                   </FormControl>
                 </Grid>
               </form>
-              <div style={{ margin: '20px 0' }}>
-                <Divider variant='middle' />
+              <div style={{ margin: "20px 0" }}>
+                <Divider variant="middle" />
                 <Typography
                   variant="subtitle1"
                   component="h6"
@@ -198,45 +232,45 @@ function SalesReportFunction(props) {
                   className="p-3"
                 >
                   Expense
-              </Typography>
-                <Divider variant='middle' />
+                </Typography>
+                <Divider variant="middle" />
               </div>
-              <Grid container spacing={3} >
+              <Grid container spacing={3}>
                 {/* <form className={classes.root} noValidate autoComplete="off"> */}
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      label="PAID WINNINGS"
-                      type="number"
-                      variant="outlined"
-                      value={totalPayout}
-                      onChange={(e) => setTotalPayout(e.target.value)}
-                      onBlur={() => HandleTotals()}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      label="FUEL"
-                      value={fuel}
-                      onChange={(e) => setFuel(e.target.value)}
-                      onBlur={() => HandleTotals()}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <TextField
-                      id="outlined-basic"
-                      label="MISCELLENOUS EXPENSES"
-                      value={misc}
-                      onBlur={() => HandleTotals()}
-                      onChange={(e) => setMisc(e.target.value)}
-                      variant="outlined"
-                    />
-                  </Grid>
-                  {/* </form> */}
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="outlined-basic"
+                    label="PAID WINNINGS"
+                    type="number"
+                    variant="outlined"
+                    value={totalPayout}
+                    onChange={(e) => setTotalPayout(e.target.value)}
+                    onBlur={() => HandleTotals()}
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="outlined-basic"
+                    label="FUEL"
+                    value={fuel}
+                    onChange={(e) => setFuel(e.target.value)}
+                    onBlur={() => HandleTotals()}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <TextField
+                    id="outlined-basic"
+                    label="MISCELLENOUS EXPENSES"
+                    value={misc}
+                    onBlur={() => HandleTotals()}
+                    onChange={(e) => setMisc(e.target.value)}
+                    variant="outlined"
+                  />
+                </Grid>
+                {/* </form> */}
               </Grid>
-              <div style={{margin: '2em'}} />
+              <div style={{ margin: "2em" }} />
               <Grid container spacing={3}>
                 <Grid item xs={12} md={4}>
                   <TextField
@@ -263,7 +297,7 @@ function SalesReportFunction(props) {
                   <FormControl className={classes.textField} variant="filled">
                     <InputLabel htmlFor="filled-adornment-amount">
                       Total Expenditure
-                  </InputLabel>
+                    </InputLabel>
                     <FilledInput
                       aria-label="Summation all expense"
                       id="filled-adornment-amount"
@@ -275,14 +309,16 @@ function SalesReportFunction(props) {
                     />
                     <small className="text-muted">
                       Summation of all expense"
-            </small>
+                    </small>
                   </FormControl>
                 </Grid>
               </Grid>
               <div className="clearfix"></div>
               {/* Totals */}
-              <div style={{ margin: '20px 0' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <div style={{ margin: "20px 0" }}>
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
                   <Typography
                     variant="subtitle1"
                     component="h6"
@@ -290,7 +326,7 @@ function SalesReportFunction(props) {
                     className="p-3"
                   >
                     Totals
-              </Typography>
+                  </Typography>
                   <Button
                     variant="text"
                     color="secondary"
@@ -301,15 +337,15 @@ function SalesReportFunction(props) {
                     Re-Calculate
                   </Button>
                 </div>
-                <Divider variant='middle' />
+                <Divider variant="middle" />
               </div>
               <form className={classes.root} noValidate autoComplete="off">
-                <Grid container spacing={3} >
+                <Grid container spacing={3}>
                   <Grid item xs={12} md={4}>
                     <FormControl className={classes.textField} variant="filled">
                       <InputLabel htmlFor="filled-adornment-amount">
                         EXPECTED CASH
-                  </InputLabel>
+                      </InputLabel>
                       <FilledInput
                         aria-label="Summation of credit and unpaid winnings"
                         id="filled-adornment-amount"
@@ -321,7 +357,7 @@ function SalesReportFunction(props) {
                       />
                       <small className="text-muted">
                         The amount expected to be with you
-            </small>
+                      </small>
                     </FormControl>
                   </Grid>
 
@@ -334,14 +370,14 @@ function SalesReportFunction(props) {
                       onBlur={() => HandleTotals()}
                       onChange={(e) => setActualCashAtHand(e.target.value)}
                       variant="outlined"
-                      helperText='The actual cash at hand'
+                      helperText="The actual cash at hand"
                     />
                   </Grid>
                   <Grid item xs={12} md={3}>
                     <FormControl className={classes.textField} variant="filled">
                       <InputLabel htmlFor="filled-adornment-amount">
                         BALANCE
-                  </InputLabel>
+                      </InputLabel>
                       <FilledInput
                         aria-label="Summation of credit and unpaid winnings"
                         id="filled-adornment-amount"
@@ -352,7 +388,8 @@ function SalesReportFunction(props) {
                         }
                       />
                       <small className="text-muted">
-                        This is expected to be zero, if it's negative, your account is not balance
+                        This is expected to be zero, if it's negative, your
+                        account is not balance
                       </small>
                     </FormControl>
                   </Grid>
@@ -367,7 +404,14 @@ function SalesReportFunction(props) {
                   className="m-4"
                   disabled={props.isSendingSR}
                 >
-                  {props.isSendingSR ? (<> <CircularProgress size={20} /> <p>Sending Report</p> </>) : " Send Report"}
+                  {props.isSendingSR ? (
+                    <>
+                      {" "}
+                      <CircularProgress size={20} /> <p>Sending Report</p>{" "}
+                    </>
+                  ) : (
+                    " Send Report"
+                  )}
                 </Button>
               </div>
             </CardContent>
