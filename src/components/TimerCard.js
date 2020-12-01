@@ -154,9 +154,9 @@ const TimerCard = (props) => {
             Last checklist: {props.nextChecklist.lastChecked}
           </Typography><br />
           <Typography className={classes.caption} variant="caption">
-          {props.open.diffentInTime < 600 &&
+          {props.open.diffentInTime <= 60 &&
             `You can manually check the ${props.open.type} List. Click`}{" "}
-          {props.open.diffentInTime < 600 && (
+          {props.open.diffentInTime <= 60 && (
             <a href="#" onClick={onComplete} className="btn-link">
               Here
             </a>
