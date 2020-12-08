@@ -9,6 +9,7 @@ import {
     CLOSE_ALL,
     OPEN_NOW,
     CLOSE_NOW,
+    CHECKING_CHECKLIST
 } from "../actions/types";
 
 const initialState = {
@@ -16,6 +17,8 @@ const initialState = {
     open: false,
     nextChecklist: {},
     day: '',
+    isChecking: false,
+    checklistError: null,
     openMorning: false,
     openAfternoon: false,
     openEvening: false,
@@ -35,23 +38,28 @@ export default function(state = initialState, action) {
         case ERR_CHECKLIST_EXIST_STATUS:
             return {
                 ...state,
+                checklistError: action.payload,
+                isChecking: false,
                 err: action.payload,
             }
 
         case OPEN_DIALOG_MORNING:
             return {
                 ...state,
+                isChecking: false,
                 openMorning: true
             }
 
         case OPEN_DIALOG_AFTERNOON:
             return {
                 ...state,
+                isChecking: false,
                 openAfternoon: true
             }
         case OPEN_DIALOG_EVENING:
             return {
                 ...state,
+                isChecking: false,
                 openEvening: true
             }
         case CHECKLIST_EXIST_STATUS:
@@ -63,6 +71,7 @@ export default function(state = initialState, action) {
         case OPEN_DIALOG:
             return {
                 ...state,
+                isChecking: false,
                 open: action.payload
             }
         case NEXT_CHECKLIST:
@@ -73,12 +82,19 @@ export default function(state = initialState, action) {
         case OPEN_NOW:
             return {
                 ...state,
+                isChecking: false,
                 openNow: action.payload
             }
         case CLOSE_NOW:
             return {
                 ...state,
                 openNow: {}
+            }
+        case CHECKING_CHECKLIST:
+            return {
+                ...state,
+                isChecking: true,
+                checklistError: null
             }
 
         default:

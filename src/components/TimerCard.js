@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     height: 32,
     width: 32,
+    color: '#ffff'
   },
   difference: {
     marginTop: theme.spacing(2),
@@ -70,6 +71,9 @@ const TimerCard = (props) => {
     setTime(props.open && props.open.next);
   }, [props.nextChecklist]);
 
+  useEffect(() => {
+   setInterval(() => refresh(), 30000);
+  }, [])
   const dispatch = useDispatch();
   const onComplete = () => {
     dispatch({
@@ -112,7 +116,7 @@ const TimerCard = (props) => {
       // Render a countdown
       return (
         <Typography variant="h4">
-          {hours}:{minutes < 9 ? `0${minutes}` : minutes}:{" "}
+          {hours}:{minutes <= 9 ? `0${minutes}` : minutes}:{" "}
           {seconds < 9 ? `0${seconds}` : seconds}
         </Typography>
       );
@@ -125,10 +129,10 @@ const TimerCard = (props) => {
         <Grid container justify="space-between">
           <Grid item>
             <Typography variant="subtitle2" component="small">
-              {props.open &&
+              {!props.isChecking ? props.open &&
                 `Next Checklist in ${new Date(
                   props.open.next
-                ).getHours()}:${new Date(props.open.next).getMinutes()}`}
+                ).getHours()}:${new Date(props.open.next).getMinutes()}`: 'Refreshing checklist...'}
             </Typography>
             {props.open && (
               <Countdown
@@ -139,7 +143,11 @@ const TimerCard = (props) => {
             )}
           </Grid>
           <Grid item>
-            <Avatar component={Button}>
+            <Avatar
+              component={Button}
+              className={classes.avatar}
+              onClick={refresh}
+            >
               <AccessAlarmIcon className={classes.icon} />
             </Avatar>
           </Grid>
@@ -147,21 +155,21 @@ const TimerCard = (props) => {
         <Grid item>
           {/* <ArrowDownwardIcon className={classes.differenceIcon} /> */}
           <Typography className={classes.caption} variant="caption">
-            Next checklist time: 00:00
+            Last checklist: {props.nextChecklist.lastChecked}
           </Typography>
           <br />
           <Typography className={classes.caption} variant="caption">
-            Last checklist: {props.nextChecklist.lastChecked}
-          </Typography><br />
-          <Typography className={classes.caption} variant="caption">
-          {props.open.diffentInTime <= 60 &&
-            `You can manually check the ${props.open.type} List. Click`}{" "}
-          {props.open.diffentInTime <= 60 && (
-            <a href="#" onClick={onComplete} className="btn-link">
-              Here
-            </a>
-          )}</Typography>
-          <Button startIcon={<Icon  name='home' /> } onClick={refresh}>Refresh</Button>
+            {props.open.diffentInTime <= 60 &&
+              `You can manually check the ${props.open.type} List. Click`}{" "}
+            {props.open.diffentInTime <= 60 && (
+              <a href="#" onClick={onComplete} className="btn-link">
+                Here
+              </a>
+            )}
+          </Typography>
+          {/* <Button startIcon={<Icon name="home" />} onClick={refresh}>
+            Refresh
+          </Button> */}
         </Grid>
       </CardContent>
     </Card>
@@ -171,6 +179,8 @@ const TimerCard = (props) => {
 const mapStateToProps = (state) => ({
   open: state.checklist.open,
   nextChecklist: state.checklist.nextChecklist,
+  isChecking: state.checklist.isChecking,
+  checklistError: state.checklist.checklistError,
   
 });
 

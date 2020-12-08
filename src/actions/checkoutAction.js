@@ -18,12 +18,12 @@ import { baseUrl } from '../Misc/baseUrl'
 
 export const ChecklistExist = (id) => dispatch => {
     dispatch({
-        type: CHECKING_CHECKLIST
-    })
-    dispatch({
-        type: APP_IS_LOADING,
-        payload: true
-    })
+            type: CHECKING_CHECKLIST
+        })
+        // dispatch({
+        //     type: APP_IS_LOADING,
+        //     payload: true
+        // })
     dispatch({ type: CLOSE_ALL })
 
     const token = localStorage.getItem('uwin_manager_token')
