@@ -49,7 +49,7 @@ export const ChecklistExist = (id) => dispatch => {
 
         dispatch({
             type: ERR_CHECKLIST_EXIST_STATUS,
-            payload: err.message || err.response && err.response.data || JSON.stringify(err) || ' error occurred'
+            payload: err.response ? err.response.data.message || err.response.message || ' error occurred' : err.message
         })
         dispatch({
             type: APP_IS_LOADING,
@@ -128,7 +128,7 @@ export const storeChecklist = () => dispatch => {
         }
 
     ).catch(err => {
-        // alert(err.message || err.response !== undefined ? err.response.data : JSON.stringify(err))
+        alert(err.message || err.response !== undefined ? err.response.data.message : JSON.stringify(err))
 
         dispatch({
             type: APP_IS_LOADING,

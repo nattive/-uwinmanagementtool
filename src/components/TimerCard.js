@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import PropTypes from "prop-types";
 import { makeStyles } from "@material-ui/styles";
+
 import {
   Card,
   CardContent,
@@ -129,10 +130,12 @@ const TimerCard = (props) => {
         <Grid container justify="space-between">
           <Grid item>
             <Typography variant="subtitle2" component="small">
-              {!props.isChecking ? props.open &&
-                `Next Checklist in ${new Date(
-                  props.open.next
-                ).getHours()}:${new Date(props.open.next).getMinutes()}`: 'Refreshing checklist...'}
+              {!props.isChecking
+                ? props.open &&
+                  `Next Checklist in ${new Date(
+                    props.open.next
+                  ).getHours()}:${new Date(props.open.next).getMinutes()}`
+                : "Refreshing checklist..."}
             </Typography>
             {props.open && (
               <Countdown

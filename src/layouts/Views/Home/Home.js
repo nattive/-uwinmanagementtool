@@ -5,8 +5,17 @@ import SummaryCard from "../../../components/SummaryCard";
 import { connect } from "react-redux";
 import TimerCard from "../../../components/TimerCard";
 import Notification from "../../../components/Notification";
+import Snackbar from "@material-ui/core/Snackbar";
+
 
 function Home(props) {
+   const [state, setState] = React.useState({
+     open: false,
+     vertical: "top",
+     horizontal: "center",
+   });
+     const { vertical, horizontal, open } = state;
+
   return (
     <>
       <Grid container spacing={4} className="m-3">
@@ -22,7 +31,7 @@ function Home(props) {
           <TimerCard />
         </Grid>
         <Grid item lg={3} sm={6} xl={3} xs={12}>
-         <SummaryCard
+          <SummaryCard
             summaryTitle="Last Fuel Disbursement Report"
             summaryTittleAbbr="SFCR"
             totalUpdated={props.wskpaReports.length}
@@ -43,6 +52,13 @@ function Home(props) {
         </Grid>
         <Grid item lg={8} md={12} xl={9} xs={12}></Grid>
       </Grid>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={props.checklistError}
+        // onClose={}
+        message={props.checklistError}
+        key={vertical + horizontal}
+      />
     </>
   );
 }
@@ -54,6 +70,7 @@ const mapStateToProps = (state) => ({
   wskpaReport: state.reports.wskpaReport,
   wskpaReports: state.reports.wskpaReports,
   loadingState: state.reports.loadingState,
+  checklistError: state.checklist.checklistError,
   latestReport: state.reports.latestReport,
 });
 
