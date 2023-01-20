@@ -21,7 +21,7 @@
     "date-and-time": "^0.14.0",
     "date-fns": "^2.14.0",
     "history": "^4.9.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "laravel-echo": "^1.8.0",
     "laravel-echo-server": "^1.6.2",
     "moment": "^2.24.0",
