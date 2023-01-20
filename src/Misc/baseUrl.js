@@ -1,2 +1,2 @@
-export const baseUrl = 'http://uwinmanagerapi.test/api/'
-export const baseUrlNoApi = 'http://uwinmanagerapi.test/'
+export const baseUrl = 'https://uwinmanagerapi.test/api/'
+export const baseUrlNoApi = 'https://uwinmanagerapi.test/'
